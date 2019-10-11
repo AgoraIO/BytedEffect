@@ -1,0 +1,1 @@
+include ':app', ':video_capturer_and_renderer'

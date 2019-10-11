@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_enabled="true" android:state_pressed="true">
+        <bitmap android:src="@drawable/ic_bar_rotate"
+            android:alpha="0.2">
+        </bitmap>
+    </item>
+
+    <item android:state_enabled="true" android:state_focused="true">
+        <bitmap android:src="@drawable/ic_bar_rotate"
+            android:alpha="0.2">
+        </bitmap>
+    </item>
+    <item android:state_enabled="true">
+        <bitmap android:src="@drawable/ic_bar_rotate">
+        </bitmap>
+    </item>
+</selector>

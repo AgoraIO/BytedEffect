@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ShapedImageView">
+        <attr name="shape_mode" format="enum">
+            <enum name="round_rect" value="1" />
+            <enum name="circle" value="2" />
+        </attr>
+        <attr name="round_radius" format="dimension" />
+
+        <attr name="stroke_width" format="dimension" />
+        <attr name="stroke_color" format="color|reference" />
+    </declare-styleable>
+
+
+    <declare-styleable name="ColorfulCircleView">
+        <attr name="fill_color_1" format="color" />
+        <attr name="fill_color_2" format="color" />
+        <attr name="fill_color_3" format="color" />
+        <attr name="fill_color_4" format="color" />
+        <attr name="fill_mode" format="enum">
+            <enum name="single" value="0" />
+            <enum name="dual" value="1" />
+            <enum name="triple" value="2" />
+            <enum name="quadruple" value="3" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="ButtonView">
+        <attr name="src" format="reference"/>
+        <attr name="title" format="string"/>
+        <attr name="desc" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="VideoButton">
+        <attr name="startColor" format="color"/>
+        <attr name="endColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="ProgressBar">
+        <attr name="activeLineColor" format="color"/>
+        <attr name="inactiveLineColor" format="color"/>
+        <attr name="circleColor" format="color"/>
+        <attr name="textColor" format="color"/>
+        <attr name="lineHeight" format="dimension"/>
+        <attr name="circleRadius" format="dimension"/>
+        <attr name="delayShowText" format="integer"/>
+        <attr name="textPadding" format="dimension"/>
+        <attr name="animationTime" format="integer"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="textHeight" format="dimension"/>
+        <attr name="progress" format="float"/>
+    </declare-styleable>
+</resources>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <io.agora.rtcwithbyte.view.ButtonView
+        android:id="@+id/ll_cluster_clear"
+        app:src="@drawable/ic_none"
+        app:title="@string/face_cluster_clean"
+        app:desc=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="50dp"
+        />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_cluster_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/ll_cluster_clear"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="50dp"
+        />
+
+    <io.agora.rtcwithbyte.view.ButtonView
+        android:id="@+id/ll_cluster_add"
+        app:src="@drawable/ic_upload"
+        app:title="@string/face_cluster_upload"
+        app:desc=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        />
+
+
+    <Button
+        android:id="@+id/btn_cluster_start"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_margin="10dp"
+        android:text="@string/face_cluster_start"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="@color/colorGrey"
+        android:background="#80000000"
+        android:visibility="gone"
+        />
+
+    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+        android:id="@+id/progress"
+        android:layout_width="200dp"
+        android:layout_height="1dp"
+        android:indeterminate="true"
+        app:spb_sections_count="4"
+        app:spb_color="#FF0000"
+        app:spb_speed="2.0"
+        app:spb_stroke_width="4dp"
+        app:spb_stroke_separator_length="4dp"
+        app:spb_reversed="false"
+        app:spb_mirror_mode="false"
+        app:spb_progressiveStart_activated="true"
+        app:spb_progressiveStart_speed="1.5"
+        app:spb_progressiveStop_speed="3.4"
+        android:layout_alignBottom="@id/rv_cluster_list"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        />
+
+
+    <ImageView
+        android:id="@+id/btn_cluster_ret"
+        android:src="@drawable/ic_arrow_down"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        />
+</RelativeLayout>

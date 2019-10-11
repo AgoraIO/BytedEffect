@@ -1,0 +1,364 @@
+<resources>
+    <string name="app_name">BytedEffects</string>
+    <string name="agora_app_id">98a134a6890047879d46ee2ff9867838</string>
+
+
+    <string name="btn_start_recording">开始录制</string>
+    <string name="btn_stop_recording">停止录制</string>
+
+    <string name="btn_switch_client_role_audience">仅收流</string>
+    <string name="btn_switch_client_role_broadcaster">收发流</string>
+
+    <string name="btn_switch_video_view">切换视图</string>
+
+    <string name="btn_switch_mirror_video_preview">切换镜像</string>
+
+    <string name="setting_hand">人手关键点跟踪及手势检测</string>
+    <string name="setting_hand_desc">43种静态手势+2种动态手势识别</string>
+    <string name="setting_beauty">美颜</string>
+    <string name="setting_face_lift">瘦脸</string>
+    <string name="setting_big_eye">大眼</string>
+    <string name="setting_skin_grinding">磨皮</string>
+    <string name="setting_skin_whitening">美白</string>
+    <string name="setting_skin_sharpen">锐化</string>
+
+    <string name="setting_filter_intensity">滤镜强度</string>
+
+
+    <string name="setting_makeup">美妆</string>
+    <string name="setting_red_lip">唇色</string>
+    <string name="setting_blush">腮红</string>
+
+    <string name="setting_skeleton">骨骼检测</string>
+    <string name="setting_skeleton_desc">实时检测人体17关键点</string>
+    <string name="setting_face">人脸106点</string>
+    <string name="setting_face_desc">人脸106关键点跟踪及人脸动作识别</string>
+    <string name="setting_face_extra">人脸280点</string>
+    <string name="setting_face_extra_desc">人脸280关键点：在106点基础上增加眼球、嘴唇关键点</string>
+    <string name="seeting_face_attribute">人脸属性</string>
+    <string name="seeting_face_attribute_desc">人脸属性及表情</string>
+
+    <string name="setting_face_verify">人脸比对</string>
+    <string name="setting_human_dist">距离估计</string>
+    <string name="setting_human_dist_desc">人脸到摄像头的距离估计</string>
+
+    <string name="invalid_license">无效的授权文件</string>
+    <string name="init_face_failed">Face初始化失败</string>
+    <string name="init_hand_failed">手势初始化失败</string>
+    <string name="init_effect_failed">Effect初始化失败</string>
+    <string name="portaitmatting">人体分割</string>
+    <string name="portaitmattingdesc">人体分割算法</string>
+    <string name="setting_hair">染发</string>
+    <string name="setting_hair_desc">染发算法</string>
+    <string name="sticker_qrcode">扫码体验Creator</string>
+    <string name="download_fail">下载失败</string>
+    <string name="download_success">下载成功</string>
+    <string name="unip_fail">解压失败</string>
+    <string name="file_check_fail">文件检查失败</string>
+    <string name="license_check_fail">授权失败</string>
+    <string name="sticker_load_fail">贴纸加载失败</string>
+    <string name="sticker_load_success">贴纸加载成功</string>
+    <string name="invalid_license_file">无效的授权文件</string>
+    <string name="download_sticker">下载贴纸</string>
+    <string name="sticker_parse_fail">贴纸ID解析失败</string>
+    <string name="network_error">网络连接失败，请检查网络设置</string>
+    <string name="tab_face">人脸</string>
+    <string name="tab_face_attr">人脸属性</string>
+    <string name="tab_hand">手势</string>
+    <string name="tab_body">人体</string>
+    <string name="tab_face_beautification">美颜</string>
+    <string name="tab_filter">滤镜</string>
+    <string name="tab_face_makeup">美妆</string>
+    <string name="tab_face_beauty_reshape">美形</string>
+    <string name="tab_face_beauty_body">美体</string>
+    <string name="tab_sticker">贴纸</string>
+    <string name="tab_segmentation">分割</string>
+    <string name="tab_face_verify">人脸比对</string>
+    <string name="tab_human_dist">距离估计</string>
+
+    <string name="tab_body_cutout">人体分割</string>
+    <string name="tab_hair_cutout">头发分割</string>
+
+    <string name="filter_normal">正常</string>
+    <string name="filter_chalk">柔白</string>
+    <string name="filter_cream">奶油</string>
+    <string name="filter_oxgen">氧气</string>
+    <string name="filter_campan">桔梗</string>
+    <string name="filter_lolita">洛丽塔</string>
+    <string name="filter_mitao"> 蜜桃</string>
+    <string name="filter_makalong">马卡龙</string>
+    <string name="filter_paomo">泡沫</string>
+    <string name="filter_yinhua">樱花</string>
+    <string name="filter_musi">浅暖</string>
+    <string name="filter_wuyu">物语</string>
+    <string name="filter_beihaidao">北海道</string>
+    <string name="filter_riza">日杂</string>
+    <string name="filter_xiyatu">西雅图</string>
+    <string name="filter_jingmi">静谧</string>
+    <string name="filter_jiaopian">胶片</string>
+    <string name="filter_nuanyang">暖阳</string>
+    <string name="filter_jiuri">旧日</string>
+    <string name="filter_hongchun">红唇</string>
+    <string name="filter_julandiao">橘蓝调</string>
+    <string name="filter_tuise">褪色</string>
+    <string name="filter_heibai">黑白</string>
+
+    <string name="sticker_yumao">羽毛</string>
+    <string name="sticker_xiyue">洗月</string>
+    <string name="sticker_xiyue_tip">眨眼触发魔法阵</string>
+    <string name="sticker_mojie">魔界妆</string>
+    <string name="sticker_shenlong">神龙</string>
+    <string name="sticker_huaxianzi">花仙子</string>
+    <string name="sticker_huaxianzi_tip">眨眼试试</string>
+    <string name="sticker_caixiaomao">彩小猫</string>
+    <string name="sticker_caixiaomao_tip">眨眼试试</string>
+    <string name="sticker_xiaoemo">小恶魔</string>
+    <string name="sticker_shengrikuaile">生日快乐</string>
+    <string name="sticker_shengrikuaile_tip">张嘴试试</string>
+    <string name="sticker_maomao">毛毛</string>
+    <string name="sticker_wumeiniang">武媚娘</string>
+    <string name="sticker_wumeiniang_tip">邀请小伙伴一起玩</string>
+    <string name="sticker_liuxing">流星</string>
+    <string name="sticker_liuxing_tip">点头试试</string>
+    <string name="sticker_yinghua">樱花妆</string>
+    <string name="sticker_tujie">兔姐</string>
+    <string name="sticker_dielianjin">蝶恋金</string>
+    <string name="sticker_dielianjin_tip">比心加眨眼试试吧~</string>
+    <string name="sticker_dielianfen">蝶恋粉</string>
+    <string name="sticker_dielianfen_tip">比心加眨眼试试吧~</string>
+    <string name="sticker_huahai">花海</string>
+    <string name="sticker_huahai_tip">眨眼试试</string>
+    <string name="sticker_miluzhuang">麋鹿妆</string>
+    <string name="sticker_nyekong">夜空烟火</string>
+    <string name="sticker_yekong_tip">点头试试</string>
+    <string name="sticker_haiwang">海王</string>
+    <string name="sticker_haiwang_tip">点头试试</string>
+    <string name="sticker_tanchizhu">贪吃猪</string>
+    <string name="sticker_tanchizhu_tip">张嘴试试~</string>
+    <string name="sticker_xinxing">发射心星</string>
+    <string name="sticker_xinxing_tip">眨眼试试~</string>
+    <string name="sticker_milutoushi">麋鹿头饰</string>
+    <string name="sticker_nvshen">逆神面具</string>
+    <string name="sticker_chelianmao">扯脸猫</string>
+    <string name="sticker_chuipaopao">吹泡泡</string>
+    <string name="sticker_mengmengxiaolu">萌萌小鹿</string>
+    <string name="sticker_mengmengxiaolu_tip">眨眼试试</string>
+    <string name="sticker_duiwohaqi">对我哈气</string>
+    <string name="sticker_duiwohaqi_tip">对手机哈气</string>
+    <string name="sticker_tuaixin">吐爱心</string>
+    <string name="sticker_tuaixin_tip">张嘴试试</string>
+    <string name="sticker_xiaohuanggou">小黄狗</string>
+    <string name="sticker_woshishui">我是谁</string>
+    <string name="sticker_woshishui_tip">邀请其他小伙伴一起试试</string>
+    <string name="sticker_nvjingling">女精灵</string>
+    <string name="sticker_nvjingling_tip">眨眼试试</string>
+    <string name="sticker_sanzhilanmao">三只懒猫</string>
+    <string name="sticker_huaxin">画心</string>
+    <string name="sticker_yanzhisaomiao">颜值扫描</string>
+    <string name="sticker_yanzhisaomiao_tip">邀请小伙伴一起比颜值</string>
+    <string name="sticker_tiezhi">贴纸妆</string>
+    <string name="sticker_caomei">草莓妆</string>
+    <string name="sticker_xinhua">心花怒放</string>
+    <string name="sticker_xinhua_tip">挑眉试试</string>
+    <string name="sticker_wodeshenghao">我的身高</string>
+    <string name="sticker_wodeshengao_tip">眨眼试试</string>
+    <string name="sticker_wpikaqiu">皮卡丘</string>
+    <string name="sticker_pikaqiu_tip">张手试试</string>
+    <string name="sticker_pangliang">胖脸测试</string>
+    <string name="sticker_panglian_tip">邀请其他小伙伴一起试试</string>
+    <string name="sticker_pikaqiu2">皮卡丘</string>
+    <string name="sticker_pikaqiu2_tip">眨眼试试~</string>
+    <string name="sticker_bixintu">比心兔</string>
+    <string name="sticker_bixintu_tip">飞吻试试~</string>
+    <string name="sticker_xiaohuahua">小花花</string>
+    <string name="sticker_xiaohuahua_tip">眨眼试试</string>
+    <string name="sticker_lentu">冷兔baby</string>
+    <string name="sticker_lengtu_tip">眨眼试试，有惊喜哦</string>
+    <string name="sticker_ya">呀</string>
+    <string name="sticker_yanjingli">眼睛里</string>
+    <string name="sticker_yanjingli_tip">眨眼试试</string>
+    <string name="sticker_rain">控雨</string>
+    <string name="sticker_change_face">变脸</string>
+    <string name="sticker_change_face_tip">甩动头部开始变脸～</string>
+    <string name="sticker_wudan">京剧武旦</string>
+    <string name="sticker_qingyi">青衣</string>
+    <string name="sticker_hualian">花脸</string>
+    <string name="sticker_chou">丑角色</string>
+    <string name="sticker_laosheng">老生</string>
+    <string name="sticker_line_dance">线条人</string>
+    <string name="sticker_happy_birth_day">生日快乐</string>
+    <string name="sticker_lovely_cat">萌萌哒喵喵</string>
+    <string name="sticker_happy_cat">开心喵</string>
+    <string name="sticker_simple_rabbit_ear">极简兔耳</string>
+
+    <string name="total_verify">总检测次数</string>
+    <string name="current_face">当前人脸数</string>
+    <string name="yaw">偏航角</string>
+    <string name="roll">翻滚角</string>
+    <string name="pitch">俯仰角</string>
+    <string name="detect_count">总检测次数</string>
+    <string name="face_count">当前人脸数</string>
+    <string name="closing_eye">眨眼</string>
+    <string name="open_mouth">张嘴</string>
+    <string name="shake_head">摇头</string>
+    <string name="nod">点头</string>
+    <string name="raise_eyebrow">挑眉</string>
+    <string name="pout">嘟嘴</string>
+    <string name="age">年龄</string>
+    <string name="happiness">开心值</string>
+    <string name="beauty">颜值</string>
+    <string name="gender">性别</string>
+    <string name="race">肤色</string>
+    <string name="gesture">手势:</string>
+    <string name="punching">击拳</string>
+    <string name="applaud">鼓掌</string>
+    <string name="dist">距离(m):</string>
+    <!--race -->
+    <string name="yellow">黄种人</string>
+    <string name="white">白种人</string>
+    <string name="black">黑种人</string>
+    <string name="brown">印度人</string>
+
+    <!-- expression-->
+    <string name="expression">表情</string>
+    <string name="anger">生气</string>
+    <string name="nausea">沮丧</string>
+    <string name="fear">害怕</string>
+    <string name="happy">高兴</string>
+    <string name="sad">悲伤</string>
+    <string name="surprise">惊讶</string>
+    <string name="poker_face">正常</string>
+
+    <string name="male">男</string>
+    <string name="female">女</string>
+
+    <!-- welcome-->
+    <string name="resource_prepare">资源准备中</string>
+    <string name="start">开始</string>
+    <string name="resource_ready">资源准备就绪</string>
+    <string name="choose">选择一张人脸图</string>
+    <string name="similarity">相似度</string>
+    <string name="similarity_default">相似度:0.00</string>
+
+    <string name="cost">耗时</string>
+    <string name="cost_default">耗时:0ms</string>
+    <string name="logo">字节跳动 人工智能</string>
+    <string name="product">Byte Effect SDK</string>
+    <string name="no_face_detected">未检测到人脸</string>
+    <string name="face_more_than_one">检测到超过一张人脸</string>
+    <string name="sticker_without_license">素材未发现授权文件</string>
+    <string name="open_face106_fist">请先打开人脸106关键点检测开关</string>
+    <string name="ablum_not_supported">不支持调起相册</string>
+
+    <string name="face_106_title">人脸106点</string>
+    <string name="face_106_desc">106点+动作</string>
+    <string name="face_280_title">人脸280点</string>
+    <string name="face_280_desc">眼球+嘴唇</string>
+    <string name="face_attr_title">人脸属性</string>
+    <string name="face_attr_desc">属性表情</string>
+
+    <string name="hand_detect_title">手势检测</string>
+    <string name="hand_detect_desc">45种手势识别</string>
+
+    <string name="skeleton_detect_title">骨骼检测</string>
+    <string name="skeleton_detect_desc">人体关键点跟踪</string>
+
+    <string name="segment_segment_title">人体分割</string>
+    <string name="segment_segment_desc">人体分割算法</string>
+    <string name="segment_hair_title">染发</string>
+    <string name="segment_hair_desc">染发算法</string>
+
+    <string name="face_verify_none_title">无</string>
+    <string name="face_verify_none_desc">关闭对比</string>
+    <string name="face_verify_upload_title">上传照片</string>
+    <string name="face_verify_upload_desc">上传对比照片</string>
+
+    <!--美颜功能-->
+    <string name="close">关闭</string>
+    <string name="beauty_face_smooth">磨皮</string>
+    <string name="beauty_face_whiten">美白</string>
+    <string name="beauty_face_sharpen">锐化</string>
+
+    <!--美型功能-->
+    <string name="beauty_reshape_face_overall">瘦脸</string>
+    <string name="beauty_reshape_face_small">小脸</string>
+    <string name="beauty_reshape_face_cut">窄脸</string>
+    <string name="beauty_reshape_cheek">瘦颧骨</string>
+    <string name="beauty_reshape_jaw">下颌骨</string>
+    <string name="beauty_reshape_eye">大眼</string>
+    <string name="beauty_reshape_nose_lean">瘦鼻</string>
+    <string name="beauty_reshape_nose_long">长鼻</string>
+    <string name="beauty_reshape_chin">下巴</string>
+    <string name="beauty_reshape_forehead">额头</string>
+    <string name="beauty_reshape_eye_rotate">眼角度</string>
+    <string name="beauty_reshape_mouth_zoom">嘴型</string>
+    <string name="beauty_reshape_mouth_smile">微笑</string>
+    <string name="beauty_reshape_decree">法令纹</string>
+    <string name="beauty_reshape_dark_circle">黑眼圈</string>
+
+    <!--美体功能 -->
+    <string name="beauty_body_thin">瘦身</string>
+    <string name="beauty_body_long_leg">长腿</string>
+
+    <!--美妆功能-->
+    <string name="makeup_lip">口红</string>
+    <string name="makeup_blusher">腮红</string>
+    <string name="makeup_eyelash">睫毛</string>
+    <string name="makeup_pupil">美瞳</string>
+    <string name="makeup_hair">头发</string>
+    <string name="makeup_eye">眼睛</string>
+    <string name="makeup_eyebrow">眉毛</string>
+
+    <!--美妆功能种类-->
+    <string name="lip_huluopohong">胡萝卜红</string>
+    <string name="lip_huoliju">活力橘</string>
+    <string name="lip_yingsuhong">罂粟红</string>
+    <string name="blusher_shaishanghong">晒伤红</string>
+    <string name="blusher_weixunfen">微醺粉</string>
+    <string name="blusher_yuanqiju">元气橘</string>
+    <string name="eyelash_wumei">妩媚</string>
+    <string name="eyelash_nongmi">浓密</string>
+    <string name="eyelash_shanxing">扇形</string>
+    <string name="pupil_babizi">芭比紫</string>
+    <string name="pupil_hunxuelan">混血蓝</string>
+    <string name="pupil_hunxuelv">混血绿</string>
+    <string name="hair_anlan">暗蓝</string>
+    <string name="hair_molv">墨绿</string>
+    <string name="hair_shenzong">深棕</string>
+    <string name="eye_shaonvfen">少女粉</string>
+    <string name="eye_yanxunzong">烟熏棕</string>
+    <string name="eye_ziranlan">自然蓝</string>
+    <string name="eyebrow_chunhei">纯黑</string>
+    <string name="eyebrow_danhui">淡灰</string>
+    <string name="eyebrow_ziranhei">自然黑</string>
+
+    <!--人脸聚类-->
+    <string name="tab_face_cluster">人脸聚类</string>
+    <string name="face_cluster_class_name">人物</string>
+    <string name="face_cluster_null_class_name">未识别人物</string>
+    <string name="face_cluster_clean">清空重置</string>
+    <string name="face_cluster_upload">上传图片</string>
+    <string name="face_cluster_start">开始聚类</string>
+
+    <!--主页面标签-->
+    <string name="detect">检测</string>
+    <string name="effect">特效</string>
+    <string name="sticker">贴纸</string>
+
+    <!-- pet type -->
+    <string name="cat">猫</string>
+    <string name="dog">狗</string>
+    <string name="human">人</string>
+    <string name="unknown">未知</string>
+    <string name="pet_face_type">宠物类型</string>
+    <string name="left_eye_open">左眼开</string>
+    <string name="right_eye_open">右眼开</string>
+    <string name="mouth_open">嘴巴开</string>
+    <string name="pet_face_title">宠物脸90点+动作</string>
+    <string name="tab_pet_face">宠物脸</string>
+
+    <string name="face_verify_detect">检测到相同人脸</string>
+    <string name="face_verify_no_detect">未检测到相同人脸</string>
+
+    <string name="legal_characters_for_agora" translatable="false" >abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&amp;()+,-:;&lt;=.>?@[]^_`{|}~</string>
+</resources>

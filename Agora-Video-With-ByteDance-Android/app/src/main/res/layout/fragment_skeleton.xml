@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <io.agora.rtcwithbyte.view.ButtonView
+        android:id="@+id/bv_skeleton"
+        app:src="@drawable/ic_skeleton"
+        app:title="@string/skeleton_detect_title"
+        app:desc="@string/skeleton_detect_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
