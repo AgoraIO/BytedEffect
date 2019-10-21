@@ -1,7 +1,6 @@
 <resources>
-    <string name="app_name">BytedEffects</string>
-    <string name="agora_app_id">98a134a6890047879d46ee2ff9867838</string>
-
+    <string name="app_name">Agora RTC with BytedEffects</string>
+    <string name="agora_app_id"><#YOUR APP ID#></string>
 
     <string name="btn_start_recording">开始录制</string>
     <string name="btn_stop_recording">停止录制</string>

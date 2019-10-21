@@ -1,4 +1,4 @@
-# Agora Video With ByteDance Effect
+# Agora Video With BytedEffect
 
 这个开源示例项目演示了如果快速集成 [Agora](www.agora.io) 视频 SDK 和 [BytedEffect](https://ailab.bytedance.com/sdk2) 美颜 SDK，实现一对一视频聊天。
 
@@ -10,7 +10,7 @@ Agora
 - 实现一对一视频聊天
 - 静音和解除静音
 
-ByteDance Effect
+BytedEffect
 
 - 贴纸，滤镜，美颜滤镜，美肤，美型功能
 - 切换采集模式
@@ -32,7 +32,7 @@ Agora 功能实现请参考 [Agora 官方文档](https://docs.agora.io/cn/2.1.2/
 ```
 然后在 [Agora.io SDK](https://www.agora.io/cn/download/) 下载 视频通话 + 直播 SDK，解压后将其中的 libs\agora-rtc-sdk.jar 复制到本项目的 app\libs 文件夹下。
 
-请联系 sales@agora.io 获取BytedEffect SDK 和对应resource 文件
+请联系 labcv_business@bytedance.com 获取 BytedEffect SDK 和对应资源文件
 
 最后使用 Android Studio 打开本项目，连接 Android 测试设备，运行项目。
 
@@ -46,7 +46,7 @@ Agora 功能实现请参考 [Agora 官方文档](https://docs.agora.io/cn/2.1.2/
 - 如果在集成中遇到问题，你可以到 [开发者社区](https://dev.agora.io/cn/) 提问
 - 如果有售前咨询问题，可以拨打 400 632 6626，或加入官方Q群 12742516 提问
 - 如果需要售后技术支持，你可以在 [Agora Dashboard](https://dashboard.agora.io) 提交工单
-- 如果发现了示例代码的bug，欢迎提交 [issue](https://github.com/AgoraIO-Community/effect_sdk_agoraio/issues)
+- 如果发现了示例代码的bug，欢迎提交 [issue](https://github.com/AgoraIO/BytedEffect/issues)
 
 ## 代码许可
 

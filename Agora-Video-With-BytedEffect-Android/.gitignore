@@ -46,6 +46,7 @@ captures/
 .idea/gradle.xml
 .idea/dictionaries
 .idea/libraries
+.idea/caches
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
@@ -164,8 +165,8 @@ fabric.properties
 # Mobile Tools for Java (J2ME)
 
 # Package Files #
-#*.jar
-#*.zip
+*.jar
+*.zip
 *.tar.gz
 *.rar
 
@@ -177,4 +178,4 @@ fabric.properties
 # End of https://www.gitignore.io/api/java,android,androidstudio
 
 # .so Files #
-#app/src/main/jniLibs/*/*.so
+app/src/main/jniLibs/*/*.so
