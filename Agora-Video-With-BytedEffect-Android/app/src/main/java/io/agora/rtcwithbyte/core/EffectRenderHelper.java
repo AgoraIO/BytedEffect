@@ -1,12 +1,18 @@
 // Copyright (C) 2018 Beijing Bytedance Network Technology Co., Ltd.
-package io.agora.rtcwithbyte.renderer;
+package io.agora.rtcwithbyte.core;
 
 import android.app.Activity;
 import android.content.Context;
-import android.opengl.GLES20;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.widget.Toast;
+import android.util.Log;
+
+import io.agora.rtcwithbyte.ResourceHelper;
+import io.agora.rtcwithbyte.model.CaptureResult;
+import io.agora.rtcwithbyte.model.ComposerNode;
+import io.agora.rtcwithbyte.utils.AppUtils;
+import library.LogUtils;
 
 import com.bytedance.labcv.effectsdk.BytedEffectConstants;
 import com.bytedance.labcv.effectsdk.RenderManager;
@@ -14,16 +20,12 @@ import com.bytedance.labcv.effectsdk.RenderManager;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.agora.rtcwithbyte.ResourceHelper;
-import io.agora.rtcwithbyte.model.CaptureResult;
-import io.agora.rtcwithbyte.model.ComposerNode;
-import library.LogUtils;
-
 import static com.bytedance.labcv.effectsdk.BytedEffectConstants.BytedResultCode.BEF_RESULT_FAIL;
 import static com.bytedance.labcv.effectsdk.BytedEffectConstants.BytedResultCode.BEF_RESULT_SUC;
 
 
 public class EffectRenderHelper {
+    public static final String ProfileTAG = "Profile ";
 
     private RenderManager mRenderManager;
     private int mSurfaceWidth;
@@ -31,22 +33,21 @@ public class EffectRenderHelper {
     private int mImageWidth;
     private int mImageHeight;
 
+    private OnEffectListener mOnEffectListener;
     private EffectRender mEffectRender;
 
     // 设置了贴纸后会与 Composer 冲突，所以再使用 Composer 功能的时候
     // 需要重新设置 Composer 路径，以 isShouldResetComposer 标志
     // After setting the sticker, it will conflict with Composer,
     // so You need to reset the Composer path by using the isShouldResetComposer flag when using the Composer function
-    private boolean isShouldResetComposer = false;
+    private volatile boolean isShouldResetComposer = true;
+    private volatile int mComposerMode;
     private String mFilterResource;
     private String[] mComposeNodes = new String[0];
     private String mStickerResource;
     private Set<ComposerNode> mSavedComposerNodes = new HashSet<>();
-    private ArrayMap<BytedEffectConstants.IntensityType, Float> storedIntensities = new ArrayMap<>();
-
-
-    public volatile boolean isEffectOn = true;
-
+    private float mFilterIntensity = 0f;
+    private volatile boolean isEffectOn = true;
     private Context mContext;
 
     public EffectRenderHelper(Context context) {
@@ -55,10 +56,15 @@ public class EffectRenderHelper {
         mEffectRender = new EffectRender();
     }
 
+    public void setOnEffectListener(OnEffectListener listener) {
+        mOnEffectListener = listener;
+    }
+
     /**
      * 特效初始化入口
-     * @param context 应用上下文
-     * @param imageWidth 输入图片的宽  注意是人脸转正后的宽度
+     *
+     * @param context     应用上下文
+     * @param imageWidth  输入图片的宽  注意是人脸转正后的宽度
      * @param imageHeight 输入图片的高 注意是人脸转正后的高度
      * @return 如果成功返回BEF_RESULT_SUC， 否则返回对应的错误码
      */
@@ -69,65 +75,84 @@ public class EffectRenderHelper {
         }
         mImageWidth = imageWidth;
         mImageHeight = imageHeight;
+        LogUtils.d("Effect SDK version =" + mRenderManager.getSDKVersion());
         int ret = mRenderManager.init(context, ResourceHelper.getModelDir(context), ResourceHelper.getLicensePath(context), imageWidth, imageHeight);
         if (ret != BEF_RESULT_SUC) {
             LogUtils.e("mRenderManager.init failed!! ret =" + ret);
-            return ret;
         }
-        ret = mRenderManager.setComposer(ResourceHelper.getComposeMakeupComposerPath(context));
-        if (ret != BEF_RESULT_SUC) {
-            LogUtils.e("mRenderManager.setComposer failed!! ret =" + ret);
+
+        if (mOnEffectListener != null) {
+            mOnEffectListener.onEffectInitialized();
         }
         return ret;
     }
 
-    public int processTexure(int srcTextureId, BytedEffectConstants.TextureFormat srcTetxureFormat, int srcTextureWidth, int srcTextureHeight, int cameraRotation, boolean frontCamera, BytedEffectConstants.Rotation sensorRotation, long timestamp){
+    /**
+     * 特效处理接口
+     * 步骤1：将纹理做旋转&翻转操作，将人脸转正（如果是前置摄像头，会加左右镜像），
+     * 步骤2：然后执行特效处理，
+     * 步骤3：步骤1的逆操作，将纹理处理成原始输出的角度、镜像状态
+     * 客户可以根据自己输入的纹理状态自行选择执行上述部分步骤，比如部分推流SDK采集到的纹理已经做了人脸转正操作，只需要执行步骤2即可
+     * @param srcTextureId 输入纹理
+     * @param srcTetxureFormat 输入纹理的格式
+     * @param srcTextureWidth 输入纹理的宽度
+     * @param srcTextureHeight 输入纹理的高度
+     * @param cameraRotation 相机输出的图像旋转角度
+     * @param frontCamera 是否是前置摄像头
+     * @param sensorRotation 重力传感器的重力方向角
+     * @param timestamp 时间戳，由SurfaceTexture的接口输出
+     * @return 输出后的纹理
+     */
+    public int processTexure(int srcTextureId, BytedEffectConstants.TextureFormat srcTetxureFormat, int srcTextureWidth, int srcTextureHeight, int cameraRotation, boolean frontCamera, BytedEffectConstants.Rotation sensorRotation, long timestamp) {
         int tempWidth = srcTextureWidth;
         int tempheight = srcTextureHeight;
 
-        if (cameraRotation %180 == 90){
+        if (cameraRotation % 180 == 90) {
             tempWidth = srcTextureHeight;
             tempheight = srcTextureWidth;
         }
         long start = System.currentTimeMillis();
-        int tempTexureId = mEffectRender.drawFrameOffScreen(srcTextureId, srcTetxureFormat, tempWidth, tempheight, -cameraRotation , frontCamera, true);
+        // 因为Android相机预览纹理中的人脸不是正，该函数将oes转为2D纹理，并将人脸转正，如果是前置摄像头，会同时做左右镜像
+        int tempTexureId = mEffectRender.drawFrameOffScreen(srcTextureId, srcTetxureFormat, tempWidth, tempheight, -cameraRotation, frontCamera, true);
 
+        // 准备帧缓冲区纹理
         int dstTextureId = mEffectRender.prepareTexture(tempWidth, tempheight);
-        if (!isEffectOn || !mRenderManager.processTexture(tempTexureId, dstTextureId, tempWidth, tempheight, sensorRotation, timestamp)){
+        long detectnext = System.currentTimeMillis();
+
+        // 执行特效处理
+        if (!isEffectOn || !mRenderManager.processTexture(tempTexureId, dstTextureId, tempWidth, tempheight, sensorRotation, timestamp)) {
             dstTextureId = tempTexureId;
         }
+        if (AppUtils.isProfile()) {
+            Log.d(ProfileTAG, "effectprocess: " + String.valueOf(System.currentTimeMillis() - detectnext));
+        }
+        // 将特效处理后的纹理，转回相机原始的状态(包括旋转角度、左右镜像)，方便接入推流SDK
+        int tt = mEffectRender.drawFrameOffScreen(dstTextureId, BytedEffectConstants.TextureFormat.Texure2D, srcTextureWidth, srcTextureHeight, frontCamera ? -cameraRotation : cameraRotation, frontCamera, true);
 
-        long middle = System.currentTimeMillis();
-        int tt = mEffectRender.drawFrameOffScreen(dstTextureId, BytedEffectConstants.TextureFormat.Texure2D, srcTextureWidth, srcTextureHeight,   frontCamera?-cameraRotation:cameraRotation, frontCamera, true);
-        long end = System.currentTimeMillis();
-//        LogUtils.e("1阶段 =" +(middle - start));
-//        LogUtils.e("2阶段 =" +(end - middle));
-//        if (AppUtils.isDebug() && mainView.mImageView.getVisibility() == View.VISIBLE) {
-//            ByteBuffer byteBuffer = mEffectRender.readPixlesBuffer(tempTexureId,tempWidth, tempheight  );
-//            if (null != byteBuffer){
-//                final Bitmap bitmap = BitmapUtils.getBitmapFromPixels(byteBuffer,tempWidth, tempheight);
-//
-//                mainView.runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        mainView.mImageView.setImageBitmap(bitmap);
-//                    }
-//                });
-//            }
-//
-//        }
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0);
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         return tt;
 
     }
 
-
-    public void drawFrame(int textureId, BytedEffectConstants.TextureFormat textureFormat, int srcTextureWidth, int srcTextureHeight , int cameraRotation, boolean flipHorizontal, boolean flipVertical) {
+    /**
+     * 在屏幕上渲染
+     * draw on screen
+     * @param textureId
+     * @param textureFormat
+     * @param srcTextureWidth
+     * @param srcTextureHeight
+     * @param cameraRotation
+     * @param flipHorizontal
+     * @param flipVertical
+     */
+    public void drawFrame(int textureId, BytedEffectConstants.TextureFormat textureFormat, int srcTextureWidth, int srcTextureHeight, int cameraRotation, boolean flipHorizontal, boolean flipVertical) {
         mEffectRender.drawFrameOnScreen(textureId, textureFormat, srcTextureWidth, srcTextureHeight, cameraRotation, flipHorizontal, flipVertical);
     }
 
+    /**
+     * 根据suafceView的尺寸设置Render的参数
+     * @param width
+     * @param height
+     */
     public void onSurfaceChanged(int width, int height) {
         if (width != 0 && height != 0) {
             this.mSurfaceWidth = width;
@@ -147,6 +172,7 @@ public class EffectRenderHelper {
         mEffectRender.release();
 
         initedEffectSDK = false;
+        isShouldResetComposer = true;
 
         LogUtils.d("destroyEffectSDK finish");
     }
@@ -163,10 +189,15 @@ public class EffectRenderHelper {
 
     private volatile boolean initedEffectSDK = false;
 
+    /**
+     * 初始化特效SDK，确保在gl线程中执行
+     * @param imageWidth
+     * @param imageHeight
+     */
     public void initEffectSDK(int imageWidth, int imageHeight) {
         if (initedEffectSDK)
             return;
-        int ret = initEffect(mContext,imageWidth,  imageHeight);
+        int ret = initEffect(mContext, imageWidth, imageHeight);
         if (ret != BEF_RESULT_SUC) {
             LogUtils.e("initEffect ret =" + ret);
             sendUIToastMsg("Effect Initialization failed");
@@ -191,19 +222,32 @@ public class EffectRenderHelper {
     }
 
 
-    public CaptureResult capture(){
-        if (null == mEffectRender){
+    public CaptureResult capture() {
+        if (null == mEffectRender) {
             return null;
         }
-        if (0 == mImageWidth * mImageHeight){
+        if (0 == mImageWidth * mImageHeight) {
             return null;
         }
-        return new CaptureResult(mEffectRender.captureRenderResult(mImageWidth,mImageHeight),mImageWidth, mImageHeight);
+        return new CaptureResult(mEffectRender.captureRenderResult(mImageWidth, mImageHeight), mImageWidth, mImageHeight);
     }
 
 
+    public void setComposerMode(final int mode) {
+        int result = mRenderManager.setComposerMode(mode, 0);
+        if (result == BEF_RESULT_SUC) {
+            mComposerMode = mode;
+        } else {
+            LogUtils.e("set composer mode failed: " + result);
+        }
+    }
+
+    public int getComposerMode() {
+        return mComposerMode;
+    }
+
     /**
-     * 设置特效组合，目前仅支持美颜 美妆 两种特效的任意叠加
+     * 设置特效组合，目前支持美颜、美形、美体、 美妆特效的任意叠加
      * Set special effects combination
      * Currently only support the arbitrary superposition of two special effects, beauty and beauty makeup
      *
@@ -211,11 +255,12 @@ public class EffectRenderHelper {
      * @return
      */
     public boolean setComposeNodes(String[] nodes) {
-        if (isShouldResetComposer) {
+        if (isShouldResetComposer()) {
             int ret = mRenderManager.setComposer(ResourceHelper.getComposeMakeupComposerPath(mContext));
             if (ret != BEF_RESULT_SUC) {
                 return false;
             }
+            mStickerResource = null;
             isShouldResetComposer = false;
         }
         // clear mSavedComposerNodes cache when nodes length is 0
@@ -233,15 +278,18 @@ public class EffectRenderHelper {
     }
 
     /**
-     * 更新组合特效中某个节点的强度
+     * 更新组合特效(美颜、美形、美体、 美妆)中某个节点的强度
      * Updates the strength of a node in a composite effect
      *
      * @param node The ComposerNode corresponding to the special effects material
      *             特效素材对应的 ComposerNode
      * @return
      */
-    public boolean updateComposeNode(ComposerNode node) {
-        mSavedComposerNodes.add(node);
+    public boolean updateComposeNode(ComposerNode node, boolean update) {
+        if (update) {
+            mSavedComposerNodes.remove(node);
+            mSavedComposerNodes.add(node);
+        }
         String path = ResourceHelper.getComposePath(mContext) + node.getNode();
         return mRenderManager.updateComposerNodes(path, node.getKey(), node.getValue()) == BEF_RESULT_SUC;
     }
@@ -261,23 +309,26 @@ public class EffectRenderHelper {
         return mRenderManager.setSticker(path);
     }
 
+
+    public boolean getAvailableFeatures(String[] features) {
+        return mRenderManager.getAvailableFeatures(features);
+    }
+
     /**
-     * 设置美颜/滤镜(除塑形)强度
-     * Set the intensity of the beauty/filter (except shaping)
+     * 设置滤镜强度
+     * Set the intensity of the filter
      *
-     * @param intensitytype intensity type参数类型
-     * @param intensity     intensity 参数值
+     * @param intensity intensity 参数值
      * @return 是否成功  if it is successful
      */
-    public boolean updateIntensity(BytedEffectConstants.IntensityType intensitytype, float intensity) {
-        boolean result = mRenderManager.updateIntensity(intensitytype.getId(), intensity);
+    public boolean updateFilterIntensity(float intensity) {
+        boolean result = mRenderManager.updateIntensity(BytedEffectConstants.IntensityType.Filter.getId(), intensity);
         if (result) {
-            storedIntensities.put(intensitytype, intensity);
+            mFilterIntensity = intensity;
         }
         return result;
 
     }
-
 
     /**
      * 切换摄像头后恢复特效设置
@@ -296,14 +347,21 @@ public class EffectRenderHelper {
             setComposeNodes(mComposeNodes);
 
             for (ComposerNode node : mSavedComposerNodes) {
-                updateComposeNode(node);
+                updateComposeNode(node, false);
             }
         }
-        for (BytedEffectConstants.IntensityType entryk : storedIntensities.keySet()) {
-            updateIntensity(entryk, storedIntensities.get(entryk));
-        }
+        updateFilterIntensity(mFilterIntensity);
+
+        setComposerMode(mComposerMode);
 
     }
 
 
+    private boolean isShouldResetComposer() {
+        return mComposerMode == 0 && isShouldResetComposer;
+    }
+
+    public interface OnEffectListener {
+        void onEffectInitialized();
+    }
 }

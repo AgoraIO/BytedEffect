@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/ll_cluster_clear"
         app:src="@drawable/ic_none"
         app:title="@string/face_cluster_clean"
@@ -30,7 +30,7 @@
         android:layout_marginBottom="50dp"
         />
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/ll_cluster_add"
         app:src="@drawable/ic_upload"
         app:title="@string/face_cluster_upload"

@@ -10,7 +10,7 @@ import java.io.File;
 public class ResourceHelper {
 
     public static final String ResourceZip = "resource.zip";
-    public static final String RESOURCE = "";//"resource";
+    public static final String RESOURCE = "resource";
     public static final String FACE = "ModelResource.bundle/ttfacemodel/tt_face_v6.0.model";
     public static final String PETFACE = "ModelResource.bundle/ttpetface/tt_petface_v2.4.model";
     public static final String DetectParamFile = "ModelResource.bundle/handmodel/tt_hand_det_v7.0.model";
@@ -32,7 +32,7 @@ public class ResourceHelper {
     private static final String PORTRAITMATTING = "ModelResource.bundle/mattingmodel/tt_matting_v9.0.model";
     private static final String HAIRPARSING = "ModelResource.bundle/hairparser/tt_hair_v7.0.model";
 
-    private static final String LICENSE_NAME = "labcv_test_20190920_20191022_com.bytedance.labcv.demo_labcv_test_v3.0.0.licbag";
+    private static final String LICENSE_NAME = "labcv_test_20191025_20200115_com.bytedance.labcv.demo_labcv_test_v3.7.1.licbag";
 
     private static String getResourcePath(Context context) {
         return context.getExternalFilesDir("assets").getAbsolutePath() + File.separator + RESOURCE;
@@ -100,6 +100,11 @@ public class ResourceHelper {
         return file.getAbsolutePath();
     }
 
+    public static String getAnimojiPath(final Context context) {
+        File file = new File(new File(getResourcePath(context), "StickerResource.bundle"), "animoji");
+        return file.getAbsolutePath();
+    }
+
     public static String getComposeMakeupComposerPath(@NonNull final Context context) {
         return getResourcePath(context) + File.separator + "ComposeMakeup.bundle" + File.separator + "ComposeMakeup/composer";
     }
@@ -124,6 +129,10 @@ public class ResourceHelper {
     public static String getStickerPath(@NonNull final Context context,String name) {
         return getStickersPath(context) + File.separator + name;
 
+    }
+
+    public static  String getAnimojiPath(final Context context, String name) {
+        return getAnimojiPath(context) + File.separator + name;
     }
 
     public static boolean isResourceReady(@NonNull final Context context, int versionCode) {

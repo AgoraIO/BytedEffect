@@ -20,8 +20,6 @@ public abstract class Program {
     protected int[] mFrameBufferTextures;
     protected int FRAME_BUFFER_NUM = 1;
     protected Point mFrameBufferShape;
-
-
     /**
      * Prepares the program in the current EGL context.
      */
@@ -126,6 +124,7 @@ public abstract class Program {
      * the program).
      */
     public void release() {
+        destroyFrameBuffers();
         GLES20.glDeleteProgram(mProgramHandle);
         mProgramHandle = -1;
     }

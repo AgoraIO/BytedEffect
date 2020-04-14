@@ -2,30 +2,45 @@ package io.agora.rtcwithbyte.contract.presenter;
 
 import android.content.Context;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
+import io.agora.rtcwithbyte.R;
 import io.agora.rtcwithbyte.ResourceHelper;
 import io.agora.rtcwithbyte.contract.StickerContract;
 import io.agora.rtcwithbyte.model.StickerItem;
-import io.agora.rtcwithbyte.R;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static io.agora.rtcwithbyte.contract.StickerContract.TYPE_ANIMOJI;
+import static io.agora.rtcwithbyte.contract.StickerContract.TYPE_STICKER;
 
 /**
  * Created by QunZhang on 2019-07-21 14:09
  */
 public class StickerPresenter extends StickerContract.Presenter {
     private List<StickerItem> mStickerItems;
+    private List<StickerItem> mAnimojiItems;
 
     @Override
-    public List<StickerItem> getItems() {
+    public List<StickerItem> getItems(int type) {
+        switch (type) {
+            case TYPE_STICKER:
+                return getStickersItems();
+            case TYPE_ANIMOJI:
+                return getAnimojiItems();
+                default:
+                    return Collections.emptyList();
+        }
+    }
+
+    private List<StickerItem> getStickersItems() {
         if (mStickerItems != null) {
             return mStickerItems;
         }
 
         Context context = getView().getContext();
         mStickerItems = new ArrayList<>();
-        mStickerItems.add(new StickerItem(context.getString(R.string.filter_normal), R.drawable.clear, ResourceHelper.getStickerPath(context,"")));
+        mStickerItems.add(new StickerItem(context.getString(R.string.filter_normal), R.drawable.clear, null));
         mStickerItems.add(new StickerItem(context.getString(R.string.sticker_change_face), R.drawable.icon_change_face, ResourceHelper.getStickerPath(context,"change_face"), context.getString(R.string.sticker_change_face_tip)));
         mStickerItems.add(new StickerItem(context.getString(R.string.sticker_line_dance), R.drawable.icon_line_dance, ResourceHelper.getStickerPath(context,"line_dance")));
 
@@ -71,5 +86,18 @@ public class StickerPresenter extends StickerContract.Presenter {
         mStickerItems.add(new StickerItem(context.getString(R.string.sticker_yanjingli), R.drawable.icon_yanjlimdaidongxi, ResourceHelper.getStickerPath(context,"006baecf13b35f5f27d099b138383484"), context.getString(R.string.sticker_yanjingli_tip)));
 //        mStickerItems.add(new StickerItem(context.getString(R.string.sticker_happy_birth_day), R.drawable.icon_happy_birth_day, ResourceHelper.getStickerPath(context, "1cb7ee9fec82f44b9fa24f5f4d8ff97b")));
         return mStickerItems;
+    }
+
+    private List<StickerItem> getAnimojiItems() {
+        if (mAnimojiItems != null) {
+            return mAnimojiItems;
+        }
+        mAnimojiItems = new ArrayList<>();
+        Context context = getView().getContext();
+        mAnimojiItems.add(new StickerItem(context.getString(R.string.filter_normal), R.drawable.clear, null));
+        mAnimojiItems.add(new StickerItem(context.getString(R.string.animoji_boy), R.drawable.icon_change_face, ResourceHelper.getAnimojiPath(context, "animoji_boy")));
+        mAnimojiItems.add(new StickerItem(context.getString(R.string.animoji_girl), R.drawable.icon_change_face, ResourceHelper.getAnimojiPath(context, "mm")));
+//        mAnimojiItems.add(new StickerItem("mm", R.drawable.icon_change_face, ResourceHelper.getStickerPath(context, "mm")));
+        return mAnimojiItems;
     }
 }

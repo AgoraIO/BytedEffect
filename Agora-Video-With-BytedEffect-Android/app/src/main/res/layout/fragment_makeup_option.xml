@@ -10,11 +10,4 @@
         android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="0dp" />
-
-    <ImageView
-        android:id="@+id/iv_close_makeup_option"
-        android:src="@drawable/ic_arrow_down"
-        android:padding="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="25dp" />
 </LinearLayout>

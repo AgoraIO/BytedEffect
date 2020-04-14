@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/bv_face"
         app:src="@drawable/ic_face106"
         app:title="@string/face_106_title"
@@ -15,7 +15,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content" />
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/bv_280_face"
         app:src="@drawable/ic_face280"
         app:title="@string/face_280_title"
@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content" />
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/bv_attr_face"
         app:src="@drawable/ic_face_attr"
         app:title="@string/face_attr_title"

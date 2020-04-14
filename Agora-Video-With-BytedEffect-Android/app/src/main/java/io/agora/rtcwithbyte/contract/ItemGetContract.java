@@ -1,11 +1,10 @@
 package io.agora.rtcwithbyte.contract;
 
-
-import java.util.List;
-
 import io.agora.rtcwithbyte.base.BasePresenter;
 import io.agora.rtcwithbyte.base.IView;
 import io.agora.rtcwithbyte.model.ButtonItem;
+
+import java.util.List;
 
 /**
  * Created by QunZhang on 2019-07-20 23:39
@@ -47,6 +46,10 @@ public interface ItemGetContract {
     int TYPE_BEAUTY_FACE_SMOOTH = TYPE_BEAUTY_FACE + (1 << SUB_OFFSET);
     int TYPE_BEAUTY_FACE_WHITEN = TYPE_BEAUTY_FACE + (2 << SUB_OFFSET);
     int TYPE_BEAUTY_FACE_SHARPEN = TYPE_BEAUTY_FACE + (3 << SUB_OFFSET);
+    int TYPE_BEAUTY_FACE_BRIGHTEN_EYE    = TYPE_BEAUTY_FACE     + (4 << SUB_OFFSET);
+    int TYPE_BEAUTY_FACE_REMOVE_POUCH    = TYPE_BEAUTY_FACE     + (5 << SUB_OFFSET);
+    int TYPE_BEAUTY_FACE_SMILE_FOLDS    = TYPE_BEAUTY_FACE   + (6 << SUB_OFFSET);
+    int TYPE_BEAUTY_FACE_WHITEN_TEETH    = TYPE_BEAUTY_FACE     + (7 << SUB_OFFSET);
 
     // Beautify reshape 美形
     int TYPE_BEAUTY_RESHAPE_FACE_OVERALL = TYPE_BEAUTY_RESHAPE + (1 << SUB_OFFSET);
@@ -64,6 +67,9 @@ public interface ItemGetContract {
     int TYPE_BEAUTY_RESHAPE_MOUTH_SMILE = TYPE_BEAUTY_RESHAPE + (13 << SUB_OFFSET);
     int TYPE_BEAUTY_RESHAPE_DECREE = TYPE_BEAUTY_RESHAPE + (14 << SUB_OFFSET);
     int TYPE_BEAUTY_RESHAPE_DARK = TYPE_BEAUTY_RESHAPE + (15 << SUB_OFFSET);
+    int TYPE_BEAUTY_RESHAPE_EYE_SPACING = TYPE_BEAUTY_RESHAPE + (16 << SUB_OFFSET);
+    int TYPE_BEAUTY_RESHAPE_EYE_MOVE = TYPE_BEAUTY_RESHAPE + (17 << SUB_OFFSET);
+    int TYPE_BEAUTY_RESHAPE_MOUTH_MOVE = TYPE_BEAUTY_RESHAPE + (18 << SUB_OFFSET);
 
     // Beautify body 美体
     int TYPE_BEAUTY_BODY_THIN = TYPE_BEAUTY_BODY + (1 << SUB_OFFSET);
@@ -78,10 +84,12 @@ public interface ItemGetContract {
     int TYPE_MAKEUP_HAIR = TYPE_MAKEUP_OPTION + (5 << SUB_OFFSET);
     int TYPE_MAKEUP_EYESHADOW = TYPE_MAKEUP_OPTION + (6 << SUB_OFFSET);
     int TYPE_MAKEUP_EYEBROW = TYPE_MAKEUP_OPTION + (7 << SUB_OFFSET);
+    int TYPE_MAKEUP_FACIAL = TYPE_MAKEUP_OPTION + (8 << SUB_OFFSET);
 
 
     // Node name 结点名称
-    String NODE_BEAUTY = "beauty";
+    String NODE_BEAUTY = "beauty_Android";
+    String NODE_BEAUTY_4ITEMS = "beauty_4Items";
     String NODE_RESHAPE = "reshape";
     String NODE_LONG_LEG = "body/longleg";
     String NODE_THIN = "body/thin";

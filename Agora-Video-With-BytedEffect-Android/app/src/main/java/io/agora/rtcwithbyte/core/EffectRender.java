@@ -1,15 +1,14 @@
-package io.agora.rtcwithbyte.renderer;
+package io.agora.rtcwithbyte.core;
 
 import android.graphics.Point;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 
+import io.agora.rtcwithbyte.opengl.GlUtil;
+import io.agora.rtcwithbyte.opengl.ProgramManager;
 import com.bytedance.labcv.effectsdk.BytedEffectConstants;
 
 import java.nio.ByteBuffer;
-
-import io.agora.rtcwithbyte.opengl.GlUtil;
-import io.agora.rtcwithbyte.opengl.ProgramManager;
 
 
 public class EffectRender {
@@ -100,7 +99,7 @@ public class EffectRender {
     }
 
 
-    public void drawFrameOnScreen(int textureId, BytedEffectConstants.TextureFormat srcTetxureFormat, int textureWidth, int textureHeight, int rotation, boolean flipHorizontal, boolean flipVertical) {
+    public void drawFrameOnScreen(int textureId,BytedEffectConstants.TextureFormat srcTetxureFormat,int textureWidth, int textureHeight,  int rotation, boolean flipHorizontal, boolean flipVertical) {
         if (null == mProgramManager) {
             mProgramManager = new ProgramManager();
         }
@@ -144,6 +143,7 @@ public class EffectRender {
     }
 
     public ByteBuffer captureRenderResult(int imageWidth, int imageHeight){
+        if (mFrameBufferTextures == null) return null;
         int textureId = mFrameBufferTextures[0];
         if (null == mFrameBufferTextures || textureId == GlUtil.NO_TEXTURE) {
             return null;

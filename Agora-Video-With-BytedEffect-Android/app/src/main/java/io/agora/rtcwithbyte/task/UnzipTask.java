@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import library.FileUtils;
@@ -28,10 +29,19 @@ public class UnzipTask extends AsyncTask<String, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(String... strings) {
-        String zipPath = strings[0];
+        String path = strings[0];
         File dstFile = mCallback.get().getContext().getExternalFilesDir("assets");
+        FileUtils.clearDir(new File(dstFile, path));
 
-        return FileUtils.unzipAssetFile(mCallback.get().getContext(), zipPath, dstFile);
+        try {
+            FileUtils.copyAssets(mCallback.get().getContext().getAssets(), path, dstFile.getAbsolutePath());
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+//        return FileUtils.unzipAssetFile(mCallback.get().getContext(), zipPath, dstFile);
     }
 
     @Override

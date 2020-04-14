@@ -30,7 +30,12 @@ public class ProgramTexture2d extends Program {
                     "attribute vec2 aTextureCoord;\n" +
                     "varying vec2 vTextureCoord;\n" +
                     "void main() {\n" +
-                    "    gl_Position = uMVPMatrix * aPosition;\n" +
+                        "float scale = 1.05;\n" +
+                        "mat4 s = mat4(scale, 0.0, 0.0, 0.0,\n" +
+                            "0.0, scale, 0.0, 0.0,\n" +
+                            "0.0, 0.0, scale, 0.0,\n" +
+                            "0.0, 0.0, 0.0, 1.0);\n" +
+                    "    gl_Position = uMVPMatrix * s * aPosition;\n" +
                     "    vTextureCoord = aTextureCoord;\n" +
                     "}\n";
 
@@ -44,7 +49,6 @@ public class ProgramTexture2d extends Program {
                     "}\n";
 
     private int muMVPMatrixLoc;
-    private int muTexMatrixLoc;
     private int maPositionLoc;
     private int maTextureCoordLoc;
 
@@ -65,8 +69,6 @@ public class ProgramTexture2d extends Program {
         GlUtil.checkLocation(maTextureCoordLoc, "aTextureCoord");
         muMVPMatrixLoc = GLES20.glGetUniformLocation(mProgramHandle, "uMVPMatrix");
         GlUtil.checkLocation(muMVPMatrixLoc, "uMVPMatrix");
-        muTexMatrixLoc = GLES20.glGetUniformLocation(mProgramHandle, "uTexMatrix");
-        GlUtil.checkLocation(muTexMatrixLoc, "uTexMatrix");
     }
 
     @Override

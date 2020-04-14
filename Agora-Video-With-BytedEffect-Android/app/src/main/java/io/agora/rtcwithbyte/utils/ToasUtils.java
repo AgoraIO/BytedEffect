@@ -5,7 +5,6 @@ import android.widget.Toast;
 
 import library.LogUtils;
 
-//import com.bytedance.labcv.effectsdk.library.LogUtils;
 
 public class ToasUtils {
     private static Context mAppContext = null;

@@ -15,7 +15,7 @@ public class WelcomePresenter extends WelcomeContract.Presenter implements Unzip
     @Override
     public void startTask() {
         UnzipTask mTask = new UnzipTask(this);
-        mTask.execute(ResourceHelper.ResourceZip);
+        mTask.execute(ResourceHelper.RESOURCE);
     }
 
     @Override

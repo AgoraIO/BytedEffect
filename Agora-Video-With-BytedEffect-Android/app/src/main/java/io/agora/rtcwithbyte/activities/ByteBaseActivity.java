@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -108,7 +106,7 @@ public abstract class ByteBaseActivity extends RTCBaseActivity
 //                    ((Button) v).setText(R.string.btn_switch_client_role_broadcaster);
                 }
                 break;
-            case R.id.ll_identify:
+            case R.id.ll_effect:
                 mEffectPanelStatus ^= 1;
                 onChangeToEffectPanel(mEffectPanelStatus > 0, "effect");
                 break;
@@ -153,5 +151,9 @@ public abstract class ByteBaseActivity extends RTCBaseActivity
      */
     public interface OnCloseListener {
         void onClose();
+    }
+
+    public interface ICheckAvailableCallback {
+        boolean checkAvailable(int id);
     }
 }

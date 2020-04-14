@@ -6,7 +6,6 @@ import io.agora.rtcwithbyte.base.BasePresenter;
 import io.agora.rtcwithbyte.base.IView;
 import io.agora.rtcwithbyte.model.ComposerNode;
 
-
 /**
  * Created by QunZhang on 2019-07-22 13:45
  */
@@ -30,6 +29,13 @@ public interface EffectContract {
          *
          */
         abstract public void removeNodesOfType(SparseArray<ComposerNode> composerNodeMap, int type);
+
+        /**
+         * 移除某一种类型的 progress，逻辑同 removeNodesOfType
+         * @param progressMap map
+         * @param type type
+         */
+        abstract public void removeProgressInMap(SparseArray<Float> progressMap, int type);
 
         /**
          * 根据 composer node map 生成 composer nodes

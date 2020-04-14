@@ -8,9 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-import java.io.File;
-
+import io.agora.rtcwithbyte.R;
 import io.agora.rtcwithbyte.activities.ByteBaseActivity;
 import io.agora.rtcwithbyte.activities.MainActivity;
 import io.agora.rtcwithbyte.adapter.StickerRVAdapter;
@@ -18,11 +16,14 @@ import io.agora.rtcwithbyte.contract.StickerContract;
 import io.agora.rtcwithbyte.contract.presenter.StickerPresenter;
 import io.agora.rtcwithbyte.model.StickerItem;
 import io.agora.rtcwithbyte.utils.ToasUtils;
-import io.agora.rtcwithbyte.R;
+
+import java.io.File;
 
 public class StickerFragment extends BaseFeatureFragment<StickerContract.Presenter, StickerFragment.IStickerCallback>
         implements StickerRVAdapter.OnItemClickListener, ByteBaseActivity.OnCloseListener, StickerContract.View {
     private RecyclerView rv;
+    private int mType;
+    private ByteBaseActivity.ICheckAvailableCallback mCheckAvailableCallback;
 
     @Nullable
     @Override
@@ -36,9 +37,29 @@ public class StickerFragment extends BaseFeatureFragment<StickerContract.Present
         super.onViewCreated(view, savedInstanceState);
         setPresenter(new StickerPresenter());
 
-        StickerRVAdapter adapter = new StickerRVAdapter(mPresenter.getItems(), this);
+        StickerRVAdapter adapter = new StickerRVAdapter(mPresenter.getItems(mType), this);
+        adapter.setCheckAvailableCallback(mCheckAvailableCallback);
         rv.setLayoutManager(new GridLayoutManager(getContext(), 4));
         rv.setAdapter(adapter);
+    }
+
+    public StickerFragment setType(int type) {
+        mType = type;
+        return this;
+    }
+
+    public StickerFragment setCheckAvailableCallback(ByteBaseActivity.ICheckAvailableCallback callback) {
+        mCheckAvailableCallback = callback;
+        return this;
+    }
+
+    public void setSelectItem(String sticker) {
+        ((StickerRVAdapter)rv.getAdapter()).setSelectItem(sticker);
+    }
+
+    public void recoverState(String sticker) {
+        setSelectItem(sticker);
+        getCallback().onStickerSelected(new File(sticker));
     }
 
     @Override
@@ -46,13 +67,14 @@ public class StickerFragment extends BaseFeatureFragment<StickerContract.Present
         if (item.hasTip()) {
             ToasUtils.show(item.getTip());
         }
-        getCallback().onStickerSelected(new File(item.getResource()));
+        if (getCallback() == null) {
+            return;
+        }
+        getCallback().onStickerSelected(item.getResource() == null ? null : new File(item.getResource()));
     }
 
     @Override
     public void onClose() {
-        getCallback().onStickerSelected(null);
-
         ((StickerRVAdapter)rv.getAdapter()).setSelect(0);
     }
 

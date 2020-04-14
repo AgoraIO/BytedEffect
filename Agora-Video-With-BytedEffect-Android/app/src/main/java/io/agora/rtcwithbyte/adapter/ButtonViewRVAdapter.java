@@ -5,22 +5,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import io.agora.rtcwithbyte.R;
+import io.agora.rtcwithbyte.activities.ByteBaseActivity;
+import io.agora.rtcwithbyte.activities.MainActivity;
 import io.agora.rtcwithbyte.model.ButtonItem;
 import io.agora.rtcwithbyte.utils.CommonUtils;
 import io.agora.rtcwithbyte.utils.ToasUtils;
 import io.agora.rtcwithbyte.view.ButtonView;
 
-import io.agora.rtcwithbyte.R;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class ButtonViewRVAdapter extends SelectRVAdapter<ButtonViewRVAdapter.ViewHolder> {
     private List<ButtonItem> mItemList;
     private OnItemClickListener mListener;
+    private ByteBaseActivity.ICheckAvailableCallback mCheckAvailableCallback;
 
     private Set<Integer> mPointOnItems;
 
@@ -59,6 +60,10 @@ public class ButtonViewRVAdapter extends SelectRVAdapter<ButtonViewRVAdapter.Vie
             public void onClick(View v) {
                 if (CommonUtils.isFastClick()) {
                     ToasUtils.show("too fast click");
+                    return;
+                }
+                if (mCheckAvailableCallback != null &&
+                        !mCheckAvailableCallback.checkAvailable(item.getNode().getId())) {
                     return;
                 }
                 setSelect(position);
@@ -102,6 +107,20 @@ public class ButtonViewRVAdapter extends SelectRVAdapter<ButtonViewRVAdapter.Vie
                 }
             }
         }
+    }
+
+    public void setSelectItem(int id) {
+        for (int i = 0; i < mItemList.size(); i++) {
+            if (mItemList.get(i).getNode().getId() == id) {
+                setSelect(i);
+                return;
+            }
+        }
+        setSelect(-1);
+    }
+
+    public void setCheckAvailableCallback(ByteBaseActivity.ICheckAvailableCallback callback) {
+        mCheckAvailableCallback = callback;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

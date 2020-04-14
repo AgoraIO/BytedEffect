@@ -8,18 +8,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import io.agora.rtcwithbyte.R;
+import io.agora.rtcwithbyte.activities.ByteBaseActivity;
+import io.agora.rtcwithbyte.activities.MainActivity;
+import io.agora.rtcwithbyte.model.FilterItem;
+import io.agora.rtcwithbyte.utils.CommonUtils;
+import io.agora.rtcwithbyte.utils.ToasUtils;
 
 import java.io.File;
 import java.util.List;
 
-import io.agora.rtcwithbyte.model.FilterItem;
-import io.agora.rtcwithbyte.utils.CommonUtils;
-import io.agora.rtcwithbyte.utils.ToasUtils;
-import io.agora.rtcwithbyte.R;
+import static io.agora.rtcwithbyte.contract.ItemGetContract.TYPE_FILTER;
 
 public class FilterRVAdapter extends SelectRVAdapter<FilterRVAdapter.ViewHolder> {
     private List<FilterItem> mFilterList;
     private OnItemClickListener mListener;
+    private ByteBaseActivity.ICheckAvailableCallback mCheckAvailableCallback;
 
     public FilterRVAdapter(List<FilterItem> filterList, OnItemClickListener listener) {
         mFilterList = filterList;
@@ -52,6 +56,9 @@ public class FilterRVAdapter extends SelectRVAdapter<FilterRVAdapter.ViewHolder>
                     ToasUtils.show("too fast click");
                     return;
                 }
+                if (mCheckAvailableCallback != null && !mCheckAvailableCallback.checkAvailable(TYPE_FILTER)) {
+                    return;
+                }
                 if (mSelect != position) {
                     mListener.onItemClick(item.getResource().equals("") ? null : new File(item.getResource()));
                     setSelect(position);
@@ -63,6 +70,24 @@ public class FilterRVAdapter extends SelectRVAdapter<FilterRVAdapter.ViewHolder>
     @Override
     public int getItemCount() {
         return mFilterList.size();
+    }
+
+    public void setCheckAvailableCallback(ByteBaseActivity.ICheckAvailableCallback callback) {
+        mCheckAvailableCallback = callback;
+    }
+
+    public void setSelectItem(String filterPath) {
+        if (filterPath == null) {
+            setSelect(0);
+            return;
+        }
+        for (int i = 1; i < mFilterList.size(); i++) {
+            if (filterPath.contains(mFilterList.get(i).getResource())) {
+                setSelect(i);
+                return;
+            }
+        }
+        setSelect(0);
     }
 
     public interface OnItemClickListener {

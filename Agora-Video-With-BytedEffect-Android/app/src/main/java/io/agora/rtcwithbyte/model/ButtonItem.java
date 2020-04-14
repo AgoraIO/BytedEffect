@@ -2,6 +2,7 @@ package io.agora.rtcwithbyte.model;
 
 public class ButtonItem {
     // 一般情况下 id 为正数，当 id 为 -1 时表示这是一个功能关闭按钮
+    // When id is -1 it means this is a function off button
     private int icon;
     private String title;
     private String desc;

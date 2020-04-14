@@ -18,6 +18,10 @@ package io.agora.rtcwithbyte.opengl;
 
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
+import android.opengl.GLUtils;
+
+
+import library.LogUtils;
 
 import static android.opengl.GLES20.GL_FRAMEBUFFER;
 
@@ -47,7 +51,6 @@ public class ProgramTextureOES extends Program {
                     "}\n";
 
     private int muMVPMatrixLoc;
-    private int muTexMatrixLoc;
     private int maPositionLoc;
     private int maTextureCoordLoc;
 
@@ -71,8 +74,6 @@ public class ProgramTextureOES extends Program {
         GlUtil.checkLocation(maTextureCoordLoc, "aTextureCoord");
         muMVPMatrixLoc = GLES20.glGetUniformLocation(mProgramHandle, "uMVPMatrix");
         GlUtil.checkLocation(muMVPMatrixLoc, "uMVPMatrix");
-        muTexMatrixLoc = GLES20.glGetUniformLocation(mProgramHandle, "uTexMatrix");
-        GlUtil.checkLocation(muTexMatrixLoc, "uTexMatrix");
     }
 
     @Override
@@ -80,6 +81,7 @@ public class ProgramTextureOES extends Program {
         GlUtil.checkGlError("draw start");
 
         // Select the program.
+        LogUtils.e("mProgramHandle ="+mProgramHandle);
         GLES20.glUseProgram(mProgramHandle);
         GlUtil.checkGlError("glUseProgram");
 

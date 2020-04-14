@@ -165,7 +165,6 @@ fabric.properties
 # Mobile Tools for Java (J2ME)
 
 # Package Files #
-*.jar
 *.zip
 *.tar.gz
 *.rar
@@ -177,5 +176,3 @@ fabric.properties
 
 # End of https://www.gitignore.io/api/java,android,androidstudio
 
-# .so Files #
-app/src/main/jniLibs/*/*.so

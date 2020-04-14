@@ -3,13 +3,17 @@ package io.agora.rtcwithbyte.utils;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.media.ExifInterface;
 import android.opengl.GLES20;
 import android.os.Environment;
 import android.text.TextUtils;
 
-//import com.bytedance.labcv.effectsdk.library.LogUtils;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -49,7 +53,7 @@ public class BitmapUtils {
 
     /**
      * 压缩Bitmap的大小
-     *
+     * Compress Bitmap size
      * @param imagePath     图片文件路径
      * @param requestWidth  压缩到想要的宽度
      * @param requestHeight 压缩到想要的高度
@@ -93,6 +97,27 @@ public class BitmapUtils {
         bitmap.copyPixelsToBuffer(buffer);
         return buffer;
 
+    }
+
+
+    public static Bitmap getBitmapFromPixels(ByteBuffer byteBuffer, int width, int height) {
+
+        Bitmap mCameraBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        byteBuffer.position(0);
+        mCameraBitmap.copyPixelsFromBuffer(byteBuffer);
+        byteBuffer.position(0);
+        return mCameraBitmap;
+    }
+
+    public static Bitmap getBitmapFromYuv(ByteBuffer data, int width, int height) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        YuvImage yuvImage = new YuvImage(data.array(), ImageFormat.NV21, width, height, null);
+        yuvImage.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+        byte[] imageBytes = out.toByteArray();
+        Bitmap mCameraBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+        return mCameraBitmap;
     }
 
     public static File saveToLocal(Bitmap bitmap){

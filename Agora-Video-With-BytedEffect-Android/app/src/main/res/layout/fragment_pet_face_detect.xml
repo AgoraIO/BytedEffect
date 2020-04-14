@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/bv_face"
         app:src="@drawable/ic_face106"
         app:title="@string/pet_face_title"

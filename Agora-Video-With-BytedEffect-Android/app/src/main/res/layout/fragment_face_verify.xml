@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/bv_none_face_verify"
         app:src="@drawable/ic_none"
         app:title="@string/face_verify_none_title"
@@ -15,7 +15,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content" />
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/bv_upload_face_verify"
         app:src="@drawable/ic_upload"
         app:title="@string/face_verify_upload_title"

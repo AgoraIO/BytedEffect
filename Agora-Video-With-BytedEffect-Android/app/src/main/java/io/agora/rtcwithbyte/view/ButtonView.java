@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import io.agora.rtcwithbyte.R;
+
 public class ButtonView extends FrameLayout {
     public static final float WH_RATIO = 1F;
 
@@ -69,7 +70,7 @@ public class ButtonView extends FrameLayout {
             @Override
             public void run() {
                 int height = llContent.getHeight();
-                LayoutParams lp = (LayoutParams) llContent.getLayoutParams();
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) llContent.getLayoutParams();
                 lp.width = (int) (height * WH_RATIO);
                 llContent.setLayoutParams(lp);
             }

@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import io.agora.rtcwithbyte.R;
+
 /**
  * Created by QunZhang on 2019-07-26 16:59
  * 能够显示数值的 ProgressBar
@@ -143,7 +144,7 @@ public class ProgressBar extends View {
 
     // 设置进度值
     public void setProgress(float progress) {
-        mProgress = progress;
+        mProgress = clip(progress);
         invalidate();
         if (mListener != null) {
             mListener.onProgressChanged(this, progress, false);
@@ -258,6 +259,15 @@ public class ProgressBar extends View {
             mListener.onProgressChanged(this, mProgress, true);
         }
         postInvalidate();
+    }
+
+    private float clip(float progress) {
+        if (progress > 1) {
+            progress = 1F;
+        } else if (progress < 0) {
+            progress = 0F;
+        }
+        return progress;
     }
 
     @SuppressLint("ClickableViewAccessibility")

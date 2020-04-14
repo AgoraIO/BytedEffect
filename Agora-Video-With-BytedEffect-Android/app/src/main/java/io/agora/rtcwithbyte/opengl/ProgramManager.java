@@ -31,10 +31,12 @@ public class ProgramManager {
     public void release(){
         if (null != mProgramTexture2D){
             mProgramTexture2D.release();
+            mProgramTexture2D = null;
 
         }
         if (null != mProgramTextureOES){
             mProgramTextureOES.release();
+            mProgramTextureOES = null;
 
         }
     }

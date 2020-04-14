@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <io.agora.rtcwithbyte.view.ButtonView
+    <com.bytedance.labcv.demo.view.ButtonView
         android:id="@+id/bv_skeleton"
         app:src="@drawable/ic_skeleton"
         app:title="@string/skeleton_detect_title"

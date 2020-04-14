@@ -1,6 +1,5 @@
 package io.agora.rtcwithbyte.fragment;
 
-
 import io.agora.rtcwithbyte.base.BaseFragment;
 import io.agora.rtcwithbyte.base.IPresenter;
 

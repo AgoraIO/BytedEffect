@@ -196,7 +196,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:id="@+id/ll_identify"
+                android:id="@+id/ll_effect"
                 android:onClick="onClick"
                 android:orientation="vertical"
                 android:background="@drawable/bg_item_unselect_selector"
@@ -236,6 +236,29 @@
 
                 <TextView
                     android:text="@string/sticker"
+                    android:textColor="@color/featureboard_bg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_animoji"
+                android:orientation="vertical"
+                android:layout_marginStart="30dp"
+                android:background="@drawable/bg_item_unselect_selector"
+                android:gravity="center_horizontal"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <ImageView
+                    android:src="@drawable/ic_sticker"
+                    android:padding="5dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp" />
+
+                <TextView
+                    android:text="moji"
                     android:textColor="@color/featureboard_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

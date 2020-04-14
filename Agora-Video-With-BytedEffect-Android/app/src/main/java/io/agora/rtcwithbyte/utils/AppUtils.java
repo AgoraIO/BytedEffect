@@ -17,13 +17,18 @@ public class AppUtils {
     // for test 使用yuv数据作为特效处理的输入 如果为false 使用yuv作为检测算法的输入
     private static boolean testEffectWithBuffer = false;
 
+    private static boolean isAnimoji = true;
+
     public static boolean isTestEffectWithBuffer() {
         return testEffectWithBuffer;
     }
 
     // 加速glreadPixels 针对低性能GPU能加速，但不建议开启，会有帧不同步问题
+    //  Acceleration glreadPixels is capable of acceleration for low performance GPU,
+    // but it is not recommended to turn it on, because of the problem of frame unsynchronization
     private static boolean accGlReadPixels = false;
     // 适配特殊设备
+    // Adapt to special equipment
     private static SupportMode supportMode = SupportMode.NORMAL;
 
     public static SupportMode getSupportMode() {
@@ -40,6 +45,17 @@ public class AppUtils {
 
     public static boolean isDebug() {
         return isDebug;
+    }
+
+    public static boolean isAnimoji() {
+        return isAnimoji;
+    }
+
+    // for test 是否打印性能相关数据
+    private static boolean isProfile = true;
+
+    public static boolean isProfile() {
+        return isProfile;
     }
 
     /**

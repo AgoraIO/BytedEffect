@@ -7,17 +7,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import io.agora.rtcwithbyte.R;
-
-import java.util.List;
-
+import io.agora.rtcwithbyte.activities.ByteBaseActivity;
+import io.agora.rtcwithbyte.activities.MainActivity;
 import io.agora.rtcwithbyte.model.StickerItem;
 import io.agora.rtcwithbyte.utils.CommonUtils;
 import io.agora.rtcwithbyte.utils.ToasUtils;
 
+import java.util.List;
+
+import static io.agora.rtcwithbyte.contract.StickerContract.TYPE_STICKER;
+
 public class StickerRVAdapter extends SelectRVAdapter<StickerRVAdapter.ViewHolder> {
     private List<StickerItem> mStickerList;
     private OnItemClickListener mListener;
+    private ByteBaseActivity.ICheckAvailableCallback mCheckAvailableCallback;
 
     public StickerRVAdapter(List<StickerItem> stickers, OnItemClickListener listener) {
         mStickerList = stickers;
@@ -49,12 +54,31 @@ public class StickerRVAdapter extends SelectRVAdapter<StickerRVAdapter.ViewHolde
                     ToasUtils.show("too fast click");
                     return;
                 }
+                if (mCheckAvailableCallback != null &&
+                        !mCheckAvailableCallback.checkAvailable(TYPE_STICKER)) {
+                    return;
+                }
                 if (mSelect != position) {
                     mListener.onItemClick(item);
                     setSelect(position);
                 }
             }
         });
+    }
+
+    public void setSelectItem(String sticker) {
+        for (int i = 0; i < mStickerList.size(); i++) {
+            StickerItem item = mStickerList.get(i);
+            if (sticker.equals(item.getResource())) {
+                setSelect(i);
+                return;
+            }
+        }
+        setSelect(0);
+    }
+
+    public void setCheckAvailableCallback(ByteBaseActivity.ICheckAvailableCallback callback) {
+        mCheckAvailableCallback = callback;
     }
 
     @Override

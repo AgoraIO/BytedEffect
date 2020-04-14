@@ -71,4 +71,7 @@
 
     <color name="colorGrey">#9C9C9C</color>
 
+    <color name="transparent_white">#66FFFFFF</color>
+    <color name="transparent_white_hence">#AAFFFFFF</color>
+
 </resources>
