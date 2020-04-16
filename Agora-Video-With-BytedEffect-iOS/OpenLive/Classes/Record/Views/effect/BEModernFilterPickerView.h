@@ -15,5 +15,6 @@
 
 - (void)refreshWithFilters:(NSArray <BEEffect *>*)filters;
 - (void)setAllCellsUnSelected;
+- (void)setSelectItem:(NSString *)filterPath;
 
 @end

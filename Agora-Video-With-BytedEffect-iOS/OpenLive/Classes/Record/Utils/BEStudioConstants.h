@@ -19,3 +19,8 @@ FOUNDATION_EXTERN NSString *const BEEffectNormalButtonNotification;
 FOUNDATION_EXTERN NSString *const BEEffectButtonItemSelectNotification;
 FOUNDATION_EXTERN NSString *const BEEffectUpdateComposerNodesNotification;
 FOUNDATION_EXTERN NSString *const BEEffectUpdateComposerNodeIntensityNotification;
+
+FOUNDATION_EXTERN NSString *const BEEffectExporsureValueChangedNotification;
+
+FOUNDATION_EXPORT NSString *const BEFUserDefaultExclusive;
+FOUNDATION_EXPORT NSString *const BESdkErrorNotification;

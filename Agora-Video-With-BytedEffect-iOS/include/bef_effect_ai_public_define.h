@@ -108,15 +108,15 @@ typedef int bef_intensity_type;
 #define BEF_RESULT_GL_ERROR_OCCUR                      -150 // opengl发生错误
 
 
-
+#define BEF_EFFECT_FEATURE_LEN                          128 //feature name 默认长度
 
 // bef_framework_public_geometry_define
 // @brief image rotate type definition
 typedef enum {
-    BEF_AI_CLOCKWISE_ROTATE_0 = 0, // 图像不需要旋转，图像中的人脸为正脸     rotate 0˚
-    BEF_AI_CLOCKWISE_ROTATE_90 = 1, // 图像需要顺时针旋转90度，使图像中的人脸为正 rotate 90˚
-    BEF_AI_CLOCKWISE_ROTATE_180 = 2, // 图像需要顺时针旋转180度，使图像中的人脸为正 rotate 180˚
-    BEF_AI_CLOCKWISE_ROTATE_270 = 3  // 图像需要顺时针旋转270度，使图像中的人脸为正 rotate 270˚
+    BEF_AI_CLOCKWISE_ROTATE_0 = 0, // 图像不需要旋转，图像中的人脸为正脸
+    BEF_AI_CLOCKWISE_ROTATE_90 = 1, // 图像需要顺时针旋转90度，使图像中的人脸为正
+    BEF_AI_CLOCKWISE_ROTATE_180 = 2, // 图像需要顺时针旋转180度，使图像中的人脸为正
+    BEF_AI_CLOCKWISE_ROTATE_270 = 3  // 图像需要顺时针旋转270度，使图像中的人脸为正
 } bef_ai_rotate_type;
 
 // ORDER!!!

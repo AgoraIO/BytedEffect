@@ -1,7 +1,7 @@
 // Copyright (C) 2018 Beijing Bytedance Network Technology Co., Ltd.
 #import "BEAppDelegate.h"
 #import "BEVideoRecorderViewController.h"
-//#import <Bugly/Bugly.h>
+#import <Bugly/Bugly.h>
 
 @interface BEAppDelegate ()
 
@@ -19,7 +19,7 @@
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:recordVC];
     self.window.rootViewController = nav;
     
-//    [Bugly startWithAppId:@"73d477ebbf"];
+    [Bugly startWithAppId:@"73d477ebbf"];
     
     return YES;
 }

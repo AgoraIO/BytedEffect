@@ -1,4 +1,4 @@
-/* 
+/*
   Localizable.strings
   BytedEffects
   Copyright © 2019 ailab. All rights reserved.
@@ -17,9 +17,7 @@
 "beauty_smooth"="磨皮";
 "beauty_whiten"="美白";
 "black"="黑种人";
-"blusher_shaishanghong"="晒伤红";
-"blusher_weixunfen"="微醺粉";
-"blusher_yuanqiju"="元气橘";
+
 "brown"="印度人";
 "btn_back"="退后";
 "choose"="选择一张人脸图";
@@ -36,15 +34,56 @@
 "download_success"="下载成功";
 "effect"="特效";
 "expression"="表情";
+
+"blusher_weixun"="微醺";
+"blusher_richang"="日常";
+"blusher_mitao"="蜜桃";
+"blusher_tiancheng"="甜橙";
+"blusher_qiaopi"="俏皮";
+"blusher_xinji"="心机";
+"blusher_shaishang"="晒伤";
+
+"facial_xiurong1"="修容01";
+"facial_xiurong2"="修容02";
+"facial_xiurong3"="修容03";
+"facial_xiurong4"="修容04";
+
+"eye_dadizong"="大地棕";
+"eye_wanxiahong"="晚霞红";
 "eye_shaonvfen"="少女粉";
-"eye_yanxunzong"="烟熏棕";
-"eye_ziranlan"="自然蓝";
-"eyebrow_chunhei"="纯黑";
-"eyebrow_danhui"="淡灰";
-"eyebrow_ziranhei"="自然黑";
+"eye_qizhifen"="气质粉";
+"eye_meizihong"="梅子红";
+"eye_jiaotangzong"="焦糖棕";
+"eye_yuanqiju"="元气橘";
+"eye_naichase"="奶茶色";
+
+"eyebrow_BR01"="BR01";
+"eyebrow_BK01"="BK01";
+"eyebrow_BK02"="BK02";
+"eyebrow_BK03"="BK03";
+
 "eyelash_nongmi"="浓密";
 "eyelash_shanxing"="扇形";
 "eyelash_wumei"="妩媚";
+
+"lip_fuguhong"="复古红";
+"lip_shaonvfen"="少女粉";
+"lip_yuanqiju"="元气橘";
+"lip_xiyouse"="西柚色";
+"lip_xiguahong"="西瓜红";
+"lip_sironghong"="丝绒红";
+"lip_zangjuse"="脏橘色";
+"lip_meizise"="梅子色";
+"lip_shanhuse"="珊瑚色";
+"lip_doushafen"="豆沙粉";
+
+"pupil_hunxuezong"="混血棕";
+"pupil_kekezong"="可可棕";
+"pupil_mitaofen"="蜜桃粉";
+"pupil_shuiguanghei"="水光黑";
+"pupil_xingkonglan"="星空蓝";
+"pupil_chujianhui"="初见灰";
+
 "face_106_desc"="106点+动作";
 "face_106_title"="人脸106点";
 "face_280_desc"="眼球+嘴唇";
@@ -83,6 +122,31 @@
 "filter_wuyu"="物语";
 "filter_xiyatu"="西雅图";
 "filter_yinhua"="樱花";
+"filter_Po1"="温柔";
+"filter_Po2"="恋爱超甜";
+"filter_Po3"="初见";
+"filter_Po4"="暗调";
+"filter_Po5"="奶茶";
+"filter_Po6"="soft";
+"filter_Po7"="夕阳";
+"filter_Po8"="冷氧";
+"filter_Po9"="海边人像";
+"filter_Po10"="高级灰";
+"filter_L1"="海岛";
+"filter_L2"="浅夏";
+"filter_L3"="夜色";
+"filter_L4"="红棕";
+"filter_L5"="清透";
+"filter_F1"="自然2";
+"filter_F2"="苏打";
+"filter_F3"="加州";
+"filter_F4"="食色";
+"filter_F5"="川味";
+"filter_S1"="美式胶片";
+"filter_S2"="红色复古";
+"filter_S3"="旅途";
+"filter_S4"="暖黄";
+"filter_S5"="蓝调胶片";
 "gender"="性别";
 "gesture"="手势:";
 "hair_anlan"="暗蓝";
@@ -98,14 +162,14 @@
 "invalid_license"="无效的授权文件";
 "invalid_license_file"="无效的授权文件";
 "license_check_fail"="授权失败";
-"lip_huluopohong"="胡萝卜红";
-"lip_huoliju"="活力橘";
+
 "lip_yingsuhong"="罂粟红";
 "logo"="字节跳动人工智能";
 "makeup_blusher"="腮红";
 "makeup_eye"="眼睛";
 "makeup_eyebrow"="眉毛";
 "makeup_eyelash"="睫毛";
+"makeup_facial"="修容";
 "makeup_hair"="头发";
 "makeup_lip"="口红";
 "makeup_pupil"="美瞳";
@@ -123,9 +187,6 @@
 "pout"="嘟嘴";
 "product"="ByteEffectSDK";
 "punching"="击拳";
-"pupil_babizi"="芭比紫";
-"pupil_hunxuelan"="混血蓝";
-"pupil_hunxuelv"="混血绿";
 "race"="肤色";
 "raise_eyebrow"="挑眉";
 "resource_prepare"="资源准备中";
@@ -266,6 +327,11 @@
 "yaw"="偏航角";
 "yellow"="黄种人";
 
+//Animoji
+"animoji"="Animoji";
+"animoji_girl"="女孩";
+"animoji_boy"="男孩";
+
 // 功能标签栏
 "tab_body"="人体";
 "tab_body_cutout"="人体分割";
@@ -297,6 +363,10 @@
 "beauty_face_smooth"="磨皮";
 "beauty_face_whiten"="美白";
 "beauty_face_sharpen"="锐化";
+"beauty_face_brighten_eye"="亮眼";
+"beauty_face_remove_pouch"="黑眼圈";
+"beauty_face_smile_folds"="法令纹";
+"beauty_face_whiten_teeth"="白牙";
 
 // 美形功能
 "beauty_reshape_face_overall"="瘦脸";
@@ -313,6 +383,10 @@
 "beauty_reshape_mouth_zoom"="嘴型";
 "beauty_reshape_mouth_smile"="微笑";
 
+"beauty_reshape_eye_spacing"="眼距";
+"beauty_reshape_eye_move"="眼移动";
+"beauty_reshape_mouth_move"="缩人中";
+
 // 美体功能
 "beauty_body_thin"="瘦身";
 "beauty_body_leg_long"="长腿";
@@ -321,6 +395,7 @@
 "makeup_blusher"="腮红";
 "makeup_lip"="口红";
 "makeup_eyelash"="睫毛";
+"makeup_facial"="修容";
 "makeup_pupil"="美瞳";
 "makeup_hair"="染发";
 "makeup_eyeshadow"="眼影";
@@ -337,3 +412,10 @@
 // 人脸比对
 "face_verify_same_face"="检测到相同人脸";
 "face_verify_not_same_face"="未检测到相同人脸";
+
+"exclusive_tip" = "重新打开应用查看效果";
+"setting_reset" = "重置";
+"setting_compare" = "对比";
+
+"tip_close_sticker_first"="请先关闭贴纸";
+"tip_close_animoji_first"="请先关闭 animoji";

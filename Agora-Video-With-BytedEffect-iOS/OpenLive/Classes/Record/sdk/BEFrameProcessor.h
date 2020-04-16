@@ -2,7 +2,7 @@
 #import <GLKit/GLKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
-#import "BEButtonItemModel.h"
+#import "BEResourceHelper.h"
 
 @class BEFrameProcessor;
 
@@ -14,24 +14,26 @@
 @end
 
 @interface BEFrameProcessor : NSObject
+
 @property (nonatomic, assign) AVCaptureDevicePosition cameraPosition;
 @property (nonatomic, assign) CGSize videoDimensions;
 @property (nonatomic, readonly) NSString *triggerAction;
+@property (nonatomic, readonly) int composerMode;
 
-- (instancetype)initWithContext:(EAGLContext *)context videoSize:(CGSize)size;
+- (instancetype)initWithContext:(EAGLContext *)context resourceDelegate:(id<BEResourceHelperDelegate>)delegate;
 - (BEProcessResult *)process:(CVPixelBufferRef)pixelBuffer timeStamp:(double)timeStamp;
 - (void)dealloc;
 
-//- (void)setIndensity:(float)intensity type:(BEEffectFaceBeautyType)type;
 - (void)setFilterPath:(NSString *)path;
 - (void)setFilterIntensity:(float)intensity;
-- (void)setRenderLicense:(NSString *)license;
 - (void)setStickerPath:(NSString *)path;
-
-- (void)updateComposerNodes:(NSArray<NSNumber *> *)nodes;
-- (void)updateComposerNodeIntensity:(BEEffectNode)node intensity:(CGFloat)intensity;
+- (void)setComposerMode:(int)mode;
+- (void)updateComposerNodes:(NSArray<NSString *> *)nodes;
+- (void)updateComposerNodeIntensity:(NSString *)node key:(NSString *)key intensity:(CGFloat)intensity;
 - (void)setEffectOn:(BOOL)on;
+- (NSArray<NSString *> *)availableFeatures;
+- (NSString *)sdkVersion;
 
-- (void)effectManagerSetInitalStatus;
+- (BEResourceHelper *)resourceHelper;
 
 @end

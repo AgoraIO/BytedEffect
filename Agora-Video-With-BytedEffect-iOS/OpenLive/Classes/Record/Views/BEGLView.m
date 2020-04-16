@@ -43,8 +43,13 @@ static NSString *const RENDER_VERTEX = TTF_SHADER_STRING
  attribute vec4 inputTextureCoordinate;
  varying vec2 textureCoordinate;
  void main(){
+    float scale = 1.05;
+    mat4 s = mat4(scale, 0.0, 0.0, 0.0,
+                  0.0, scale, 0.0, 0.0,
+                  0.0, 0.0, scale, 0.0,
+                  0.0, 0.0, 0.0, 1.0);
      textureCoordinate = inputTextureCoordinate.xy;
-     gl_Position = position;
+     gl_Position = s * position;
  }
  );
 
@@ -127,7 +132,7 @@ static NSString *const RENDER_FRAGMENT = TTF_SHADER_STRING
     }
     _displayTextureID = name;
     if (!self.window) {
-        glDeleteTextures(1, &_displayTextureID);
+//        glDeleteTextures(1, &_displayTextureID);
         _shouldDeleteTextureID = NO;
         return;
     }
@@ -267,7 +272,7 @@ static NSString *const RENDER_FRAGMENT = TTF_SHADER_STRING
         glUseProgram(0);
         glFlush();
         
-        glDeleteTextures(1, &_displayTextureID);
+//        glDeleteTextures(1, &_displayTextureID);
         _shouldDeleteTextureID = NO;
     }
 }

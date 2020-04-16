@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BEEffecFiltersCollectionViewCell : BEEffectContentCollectionViewCell
 -(void)setCellUnSelected;
+- (void)setSelectItem:(NSString *)filterPath;
 @end
 
 @interface BEEffectMakeupCollectionViewCell : BEEffectContentCollectionViewCell
@@ -42,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BEEffectNode type;
 
 - (void) setCellUnSelected;
+- (void)setSelectNode:(BEEffectNode)node;
 - (void)test;
 
 @end

@@ -35,6 +35,16 @@ BEF_SDK_API void bef_effect_ai_destroy(bef_effect_handle_t handle);
 BEF_SDK_API bef_effect_result_t bef_effect_ai_init(bef_effect_handle_t handle, int width, int height, const char *strModeDir, const char* deviceName);
 
 /**
+* @brief Return all available features name, can only be called after bef_effect_ai_init
+* @param handle       Effect handle
+* @return            If succeed return BEF_EFFECT_RESULT_SUC, `features` will contain all available feature name item, each item has length of BEF_EFFECT_FEATURE_LEN,
+            `len` would point to a number which stands for the amount of features.
+            BEF_RESULT_FAIL is returned if the given space is not big enough (according to `len`) to hold data returned by this api.
+            BEF_RESULT_INVALID_EFFECT_HANDLE is returned if this api been called before `bef_effect_ai_init`.
+*/
+BEF_SDK_API bef_effect_result_t bef_effect_available_features(bef_effect_handle_t handle, char (*features)[BEF_EFFECT_FEATURE_LEN], int* len);
+
+/**
  * @brief Set frame size.
  * @param handle     Effect handle
  * @param width      Texture width
@@ -145,6 +155,16 @@ BEF_SDK_API bef_effect_result_t bef_effect_ai_composer_set_nodes(bef_effect_hand
  * @param value 特效的强度
  */
 BEF_SDK_API bef_effect_result_t bef_effect_ai_composer_update_node(bef_effect_handle_t handle, const char *nodePath,const char *nodeTag, float value);
+
+/**
+ * @brief 设置Composer模式
+ * @param handle        Effect handle
+ * @param mode          0: A槽区+B槽区模式（Composer Feature）, 1: A槽区+B槽区+C槽区模式（Composer下沉）
+ * @param orderType     0: 按照zorder排序, 目前只支持0
+ * @return              成功返回BEF_EFFECT_RESULT_SUC, 其它值参考bef_effect_define.h
+ */
+BEF_SDK_API bef_effect_result_t bef_effect_ai_composer_set_mode(bef_effect_handle_t handle, int mode, int orderType);
+
 /**
  * @param handle          Effect handle
  * @param textureid_src   texture source

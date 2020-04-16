@@ -1,6 +1,7 @@
 // Copyright (C) 2019 Beijing Bytedance Network Technology Co., Ltd.
 
 #import "BEEffectDataManager.h"
+#import "BEResourceHelper.h"
 #import "BEMacro.h"
 
 @interface BEEffectDataManager ()
@@ -15,13 +16,14 @@ static NSArray* stickersArray = nil;
 
 @implementation BEEffectDataManager
 
-- (void) initStickerDict{
+- (void) initStickerDict {
     static dispatch_once_t onceToken;
     
     dispatch_once(&onceToken, ^{
         stickersArray = @[
            // @"控雨", @"icon_rain", @"rain",
             NSLocalizedString(@"sticker_change_face", nil), @"icon_change_face", @"change_face",  NSLocalizedString(@"sticker_change_face_tip", nil),
+            
 //            @"京剧武旦", @"icon_wudan", @"wudan",
 //            @"青衣", @"icon_qingyi", @"qingyi",
 //            @"花脸", @"icon_hualian", @"hualian",
@@ -146,24 +148,6 @@ static NSArray* stickersArray = nil;
     return effectCategoryModelArray;
 }
 
-//+ (NSArray<BEEffectCategoryModel *> *)recognizeCategoryModelArray {
-//    static NSArray *recognizeCategoryModelArray;
-//    static dispatch_once_t onceToken;
-//    dispatch_once(&onceToken, ^{
-//        recognizeCategoryModelArray = @[
-//                               [BEEffectCategoryModel categoryWithType:BEEffectPanelTabFace title:NSLocalizedString(@"tab_face", nil)],
-//                               [BEEffectCategoryModel categoryWithType:BEEffectPanelTabPetFace title:NSLocalizedString(@"tab_pet_face", nil)],
-//                               [BEEffectCategoryModel categoryWithType:BEEffectPanelTabGesture title:NSLocalizedString(@"tab_hand", nil)],
-//                               [BEEffectCategoryModel categoryWithType:BEEffectPanelTabBody title:NSLocalizedString(@"tab_body", nil)],
-//                               [BEEffectCategoryModel categoryWithType:BEEffectPanelTabSegmentation title:NSLocalizedString(@"tab_body_cutout", nil)],
-//                               [BEEffectCategoryModel categoryWithType:BEEffectPanelTabFaceVerify title:NSLocalizedString(@"tab_face_verify", nil)],
-//                               [BEEffectCategoryModel categoryWithType:BEEffectPanelTabFaceClustering title:NSLocalizedString(@"tab_face_clustering", nil)],
-//                               //[BEEffectCategoryModel categoryWithType:BEEffectPanelTabHumanDistance title:@"距离估计"]
-//                               ];
-//    });
-//    return recognizeCategoryModelArray;
-//}
-
 - (instancetype)init
 {
     self = [super init];
@@ -172,6 +156,8 @@ static NSArray* stickersArray = nil;
     }
     return self;
 }
+
+#pragma mark - public
 
 - (void)fetchDataWithCompletion:(BEEffectDataFetchCompletion)completion {
     switch (self.type) {
@@ -183,6 +169,10 @@ static NSArray* stickersArray = nil;
 //            break;
         case BEEffectDataManagerTypeSticker:
             [self _fetchStickerDataWithCompletion:completion];
+            break;
+        case BEEffectDataManagerTypeAnimoji:
+            [self _fetchAnimojiDataWithCompletion: completion];
+            break;
         default:
             break;
     }
@@ -211,69 +201,236 @@ static NSArray* stickersArray = nil;
     NSMutableArray<BEButtonItemModel *> *array = [NSMutableArray array];
     [array addObjectsFromArray:[self be_beautyFaceItemArray]];
     [array addObjectsFromArray:[self be_beautyReshapeItemArray]];
-    [array addObjectsFromArray:[self be_beautyBodyItemArray]];
+//    [array addObjectsFromArray:[self be_beautyBodyItemArray]];
     
     for (BEButtonItemModel *model in array) {
-        switch (model.ID) {
-            case BETypeBeautyFaceSmooth:
-                model.intensity = 0.6;
-                break;
-            case BETypeBeautyFaceWhiten:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyFaceSharpe:
-                model.intensity = 0.4;
-                break;
-            case BETypeBeautyReshapeFaceOverall:
-                model.intensity = 0.5;
-                break;
-            case BETypeBeautyReshapeFaceSmall:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeFaceCut:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeEye:
-                model.intensity = 0.3;
-            case BETypeBeautyReshapeEyeRotate:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeCheek:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeJaw:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeNoseLean:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeNoseLong:
-                model.intensity = 0.25;
-                break;
-            case BETypeBeautyReshapeChin:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeForehead:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeMouthZoom:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyReshapeMouthSmile:
-                model.intensity = 0.0;
-                break;
-            case BETypeBeautyBodyThin:
-                model.intensity = 1.0;
-                break;
-            case BETypeBeautyBodyLegLong:
-                model.intensity = 1.0;
-                break;
-            default:
-                break;
-        }
+        model.intensity = [[[self defaultValue] objectForKey:@(model.ID)] floatValue];
     }
     
     return array;
+}
+
++ (NSDictionary *)composerNodeDic {
+    static dispatch_once_t onceToken;
+    static NSDictionary *composerNodeDict;
+    dispatch_once(&onceToken, ^{
+        composerNodeDict = @{
+                                      // 美颜
+                                      @(BETypeBeautyFaceSharpe):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/beauty_IOS"
+                                           key:@"sharp"],
+                                      
+                                      @(BETypeBeautyFaceSmooth):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/beauty_IOS"
+                                           key:@"smooth"],
+                                      
+                                      @(BETypeBeautyFaceWhiten):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/beauty_IOS"
+                                           key:@"whiten"],                                
+                                      
+                                      @(BETypeBeautyFaceBrightenEye):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_BRIGHTEN_EYE"],
+                                      
+                                      @(BETypeBeautyFaceRemovePouch):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_REMOVE_POUCH"],
+                                      
+                                      @(BETypeBeautyFaceRemoveSmileFolds):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_SMILES_FOLDS"],
+                                      
+                                      @(BETypeBeautyFaceWhitenTeeth):
+                                               [[BEComposerNodeModel alloc]
+                                                initWithPath:@"/beauty_4Items"
+                                                key:@"BEF_BEAUTY_WHITEN_TEETH"],
+                                      
+                                      // 美形
+                                      @(BETypeBeautyReshapeFaceOverall):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Overall"],
+                                      
+                                      @(BETypeBeautyReshapeFaceCut):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_CutFace"],
+                                      
+                                      @(BETypeBeautyReshapeFaceSmall):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Face"],
+                                      
+                                      @(BETypeBeautyReshapeEye):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Eye"],
+                                      
+                                      @(BETypeBeautyReshapeEyeRotate):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_RotateEye"],
+                                      
+                                      @(BETypeBeautyReshapeCheek):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Zoom_Cheekbone"],
+                                      
+                                      @(BETypeBeautyReshapeJaw):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Zoom_Jawbone"],
+                                      
+                                      @(BETypeBeautyReshapeNoseLean):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Nose"],
+                                      
+                                      @(BETypeBeautyReshapeNoseLong):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_MovNose"],
+                                      
+                                      @(BETypeBeautyReshapeChin):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Chin"],
+                                      
+                                      @(BETypeBeautyReshapeForehead):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Forehead"],
+                                      
+                                      @(BETypeBeautyReshapeMouthZoom):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_ZoomMouth"],
+                                      
+                                      @(BETypeBeautyReshapeMouthSmile):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_MouthCorner"],
+                                      
+                                      @(BETypeBeautyReshapeEyeSpacing):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Eye_Spacing"],
+                                      
+                                      @(BETypeBeautyReshapeEyeMove):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_Eye_Move"],
+                                      
+                                      @(BETypeBeautyReshapeMouthMove):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/reshape"
+                                           key:@"Internal_Deform_MovMouth"],
+                                      
+                                      
+                                      
+                                      // 美体
+                                      @(BETypeBeautyBodyThin):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/body/thin"
+                                           key:@""],
+                                      
+                                      @(BETypeBeautyBodyLegLong):
+                                          [[BEComposerNodeModel alloc]
+                                           initWithPath:@"/body/longleg"
+                                           key:@""],
+                                      
+                                      // 美妆
+                                      @(BETypeMakeupLip):
+                                          [BEComposerNodeModel
+                                           initWithPathArray:@[@"/lip/fuguhong", @"/lip/shaonvfen", @"/lip/yuanqiju", @"/lip/xiyouse", @"/lip/xiguahong", @"/lip/sironghong", @"/lip/zangjuse", @"/lip/meizise", @"/lip/shanhuse", @"/lip/doushafen" ]
+                                           keyArray:@[@"Internal_Makeup_Lips", @"", @"", @""]],
+                                      
+                                      @(BETypeMakeupBlusher):
+                                          [BEComposerNodeModel
+                                           initWithPathArray:@[@"/blush/weixun", @"/blush/richang", @"/blush/mitao", @"/blush/tiancheng", @"/blush/qiaopi", @"/blush/xinji", @"/blush/shaishang"]
+                                           keyArray:@[@"Internal_Makeup_Blusher", @"", @"", @""]],
+                                      
+        //                              @(BETypeMakeupEyelash):
+        //                                  [BEComposerNodeModel
+        //                                   initWithPathArray:@[@"/eyelash/nongmi", @"/eyelash/shanxing", @"/eyelash/wumei", @"/eyelash/wumei"]
+        //                                   keyArray:@[@"Internal_Makeup_Eye", @"", @"", @""]],
+                                      
+                                      
+                                        @(BETypeMakeupFacial):
+                                            [BEComposerNodeModel
+                                             initWithPathArray:@[@"/facial/xiurong01", @"/facial/xiurong02", @"/facial/xiurong03", @"/facial/xiurong04"]
+                                             keyArray:@[@"Internal_Makeup_Facial", @"", @"", @""]],
+                                      
+                                      @(BETypeMakeupPupil):
+                                          [BEComposerNodeModel
+                                           initWithPathArray:@[@"/pupil/hunxuezong", @"/pupil/kekezong", @"/pupil/mitaofen", @"/pupil/shuiguanghei", @"/pupil/xingkonglan", @"/pupil/chujianhui"]
+                                           keyArray:@[@"Internal_Makeup_Pupil", @"", @"", @""]],
+                                      
+                                      @(BETypeMakeupHair):
+                                          [BEComposerNodeModel
+                                           initWithPathArray:@[@"/hair/anlan", @"/hair/molv", @"/hair/shenzong"]
+                                           keyArray:@[@"", @"", @""]],
+                                      
+                                      @(BETypeMakeupEyeshadow):
+                                          [BEComposerNodeModel
+                                           initWithPathArray:@[@"/eyeshadow/dadizong", @"/eyeshadow/wanxiahong", @"/eyeshadow/shaonvfen",@"/eyeshadow/qizhifen",@"/eyeshadow/meizihong",@"/eyeshadow/jiaotangzong",@"/eyeshadow/yuanqiju",@"/eyeshadow/naichase"]
+                                           keyArray:@[@"Internal_Makeup_Eye", @"", @"", @""]],
+                                      
+                                      @(BETypeMakeupEyebrow):
+                                          [BEComposerNodeModel
+                                           initWithPathArray:@[@"/eyebrow/BR01", @"/eyebrow/BK01", @"/eyebrow/BK02", @"/eyebrow/BK03"]
+                                           keyArray:@[@"Internal_Makeup_Brow", @"", @"", @""]],
+                                      
+                                      };
+    });
+    return composerNodeDict;
+}
+
++ (NSDictionary<NSNumber *,NSNumber *> *)defaultValue {
+    static dispatch_once_t onceToken;
+    static NSDictionary *dic;
+    dispatch_once(&onceToken, ^{
+        dic = @{
+            // face
+            @(BETypeBeautyFaceSmooth): @(0.6),
+            @(BETypeBeautyFaceWhiten): @(0.3),
+            @(BETypeBeautyFaceSharpe): @(0.7),
+            // reshape
+            @(BETypeBeautyReshapeFaceOverall): @(0.5),
+            @(BETypeBeautyReshapeFaceSmall): @(0.0),
+            @(BETypeBeautyReshapeFaceCut): @(0.0),
+            @(BETypeBeautyReshapeEye): @(0.3),
+            @(BETypeBeautyReshapeEyeRotate): @(0.0),
+            @(BETypeBeautyReshapeCheek): @(0.0),
+            @(BETypeBeautyReshapeJaw): @(0.0),
+            @(BETypeBeautyReshapeNoseLean): @(0.0),
+            @(BETypeBeautyReshapeNoseLong): @(0.25),
+            @(BETypeBeautyReshapeChin): @(0.0),
+            @(BETypeBeautyReshapeForehead): @(0.0),
+            @(BETypeBeautyReshapeMouthZoom): @(0.0),
+            @(BETypeBeautyReshapeMouthSmile): @(0.0),
+            @(BETypeBeautyReshapeEyeSpacing): @(0.0),
+            @(BETypeBeautyReshapeEyeMove): @(0.0),
+            @(BETypeBeautyReshapeMouthMove): @(0.0),
+            // body
+            @(BETypeBeautyBodyThin): @(1.0),
+            @(BETypeBeautyBodyLegLong): @(1.0),
+            // makeup
+            @(BETypeMakeupLip): @(0.3),
+            @(BETypeMakeupHair): @(0.5),
+            @(BETypeMakeupBlusher): @(0.3),
+            @(BETypeMakeupFacial): @(0.3),
+            @(BETypeMakeupEyebrow): @(0.3),
+            @(BETypeMakeupEyeshadow): @(0.4),
+            @(BETypeMakeupPupil): @(0.4),
+            // filter
+            @(BETypeFilter): @(0.8)
+        };
+    });
+    return dic;
 }
 
 #pragma mark - private
@@ -309,7 +466,38 @@ static NSArray* stickersArray = nil;
                    unselectImg:@"iconFaceBeautySharpNormal.png"
                    title:NSLocalizedString(@"beauty_face_sharpen", nil)
                    desc:@""],
+                  
+                  [BEButtonItemModel
+                   initWithID:BETypeBeautyFaceBrightenEye
+                   selectImg:@"iconFaceBeautySkinSelected.png"
+                   unselectImg:@"iconFaceBeautySkinNormal.png"
+                   title:NSLocalizedString(@"beauty_face_brighten_eye", nil)
+                   desc:@""],
+                  
+                  [BEButtonItemModel
+                   initWithID:BETypeBeautyFaceRemovePouch
+                   selectImg:@"iconFaceBeautySkinSelected.png"
+                   unselectImg:@"iconFaceBeautySkinNormal.png"
+                   title:NSLocalizedString(@"beauty_face_remove_pouch", nil)
+                   desc:@""],
+                  
+                  [BEButtonItemModel
+                   initWithID:BETypeBeautyFaceRemoveSmileFolds
+                   selectImg:@"iconFaceBeautySharpSelected.png"
+                   unselectImg:@"iconFaceBeautySharpNormal.png"
+                   title:NSLocalizedString(@"beauty_face_smile_folds", nil)
+                   desc:@""],
+                  
+                  [BEButtonItemModel
+                   initWithID:BETypeBeautyFaceWhitenTeeth
+                   selectImg:@"iconFaceBeautySharpSelected.png"
+                   unselectImg:@"iconFaceBeautySharpNormal.png"
+                   title:NSLocalizedString(@"beauty_face_whiten_teeth", nil)
+                   desc:@""],
+                  
                   ];
+        
+                 
     });
     return array;
 }
@@ -403,7 +591,25 @@ static NSArray* stickersArray = nil;
                    unselectImg:@"iconBeautyReshapeMouthSmileNormal"
                    title:NSLocalizedString(@"beauty_reshape_mouth_smile", nil)
                    desc:@""],
-                  ];
+                 [BEButtonItemModel
+                 initWithID:BETypeBeautyReshapeEyeSpacing
+                 selectImg:@"iconBeautyReshapeEyeRotateSelect"
+                 unselectImg:@"iconBeautyReshapeEyeRotateNormal"
+                 title:NSLocalizedString(@"beauty_reshape_eye_spacing", nil)
+                  desc:@""],
+                [BEButtonItemModel
+                initWithID:BETypeBeautyReshapeEyeMove
+                selectImg:@"iconBeautyReshapeEyeRotateSelect"
+                unselectImg:@"iconBeautyReshapeEyeRotateNormal"
+                title:NSLocalizedString(@"beauty_reshape_eye_move", nil)
+                 desc:@""],
+                [BEButtonItemModel
+                initWithID:BETypeBeautyReshapeMouthMove
+                selectImg:@"iconBeautyReshapeMouthZoomSelect"
+                unselectImg:@"iconBeautyReshapeMouthZoomNormal"
+                title:NSLocalizedString(@"beauty_reshape_mouth_move", nil)
+                 desc:@""],
+            ];
     });
     return array;
 }
@@ -465,12 +671,19 @@ static NSArray* stickersArray = nil;
                    title:NSLocalizedString(@"makeup_lip", nil)
                    desc:@""],
                   
+//                  [BEButtonItemModel
+//                   initWithID:BETypeMakeupEyelash
+//                   selectImg:@"iconFaceMakeUpEyelashSelected.png"
+//                   unselectImg:@"iconFaceMakeUpEyelashNormal.png"
+//                   title:NSLocalizedString(@"makeup_eyelash", nil)
+//                   desc:@""],
+
                   [BEButtonItemModel
-                   initWithID:BETypeMakeupEyelash
-                   selectImg:@"iconFaceMakeUpEyelashSelected.png"
-                   unselectImg:@"iconFaceMakeUpEyelashNormal.png"
-                   title:NSLocalizedString(@"makeup_eyelash", nil)
-                   desc:@""],
+                        initWithID:BETypeMakeupFacial
+                        selectImg:@"iconFaceMakeUpFacialSelected.png"
+                        unselectImg:@"iconFaceMakeUpFacialNormal.png"
+                        title:NSLocalizedString(@"makeup_facial", nil)
+                        desc:@""],
                   
                   [BEButtonItemModel
                    initWithID:BETypeMakeupPupil
@@ -523,23 +736,72 @@ static NSArray* stickersArray = nil;
                        initWithID:BETypeMakeupLip_1
                        selectImg:@"iconFaceMakeUpLipsSelected"
                        unselectImg:@"iconFaceMakeUpLipsNormal"
-                       title:NSLocalizedString(@"lip_huluopohong", nil)
+                       title:NSLocalizedString(@"lip_fuguhong", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupLip_2
                        selectImg:@"iconFaceMakeUpLipsSelected"
                        unselectImg:@"iconFaceMakeUpLipsNormal"
-                       title:NSLocalizedString(@"lip_huoliju", nil)
+                       title:NSLocalizedString(@"lip_shaonvfen", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupLip_3
                        selectImg:@"iconFaceMakeUpLipsSelected"
                        unselectImg:@"iconFaceMakeUpLipsNormal"
-                       title:NSLocalizedString(@"lip_yingsuhong", nil)
+                       title:NSLocalizedString(@"lip_yuanqiju", nil)
                        desc:@""],
-                      
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupLip_4
+                       selectImg:@"iconFaceMakeUpLipsSelected"
+                       unselectImg:@"iconFaceMakeUpLipsNormal"
+                       title:NSLocalizedString(@"lip_xiyouse", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupLip_5
+                       selectImg:@"iconFaceMakeUpLipsSelected"
+                       unselectImg:@"iconFaceMakeUpLipsNormal"
+                       title:NSLocalizedString(@"lip_xiguahong", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupLip_6
+                       selectImg:@"iconFaceMakeUpLipsSelected"
+                       unselectImg:@"iconFaceMakeUpLipsNormal"
+                       title:NSLocalizedString(@"lip_sironghong", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupLip_7
+                       selectImg:@"iconFaceMakeUpLipsSelected"
+                       unselectImg:@"iconFaceMakeUpLipsNormal"
+                       title:NSLocalizedString(@"lip_zangjuse", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupLip_8
+                       selectImg:@"iconFaceMakeUpLipsSelected"
+                       unselectImg:@"iconFaceMakeUpLipsNormal"
+                       title:NSLocalizedString(@"lip_meizise", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                          initWithID:BETypeMakeupLip_9
+                          selectImg:@"iconFaceMakeUpLipsSelected"
+                          unselectImg:@"iconFaceMakeUpLipsNormal"
+                          title:NSLocalizedString(@"lip_shanhuse", nil)
+                          desc:@""],
+
+                      [BEButtonItemModel
+                          initWithID:BETypeMakeupLip_10
+                          selectImg:@"iconFaceMakeUpLipsSelected"
+                          unselectImg:@"iconFaceMakeUpLipsNormal"
+                          title:NSLocalizedString(@"lip_doushafen", nil)
+                          desc:@""],
+
                       ],
                   
                   @[
@@ -554,23 +816,51 @@ static NSArray* stickersArray = nil;
                        initWithID:BETypeMakeupBlusher_1
                        selectImg:@"iconFaceMakeUpBlusherSelected"
                        unselectImg:@"iconFaceMakeUpBlusherNormal"
-                       title:NSLocalizedString(@"blusher_shaishanghong", nil)
+                       title:NSLocalizedString(@"blusher_weixun", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupBlusher_2
                        selectImg:@"iconFaceMakeUpBlusherSelected"
                        unselectImg:@"iconFaceMakeUpBlusherNormal"
-                       title:NSLocalizedString(@"blusher_weixunfen", nil)
+                       title:NSLocalizedString(@"blusher_richang", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupBlusher_3
                        selectImg:@"iconFaceMakeUpBlusherSelected"
                        unselectImg:@"iconFaceMakeUpBlusherNormal"
-                       title:NSLocalizedString(@"blusher_yuanqiju", nil)
+                       title:NSLocalizedString(@"blusher_mitao", nil)
                        desc:@""],
-                      
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupBlusher_4
+                       selectImg:@"iconFaceMakeUpBlusherSelected"
+                       unselectImg:@"iconFaceMakeUpBlusherNormal"
+                       title:NSLocalizedString(@"blusher_tiancheng", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                         initWithID:BETypeMakeupBlusher_5
+                         selectImg:@"iconFaceMakeUpBlusherSelected"
+                         unselectImg:@"iconFaceMakeUpBlusherNormal"
+                         title:NSLocalizedString(@"blusher_qiaopi", nil)
+                         desc:@""],
+
+                      [BEButtonItemModel
+                         initWithID:BETypeMakeupBlusher_6
+                         selectImg:@"iconFaceMakeUpBlusherSelected"
+                         unselectImg:@"iconFaceMakeUpBlusherNormal"
+                         title:NSLocalizedString(@"blusher_xinji", nil)
+                         desc:@""],
+
+                      [BEButtonItemModel
+                         initWithID:BETypeMakeupBlusher_7
+                         selectImg:@"iconFaceMakeUpBlusherSelected"
+                         unselectImg:@"iconFaceMakeUpBlusherNormal"
+                         title:NSLocalizedString(@"blusher_shaishang", nil)
+                         desc:@""],
+
                       ],
                   
                   @[
@@ -580,30 +870,42 @@ static NSArray* stickersArray = nil;
                        unselectImg:@"iconCloseButtonNormal"
                        title:NSLocalizedString(@"close", nil)
                        desc:@""],
-                      
+
+
                       [BEButtonItemModel
                        initWithID:BETypeMakeupEyelash_1
                        selectImg:@"iconFaceMakeUpEyelashSelected"
                        unselectImg:@"iconFaceMakeUpEyelashNormal"
                        title:NSLocalizedString(@"eyelash_nongmi", nil)
                        desc:@""],
-                      
+
                       [BEButtonItemModel
                        initWithID:BETypeMakeupEyelash_2
                        selectImg:@"iconFaceMakeUpEyelashSelected"
                        unselectImg:@"iconFaceMakeUpEyelashNormal"
                        title:NSLocalizedString(@"eyelash_shanxing", nil)
                        desc:@""],
-                      
+
                       [BEButtonItemModel
                        initWithID:BETypeMakeupEyelash_3
                        selectImg:@"iconFaceMakeUpEyelashSelected"
                        unselectImg:@"iconFaceMakeUpEyelashNormal"
                        title:NSLocalizedString(@"eyelash_wumei", nil)
                        desc:@""],
-                      
+
+                      [BEButtonItemModel
+                              initWithID:BETypeMakeupEyelash_4
+                              selectImg:@"iconFaceMakeUpEyelashSelected"
+                              unselectImg:@"iconFaceMakeUpEyelashNormal"
+                              title:NSLocalizedString(@"eyelash_wumei", nil)
+                              desc:@""],
+
+
                       ],
-                  
+
+
+
+
                   @[
                       [BEButtonItemModel
                        initWithID:BETypeClose
@@ -616,23 +918,44 @@ static NSArray* stickersArray = nil;
                        initWithID:BETypeMakeupPupil_1
                        selectImg:@"iconFaceMakeUpPupilSelected"
                        unselectImg:@"iconFaceMakeUpPupilNormal"
-                       title:NSLocalizedString(@"pupil_babizi", nil)
+                       title:NSLocalizedString(@"pupil_hunxuezong", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupPupil_2
                        selectImg:@"iconFaceMakeUpPupilSelected"
                        unselectImg:@"iconFaceMakeUpPupilNormal"
-                       title:NSLocalizedString(@"pupil_hunxuelan", nil)
+                       title:NSLocalizedString(@"pupil_kekezong", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupPupil_3
                        selectImg:@"iconFaceMakeUpPupilSelected"
                        unselectImg:@"iconFaceMakeUpPupilNormal"
-                       title:NSLocalizedString(@"pupil_hunxuelv", nil)
+                       title:NSLocalizedString(@"pupil_mitaofen", nil)
                        desc:@""],
                       
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupPupil_4
+                       selectImg:@"iconFaceMakeUpPupilSelected"
+                       unselectImg:@"iconFaceMakeUpPupilNormal"
+                       title:NSLocalizedString(@"pupil_shuiguanghei", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                         initWithID:BETypeMakeupPupil_5
+                         selectImg:@"iconFaceMakeUpPupilSelected"
+                         unselectImg:@"iconFaceMakeUpPupilNormal"
+                         title:NSLocalizedString(@"pupil_xingkonglan", nil)
+                         desc:@""],
+
+                      [BEButtonItemModel
+                         initWithID:BETypeMakeupPupil_6
+                         selectImg:@"iconFaceMakeUpPupilSelected"
+                         unselectImg:@"iconFaceMakeUpPupilNormal"
+                         title:NSLocalizedString(@"pupil_chujianhui", nil)
+                         desc:@""],
+
                       ],
                   
                   @[
@@ -678,23 +1001,60 @@ static NSArray* stickersArray = nil;
                        initWithID:BETypeMakeupEyeshadow_1
                        selectImg:@"iconFaceMakeUpEyeshadowSelected"
                        unselectImg:@"iconFaceMakeUpEyeshadowNormal"
-                       title:NSLocalizedString(@"eye_shaonvfen", nil)
+                       title:NSLocalizedString(@"eye_dadizong", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupEyeshadow_2
                        selectImg:@"iconFaceMakeUpEyeshadowSelected"
                        unselectImg:@"iconFaceMakeUpEyeshadowNormal"
-                       title:NSLocalizedString(@"eye_yanxunzong", nil)
+                       title:NSLocalizedString(@"eye_wanxiahong", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupEyeshadow_3
                        selectImg:@"iconFaceMakeUpEyeshadowSelected"
                        unselectImg:@"iconFaceMakeUpEyeshadowNormal"
-                       title:NSLocalizedString(@"eye_ziranlan", nil)
+                       title:NSLocalizedString(@"eye_shaonvfen", nil)
                        desc:@""],
-                      
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupEyeshadow_4
+                       selectImg:@"iconFaceMakeUpEyeshadowSelected"
+                       unselectImg:@"iconFaceMakeUpEyeshadowNormal"
+                       title:NSLocalizedString(@"eye_qizhifen", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                          initWithID:BETypeMakeupEyeshadow_5
+                          selectImg:@"iconFaceMakeUpEyeshadowSelected"
+                          unselectImg:@"iconFaceMakeUpEyeshadowNormal"
+                          title:NSLocalizedString(@"eye_meizihong", nil)
+                          desc:@""],
+
+
+                      [BEButtonItemModel
+                          initWithID:BETypeMakeupEyeshadow_6
+                          selectImg:@"iconFaceMakeUpEyeshadowSelected"
+                          unselectImg:@"iconFaceMakeUpEyeshadowNormal"
+                          title:NSLocalizedString(@"eye_jiaotangzong", nil)
+                          desc:@""],
+
+
+                      [BEButtonItemModel
+                          initWithID:BETypeMakeupEyeshadow_7
+                          selectImg:@"iconFaceMakeUpEyeshadowSelected"
+                          unselectImg:@"iconFaceMakeUpEyeshadowNormal"
+                          title:NSLocalizedString(@"eye_yuanqiju", nil)
+                          desc:@""],
+
+                      [BEButtonItemModel
+                          initWithID:BETypeMakeupEyeshadow_8
+                          selectImg:@"iconFaceMakeUpEyeshadowSelected"
+                          unselectImg:@"iconFaceMakeUpEyeshadowNormal"
+                          title:NSLocalizedString(@"eye_naichase", nil)
+                          desc:@""],
+
                       ],
                   
                   @[
@@ -706,42 +1066,140 @@ static NSArray* stickersArray = nil;
                        desc:@""],
                       
                       [BEButtonItemModel
-                       initWithID:BETypeMakeupEyebrow_1
-                       selectImg:@"iconFaceMakeUpEyebrowSelected"
-                       unselectImg:@"iconFaceMakeUpEyebrowNormal"
-                       title:NSLocalizedString(@"eyebrow_chunhei", nil)
-                       desc:@""],
+                          initWithID:BETypeMakeupEyebrow_1
+                          selectImg:@"iconFaceMakeUpEyebrowSelected"
+                          unselectImg:@"iconFaceMakeUpEyebrowNormal"
+                          title:NSLocalizedString(@"eyebrow_BR01", nil)
+                          desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupEyebrow_2
                        selectImg:@"iconFaceMakeUpEyebrowSelected"
                        unselectImg:@"iconFaceMakeUpEyebrowNormal"
-                       title:NSLocalizedString(@"eyebrow_danhui", nil)
+                       title:NSLocalizedString(@"eyebrow_BK01", nil)
                        desc:@""],
                       
                       [BEButtonItemModel
                        initWithID:BETypeMakeupEyebrow_3
                        selectImg:@"iconFaceMakeUpEyebrowSelected"
                        unselectImg:@"iconFaceMakeUpEyebrowNormal"
-                       title:NSLocalizedString(@"eyebrow_ziranhei", nil)
+                       title:NSLocalizedString(@"eyebrow_BK02", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupEyebrow_4
+                       selectImg:@"iconFaceMakeUpEyebrowSelected"
+                       unselectImg:@"iconFaceMakeUpEyebrowNormal"
+                       title:NSLocalizedString(@"eyebrow_BK03", nil)
                        desc:@""],
                       
                       ],
-                  
+                  @[
+                      [BEButtonItemModel
+                       initWithID:BETypeClose
+                       selectImg:@"iconCloseButtonSelected"
+                       unselectImg:@"iconCloseButtonNormal"
+                       title:NSLocalizedString(@"close", nil)
+                       desc:@""],
+
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupFacial_1
+                       selectImg:@"iconFaceMakeUpFacialSelected"
+                       unselectImg:@"iconFaceMakeUpFacialNormal"
+                       title:NSLocalizedString(@"facial_xiurong1", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupFacial_2
+                       selectImg:@"iconFaceMakeUpFacialSelected"
+                       unselectImg:@"iconFaceMakeUpFacialNormal"
+                       title:NSLocalizedString(@"facial_xiurong2", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                       initWithID:BETypeMakeupFacial_3
+                       selectImg:@"iconFaceMakeUpFacialSelected"
+                       unselectImg:@"iconFaceMakeUpFacialNormal"
+                       title:NSLocalizedString(@"facial_xiurong3", nil)
+                       desc:@""],
+
+                      [BEButtonItemModel
+                      initWithID:BETypeMakeupFacial_4
+                      selectImg:@"iconFaceMakeUpFacialSelected"
+                      unselectImg:@"iconFaceMakeUpFacialNormal"
+                      title:NSLocalizedString(@"facial_xiurong4", nil)
+                      desc:@""],
+                  ],
+
                   ];
     });
-    return array[type-1];
+    return array[type - 1];
 }
 
 #pragma mark - Private
+
+- (void) _fetchAnimojiDataWithCompletion:(BEEffectDataFetchCompletion)completion {
+    static NSArray* _animojiArray = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _animojiArray = @[
+        NSLocalizedString(@"animoji_boy", nil), @"icon_change_face", @"animoji_boy", @"",
+        NSLocalizedString(@"animoji_girl", nil), @"icon_change_face", @"mm", @""
+        ];
+    });
+    
+    
+    @weakify(self);
+    [self runAsync:^{
+        @strongify(self);
+        
+        NSString *stickerPath = [[BEResourceHelper new] stickerPath:@""];
+        NSError *error = nil;
+        NSMutableArray <BEEffectStickerGroup *> *stickersGroupArr = [NSMutableArray array];
+        BEEffectResponseModel *responseModel = [BEEffectResponseModel new];
+        
+        NSMutableArray <BEEffectSticker*> * stickerArray = [NSMutableArray array];
+        
+        BEEffectSticker *clear = [BEEffectSticker new];
+        clear.title = NSLocalizedString(@"filter_normal", nil);
+        clear.filePath = @"";
+        clear.imageName = @"icon_clear";
+        clear.toastString = @"";
+        
+        [stickerArray addObject:clear];
+
+        for (int i = 0; i < _animojiArray.count; i += 4){
+            BEEffectSticker *sticker = [BEEffectSticker new];
+            sticker.title = _animojiArray[i];
+            sticker.filePath = [stickerPath stringByAppendingPathComponent: _animojiArray[i + 2]];
+            sticker.imageName = _animojiArray[i + 1];
+            sticker.toastString = _animojiArray[i + 3];
+
+            [stickerArray addObject:sticker];
+        }
+        
+        BEEffectStickerGroup *group = [BEEffectStickerGroup new];
+        group.title = @"animoji";
+        group.stickers = stickerArray.copy;
+        
+        [stickersGroupArr addObject:group];
+        responseModel.stickerGroup = stickersGroupArr;
+//        self.responseModel = responseModel;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            BEBLOCK_INVOKE(completion, responseModel, error);
+        });
+    }];
+}
+
 - (void) _fetchStickerDataWithCompletion:(BEEffectDataFetchCompletion)completion{
     [self initStickerDict];
     @weakify(self);
     [self runAsync:^{
         @strongify(self);
         
-        NSString *resourcePath = [[NSBundle mainBundle] pathForResource:@"StickerResource" ofType:@"bundle"];
-        NSString *stickerPath = [resourcePath stringByAppendingPathComponent:@"stickers"];
+        NSString *stickerPath = [[BEResourceHelper new] stickerPath:@""];
         NSError *error = nil;
         NSMutableArray <BEEffectStickerGroup *> *stickersGroupArr = [NSMutableArray array];
         BEEffectResponseModel *responseModel = [BEEffectResponseModel new];
@@ -785,7 +1243,7 @@ static NSArray* stickersArray = nil;
     @weakify(self);
     [self runAsync:^{
         @strongify(self);
-        NSString *resourcePath = [[NSBundle mainBundle] pathForResource:@"FilterResource" ofType:@"bundle"];
+        NSString *resourcePath = [[BEResourceHelper new] filterPath:@""];
         NSError *error = nil;
         NSArray *filterCategoryResourcePaths = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:resourcePath error:&error];
         NSMutableArray *filterGroupArr = [NSMutableArray array];
@@ -824,10 +1282,38 @@ static NSArray* stickersArray = nil;
                                          NSLocalizedString(@"filter_julandiao", nil),
                                          NSLocalizedString(@"filter_tuise", nil),
                                          NSLocalizedString(@"filter_heibai", nil),
+                                         NSLocalizedString(@"filter_Po1", nil),
+                                         NSLocalizedString(@"filter_Po2", nil),
+                                         NSLocalizedString(@"filter_Po3", nil),
+                                         NSLocalizedString(@"filter_Po4", nil),
+                                         NSLocalizedString(@"filter_Po5", nil),
+                                         NSLocalizedString(@"filter_Po6", nil),
+                                         NSLocalizedString(@"filter_Po7", nil),
+                                         NSLocalizedString(@"filter_Po8", nil),
+                                         NSLocalizedString(@"filter_Po9", nil),
+                                         NSLocalizedString(@"filter_Po10", nil),
+                                         NSLocalizedString(@"filter_L1", nil),
+                                         NSLocalizedString(@"filter_L2", nil),
+                                         NSLocalizedString(@"filter_L3", nil),
+                                         NSLocalizedString(@"filter_L4", nil),
+                                         NSLocalizedString(@"filter_L5", nil),
+                                         NSLocalizedString(@"filter_F1", nil),
+                                         NSLocalizedString(@"filter_F2", nil),
+                                         NSLocalizedString(@"filter_F3", nil),
+                                         NSLocalizedString(@"filter_F4", nil),
+                                         NSLocalizedString(@"filter_F5", nil),
+                                         NSLocalizedString(@"filter_S1", nil),
+                                         NSLocalizedString(@"filter_S2", nil),
+                                         NSLocalizedString(@"filter_S3", nil),
+                                         NSLocalizedString(@"filter_S4", nil),
+                                         NSLocalizedString(@"filter_S5", nil),
                                          ];
                 NSArray *filterCNName = @[
           @"柔白",@"奶油",@"氧气",@"桔梗",@"洛丽塔",@"蜜桃",@"马卡龙",@"泡沫",@"樱花",@"浅暖",@"物语",
-          @"北海道",@"日杂",@"西雅图",@"静谧",@"胶片",@"暖阳",@"旧日",@"红唇",@"橘蓝调",@"褪色",@"黑白"];
+          @"北海道",@"日杂",@"西雅图",@"静谧",@"胶片",@"暖阳",@"旧日",@"红唇",@"橘蓝调",@"褪色",@"黑白",
+          @"温柔",@"恋爱超甜",@"初见",@"暗调",@"奶茶",@"soft",@"夕阳",@"冷氧",@"海边人像",@"高级灰",@"海岛",
+          @"浅夏",@"夜色",@"红棕",@"清透",@"自然2",@"苏打",@"加州",@"食色",@"川味",@"美式胶片",@"红色复古",
+          @"旅途",@"暖黄",@"蓝调胶片" ];
                 [filterArray enumerateObjectsUsingBlock:^(BEEffect * filter, NSUInteger idx, BOOL * _Nonnull stop) {
                     filter.title = idx < filterNames.count ? filterNames[idx] : @"";
                     filter.imageName = idx < filterCNName.count ? filterCNName[idx] : @"";
@@ -851,199 +1337,13 @@ static NSArray* stickersArray = nil;
     }];
 }
 
-- (void)_fetchMakeupDataWithCompletion:(BEEffectDataFetchCompletion)completion {
-    @weakify(self);
-    [self runAsync:^{
-        @strongify(self);
-        BEEffectResponseModel *responseModel = [BEEffectResponseModel new];
-        NSMutableArray *makeUpModels = [NSMutableArray array];
-        
-        {//腮红
-            BEEffectFaceMakeUpGroup *group = [BEEffectFaceMakeUpGroup new];
-            group.faceMakeUps = [[self _makeUpObjectFromArray:faceMakeUpBlushArray()] copy];
-            group.title = NSLocalizedString(@"makeup_blusher", nil);
-            [makeUpModels addObject:group];
-        }
-        
-        {//口红
-            BEEffectFaceMakeUpGroup *group = [BEEffectFaceMakeUpGroup new];
-            group.faceMakeUps = [[self _makeUpObjectFromArray:faceMakeUpLipArray()] copy];
-            group.title = NSLocalizedString(@"makeup_lip", nil);
-            [makeUpModels addObject:group];
-        }
-        
-        {//睫毛
-            BEEffectFaceMakeUpGroup *group = [BEEffectFaceMakeUpGroup new];
-            group.faceMakeUps = [[self _makeUpObjectFromArray:faceMakeUpEyelashArray()] copy];
-            group.title = NSLocalizedString(@"makeup_eyelash", nil);
-            [makeUpModels addObject:group];
-        }
-        
-        {//美瞳
-            BEEffectFaceMakeUpGroup *group = [BEEffectFaceMakeUpGroup new];
-            group.faceMakeUps = [[self _makeUpObjectFromArray:faceMakeUpPupilArray()] copy];
-            group.title = NSLocalizedString(@"makeup_pupil", nil);
-            [makeUpModels addObject:group];
-        }
-        
-        {//头发
-            BEEffectFaceMakeUpGroup *group = [BEEffectFaceMakeUpGroup new];
-            group.faceMakeUps = [[self _makeUpObjectFromArray:faceMakeUpHairArray()] copy];
-            group.title = NSLocalizedString(@"makeup_hair", nil);
-            [makeUpModels addObject:group];
-        }
-        
-        {//眼影
-            BEEffectFaceMakeUpGroup *group = [BEEffectFaceMakeUpGroup new];
-            group.faceMakeUps = [[self _makeUpObjectFromArray:faceMakeUpEyeshadowArray()] copy];
-            group.title = NSLocalizedString(@"makeup_eye", nil);
-            [makeUpModels addObject:group];
-        }
-        
-        {//眉毛
-            BEEffectFaceMakeUpGroup *group = [BEEffectFaceMakeUpGroup new];
-            group.faceMakeUps = [[self _makeUpObjectFromArray:faceMakeUpEyeBrowArray()] copy];
-            group.title = NSLocalizedString(@"makeup_eyebrow", nil);
-            [makeUpModels addObject:group];
-        }
-        responseModel.makeUpGroup = [makeUpModels copy];
-        self.responseModel = responseModel;
-        
-        NSError *error = nil;
-        dispatch_async(dispatch_get_main_queue(), ^{
-            BEBLOCK_INVOKE(completion, self.responseModel, error);
-        });
-    }];
-}
 
-- (NSMutableArray*)_makeUpObjectFromArray:(NSArray*) arrays{
-    int count = arrays.count;
-    NSMutableArray *retArray = [NSMutableArray array];
-
-    for (int i = 0; i < count; i ++){
-        NSArray* array = arrays[i];
-        BEEffectFaceMakeUp* makeup = [BEEffectFaceMakeUp new];
-        
-        {
-            makeup.title = array[0];
-            makeup.filePath = array[1];
-            makeup.normalImageName = array[2];
-            makeup.selectedImageName = array[3];
-            makeup.intensity = 0.0;
-        }
-        [retArray addObject:makeup];
-    }
-    return retArray;
-    
-}
 #pragma mark -
 
 - (void)runAsync:(void(^)(void))block {
     dispatch_async(self.operationQueue, ^{
         block ? block() : 0;
     });
-}
-
-
-#pragma mark - faceMakeUpArray
-static NSArray *faceMakeUpBlushArray(){
-    static NSArray* array;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        array = @[
-        @[NSLocalizedString(@"close", nil), @"blush", @"iconCloseButtonNormal", @"iconCloseButtonSelected"],
-        @[ NSLocalizedString(@"blusher_shaishanghong", nil), @"blush/shaishanghong", @"iconFaceMakeUpBlusherNormal", @"iconFaceMakeUpBlusherSelected"],
-        @[NSLocalizedString(@"blusher_weixunfen", nil), @"blush/weixunfen", @"iconFaceMakeUpBlusherNormal", @"iconFaceMakeUpBlusherSelected"],
-        @[NSLocalizedString(@"blusher_yuanqiju", nil), @"blush/yuanqiju", @"iconFaceMakeUpBlusherNormal", @"iconFaceMakeUpBlusherSelected"],
-        ];
-    });
-    return array;
-}
-
-
-static NSArray *faceMakeUpEyeBrowArray(){
-    static NSArray* array;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        array = @[
-                  @[NSLocalizedString(@"close", nil), @"eyebrow", @"iconCloseButtonNormal", @"iconCloseButtonSelected"],
-                  @[ NSLocalizedString(@"eyebrow_chunhei", nil), @"eyebrow/chunhei", @"iconFaceMakeUpEyebrowNormal", @"iconFaceMakeUpEyeBrowSelected"],
-                  @[NSLocalizedString(@"eyebrow_danhui", nil), @"eyebrow/danhui", @"iconFaceMakeUpEyebrowNormal", @"iconFaceMakeUpEyeBrowSelected"],
-                  @[NSLocalizedString(@"eyebrow_ziranhei", nil), @"eyebrow/ziranhei", @"iconFaceMakeUpEyebrowNormal", @"iconFaceMakeUpEyeBrowSelected"],
-                  ];
-    });
-    return array;
-}
-
-static NSArray *faceMakeUpEyelashArray(){
-    static NSArray* array;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        array = @[
-                  @[NSLocalizedString(@"close", nil), @"eyelash", @"iconCloseButtonNormal", @"iconCloseButtonSelected"],
-                  @[NSLocalizedString(@"eyelash_nongmi", nil), @"eyelash/nongmi", @"iconFaceMakeUpEyelashNormal", @"iconFaceMakeUpEyelashSelected"],
-                  @[NSLocalizedString(@"eyelash_shanxing", nil), @"eyelash/shanxing", @"iconFaceMakeUpEyelashNormal", @"iconFaceMakeUpEyelashSelected"],
-                  @[NSLocalizedString(@"eyelash_wumei", nil), @"eyelash/wumei", @"iconFaceMakeUpEyelashNormal", @"iconFaceMakeUpEyelashSelected"],
-                  ];
-    });
-    return array;
-}
-
-static NSArray *faceMakeUpEyeshadowArray(){
-    static NSArray* array;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        array = @[
-                  @[NSLocalizedString(@"close", nil), @"eyeshadow", @"iconCloseButtonNormal", @"iconCloseButtonSelected"],
-                  @[NSLocalizedString(@"eye_shaonvfen", nil), @"eyeshadow/shaonvfen", @"iconFaceMakeUpEyeshadowNormal", @"iconFaceMakeUpEyeshadowSelected"],
-                  @[NSLocalizedString(@"eye_yanxunzong", nil), @"eyeshadow/yanxunzong", @"iconFaceMakeUpEyeshadowNormal", @"iconFaceMakeUpEyeshadownSelected"],
-                  @[NSLocalizedString(@"eye_ziranlan", nil), @"eyeshadow/ziranlan", @"iconFaceMakeUpEyeshadowNormal", @"iconFaceMakeUpEyeshadownSelected"],
-                  ];
-    });
-    return array;
-}
-
-static NSArray *faceMakeUpHairArray(){
-    static NSArray* array;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        array = @[
-                  @[NSLocalizedString(@"close", nil), @"hair", @"iconCloseButtonNormal", @"iconCloseButtonSelected"],
-                  @[NSLocalizedString(@"hair_anlan", nil), @"hair/anlan", @"iconHairNormal", @"iconHairSelected"],
-                  @[NSLocalizedString(@"hair_molv", nil), @"hair/molv", @"iconHairNormal", @"iconHairSelected"],
-                  @[NSLocalizedString(@"hair_shenzong", nil), @"hair/shenzong", @"iconHairNormal", @"iconHairSelected"],
-                  ];
-    });
-    return array;
-}
-
-
-static NSArray *faceMakeUpLipArray(){
-    static NSArray* array;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        array = @[
-                  @[ NSLocalizedString(@"close", nil), @"lip", @"iconCloseButtonNormal", @"iconCloseButtonSelected"],
-                  @[ NSLocalizedString(@"lip_huluopohong", nil), @"lip/huluobohong", @"iconFaceMakeUpLipsNormal", @"iconFaceMakeUpLipsSelected"],
-                  @[NSLocalizedString(@"lip_huoliju", nil), @"lip/huoliju", @"iconFaceMakeUpLipsNormal", @"iconFaceMakeUpLipsSelected"],
-                  @[NSLocalizedString(@"lip_yingsuhong", nil), @"lip/yingsuhong", @"iconFaceMakeUpLipsNormal", @"iconFaceMakeUpLipsSelected"],
-                  ];
-    });
-    return array;
-}
-
-static NSArray *faceMakeUpPupilArray(){
-    static NSArray* array;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        array = @[
-                  @[NSLocalizedString(@"close", nil), @"pupil", @"iconCloseButtonNormal", @"iconCloseButtonSelected"],
-                  @[ NSLocalizedString(@"pupil_babizi", nil), @"pupil/babizi", @"iconFaceMakeUpPupilNormal", @"iconFaceMakeUpPupilSelected"],
-                  @[NSLocalizedString(@"pupil_hunxuelan", nil), @"pupil/hunxuelan", @"iconFaceMakeUpPupilNormal", @"iconFaceMakeUpPupilSelected"],
-                  @[ NSLocalizedString(@"pupil_hunxuelv", nil), @"pupil/hunxuelv", @"iconFaceMakeUpPupilNormal", @"iconFaceMakeUpPupilSelected"],
-                  ];
-    });
-    return array;
 }
 
 @end

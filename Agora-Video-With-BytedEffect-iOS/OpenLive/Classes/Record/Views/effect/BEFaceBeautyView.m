@@ -42,13 +42,15 @@
 
 - (void)setSelectNode:(BEEffectNode)node {
     if (self.items != nil) {
+        NSInteger select = -1;
         for (int i = 0; i < self.items.count; i++) {
             if (self.items[i].ID == node) {
-                _selectItem = i;
-                [self.cv reloadData];
-                return;
+                select = i;
+                break;
             }
         }
+        _selectItem = select;
+        [self.cv reloadData];
     }
 }
 
@@ -75,6 +77,11 @@
 }
 
 #pragma mark - UICollectionViewDataSource
+-(NSInteger )numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+    [collectionView.collectionViewLayout invalidateLayout];
+    return 1;
+}
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.items.count;
 }

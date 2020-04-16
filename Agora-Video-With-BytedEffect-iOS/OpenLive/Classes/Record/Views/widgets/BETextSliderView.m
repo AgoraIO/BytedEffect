@@ -7,6 +7,7 @@
 //
 
 #import "BETextSliderView.h"
+#import "BEMacro.h"
 
 @interface BETextSliderView () {
     BOOL _isShowText;
@@ -65,10 +66,10 @@
 
 // 设置默认各数据的默认值
 - (void)initDefaultSize {
-    _activeLineColor = [UIColor whiteColor];
-    _inactiveLineColor = [UIColor grayColor];
-    _circleColor = [UIColor whiteColor];
-    _textColor = [UIColor grayColor];
+    _activeLineColor = BEColorWithARGBHex(0xBBFFFFFF);
+    _inactiveLineColor = BEColorWithARGBHex(0x30000000);
+    _circleColor = BEColorWithRGBHex(0xFFFFFF);
+    _textColor = BEColorWithRGBHex(0x555555);
     
     _lineHeight = DEFAULT_LINE_HEIGHT;
     _circleRadius = DEFAULT_CIRCLE_RADIUS;
@@ -177,7 +178,7 @@
 #pragma mark - 监听手势操作
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesBegan:touches withEvent:event];
+//    [super touchesBegan:touches withEvent:event];
     
     // 设置延时显示 text
     _isInTouch = true;
@@ -188,7 +189,7 @@
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesMoved:touches withEvent:event];
+//    [super touchesMoved:touches withEvent:event];
     
     // 获取手的位置
     UITouch *touch = [touches anyObject];
@@ -196,14 +197,14 @@
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesEnded:touches withEvent:event];
+//    [super touchesEnded:touches withEvent:event];
     // 取消延迟显示
     _isInTouch = false;
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesCancelled:touches withEvent:event];
+//    [super touchesCancelled:touches withEvent:event];
     // 取消延迟显示
     _isInTouch = false;
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
@@ -335,6 +336,11 @@
 }
 
 - (void)setProgress:(CGFloat)progress {
+    if (progress > 1) {
+        progress = 1;
+    } else if (progress < 0) {
+        progress = 0;
+    }
     _progress = progress;
     [self setNeedsDisplay];
 }

@@ -6,6 +6,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface BEModernFilterPickerViewController : UIViewController
 - (void)setAllCellsUnSelected;
+- (void)setSelectItem:(NSString *)filterPath;
 
 @end
 

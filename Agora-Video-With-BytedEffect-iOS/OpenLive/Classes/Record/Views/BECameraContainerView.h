@@ -14,7 +14,9 @@
 - (void)onRecognizeClicked:(id)sender;
 - (void)onEffectButtonClicked:(id)sender;
 - (void)onStickerButtonClicked:(id)sender;
+- (void)onAnimojiButtonClicked:(id)sender;
 - (void)onSaveButtonClicked:(UIButton*)sender;
+- (void)onExclusiveSwitchChanged:(UISwitch *)sender;
 @end
 
 @interface BECameraContainerView : UIView <BECloseableProtocol>
@@ -27,4 +29,6 @@
 
 - (void)showBottomButton;
 - (void)hiddenBottomButton;
+
+- (void)setExclusive:(BOOL)exclusive;
 @end

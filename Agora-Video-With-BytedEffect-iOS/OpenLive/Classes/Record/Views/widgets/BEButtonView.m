@@ -129,21 +129,24 @@
     [self.lDesc mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self);
         make.centerX.equalTo(self);
-        make.height.mas_equalTo(13);
+        make.height.mas_equalTo(10);
     }];
     [self.lTitle mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.lDesc.mas_top).with.offset(-3);
-        make.height.mas_equalTo(10);
+        make.height.mas_equalTo(13);
         make.centerX.equalTo(self);
     }];
     
 }
 
 - (void)setPointOn:(BOOL)isOn {
-    if (isOn)
+    if (isOn) {
+        _lDesc.font = [UIFont boldSystemFontOfSize:11];
         _lDesc.text = @".";
-    else
+    } else {
+        _lDesc.font = [UIFont systemFontOfSize:11];
         _lDesc.text = @"";
+    }
 }
 
 - (void)setUsedStatus:(BOOL) used{

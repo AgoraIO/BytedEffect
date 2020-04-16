@@ -8,10 +8,21 @@
 
 #import "BEButtonItemModel.h"
 
+@interface BEButtonItemModel ()
+
+@end
+
 @implementation BEButtonItemModel
 
-+ (instancetype)initWithID:(BEEffectNode)ID selectImg:(NSString *)selectImg unselectImg:(NSString *)unselectImg title:(NSString *)title desc:(NSString *)desc {
+
++ (instancetype)initWithID:(BEEffectNode)ID selectImg:(NSString *)selectImg unselectImg:(NSString *)unselectImg title:(NSString *)title desc:(NSString *)desc{
     BEButtonItemModel *model = [[self alloc] initWithSelectImg:selectImg unselectImg:unselectImg title:title desc:desc];
+    model.ID = ID;
+    return model;
+}
+
++ (instancetype)initWithId:(BEEffectNode)ID {
+    BEButtonItemModel *model = [[self alloc] initWithSelectImg:nil unselectImg:nil title:nil desc:nil];
     model.ID = ID;
     return model;
 }
@@ -25,5 +36,14 @@
     }
     return self;
 }
+
+#pragma mark - setter
+- (void)setIntensity:(CGFloat)intensity {
+    _intensity = intensity;
+    if (_cell) {
+        [_cell setPointOn:intensity > 0];
+    }
+}
+
 
 @end

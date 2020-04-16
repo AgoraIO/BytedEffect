@@ -1,8 +1,3 @@
-/* 
-  Localizable.strings
-  BytedEffects
-  Copyright © 2019 ailab. All rights reserved.
-*/
 "ablum_not_supported"="Ablumnotsupported";
 "ablum_have_been_saved"="Photo has been saved to album";
 "age"="age";
@@ -16,9 +11,6 @@
 "beauty_smooth"="smooth";
 "beauty_whiten"="whitening";
 "black"="black";
-"blusher_shaishanghong"="Sunburnred";
-"blusher_weixunfen"="Micro-powder";
-"blusher_yuanqiju"="Tangerine";
 "brown"="brown";
 "btn_back"="BackWard";
 "choose"="ChooseOnePicture";
@@ -35,15 +27,32 @@
 "download_success"="Downloadsuccessful";
 "effect"="effect";
 "expression"="expression";
+
+//todo: syn chinese translation
 "eye_shaonvfen"="Girlpowder";
 "eye_yanxunzong"="Smokedbrown";
 "eye_ziranlan"="Naturalblue";
+
 "eyebrow_chunhei"="Pureblack";
 "eyebrow_danhui"="Lightgray";
 "eyebrow_ziranhei"="Naturalblack";
+
 "eyelash_nongmi"="Thick";
 "eyelash_shanxing"="sector";
 "eyelash_wumei"="charming";
+
+"blusher_shaishanghong"="Sunburnred";
+"blusher_weixunfen"="Micro-powder";
+"blusher_yuanqiju"="Tangerine";
+
+"pupil_babizi"="BabyPurple";
+"pupil_hunxuelan"="Mixedblue";
+"pupil_hunxuelv"="Mixedgreen";
+
+"lip_huluopohong"="Carrotred";
+"lip_huoliju"="Vibrantorange";
+"lip_yingsuhong"="Poppyred";
+
 "face_106_desc"="106point+action";
 "face_106_title"="face 106point";
 "face_280_desc"="eyeball+lips";
@@ -86,6 +95,31 @@
 "filter_wuyu"="story";
 "filter_xiyatu"="Seattle";
 "filter_yinhua"="cherry";
+"filter_Po1"="gentle";
+"filter_Po2"="sweetlove";
+"filter_Po3"="firstmeet";
+"filter_Po4"="darker";
+"filter_Po5"="milktea";
+"filter_Po6"="soft";
+"filter_Po7"="sunsut";
+"filter_Po8"="coolair";
+"filter_Po9"="seashoreport";
+"filter_Po10"="higray";
+"filter_L1"="island";
+"filter_L2"="earlysummer";
+"filter_L3"="night";
+"filter_L4"="reddish";
+"filter_L5"="clear";
+"filter_F1"="nature2";
+"filter_F2"="soda";
+"filter_F3"="california";
+"filter_F4"="yummy";
+"filter_F5"="sichuan";
+"filter_S1"="usfilm";
+"filter_S2"="redvintage";
+"filter_S3"="journey";
+"filter_S4"="warmyellow";
+"filter_S5"="bulefilm";
 "gender"="gender";
 "gesture"="gesture:";
 "hair_anlan"="Darkblue";
@@ -101,9 +135,6 @@
 "invalid_license"="InvalidLincense";
 "invalid_license_file"="Invalidlicensefile";
 "license_check_fail"="Licensecheckfailed";
-"lip_huluopohong"="Carrotred";
-"lip_huoliju"="Vibrantorange";
-"lip_yingsuhong"="Poppyred";
 "logo"="ByteDanceAI";
 //"makeup_blusher"="blusher";
 //"makeup_eye"="eye";
@@ -126,9 +157,6 @@
 "pout"="pout";
 "product"="ByteEffectSDK";
 "punching"="fistbump";
-"pupil_babizi"="BabyPurple";
-"pupil_hunxuelan"="Mixedblue";
-"pupil_hunxuelv"="Mixedgreen";
 "race"="race";
 "raise_eyebrow"="frown";
 "resource_prepare"="Reourcepreparation";
@@ -269,6 +297,11 @@
 "yaw"="yaw";
 "yellow"="yellow";
 
+//Animoji
+"animoji"="Animoji";
+"animoji_girl"="Girl";
+"animoji_boy"="Boy";
+
 // 标签
 "tab_body"="Body";
 "tab_body_cutout"="BodyCutout";
@@ -300,6 +333,10 @@
 "beauty_face_smooth"="smooth";
 "beauty_face_whiten"="whiten";
 "beauty_face_sharpen"="sharpen";
+"beauty_face_brighten_eye"="brighten eye";
+"beauty_face_remove_pouch"="pouch";
+"beauty_face_smile_folds"="smile folds";
+"beauty_face_whiten_teeth"="whiten teeth";
 
 // 美形功能
 "beauty_reshape_face_overall"="face";
@@ -315,6 +352,10 @@
 "beauty_reshape_forehead"="forehead";
 "beauty_reshape_mouth_zoom"="zoom mouth";
 "beauty_reshape_mouth_smile"="smile";
+
+"beauty_reshape_eye_spacing"="eyes pace";
+"beauty_reshape_eye_move"="eye move";
+"beauty_reshape_mouth_move"="mouth move";
 
 // 美体功能
 "beauty_body_thin"="thin";
@@ -340,3 +381,10 @@
 // 人脸比对
 "face_verify_same_face"="detect same face";
 "face_verify_not_same_face"="not detect same face";
+
+"exclusive_tip" = "re-open app for result";
+"setting_reset" = "reset";
+"setting_compare" = "compare";
+
+"tip_close_sticker_first"="please close sticker first";
+"tip_close_animoji_first"="please close animoji first";

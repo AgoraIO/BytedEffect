@@ -81,6 +81,10 @@
     [self.filterVC setAllCellsUnSelected];
 }
 
+- (void)setSelectItem:(NSString *)filterPath {
+    [self.filterVC setSelectItem:filterPath];
+}
+
 @end
 
 
@@ -111,6 +115,10 @@
 
 - (void)test {
     [self.beautyVC test];
+}
+
+- (void)setSelectNode:(BEEffectNode)node {
+    [self.beautyVC setSelectNode:node];
 }
 
 #pragma mark - setter

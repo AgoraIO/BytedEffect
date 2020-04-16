@@ -3,6 +3,19 @@
 #import <UIKit/UIKit.h>
 #import "BEFrameProcessor.h"
 
+
+@protocol BETapDelegate <NSObject>
+
+- (void)onTap;
+
+@end
+
+@protocol BEDefaultTapDelegate <NSObject>
+
+- (void)onDefaultTap;
+
+@end
+
 @interface BEVideoRecorderViewController : UIViewController
 
 - (void)initProcessor:(EAGLContext *)context;

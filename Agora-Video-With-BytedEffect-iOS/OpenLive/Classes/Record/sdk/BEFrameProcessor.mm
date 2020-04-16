@@ -8,7 +8,8 @@
 #import "BERender.h"
 #import <memory>
 #import "BEEffectManager.h"
-#import "BEVideoRecorderViewController.h"
+#import "BEResourceHelper.h"
+#import "BEMacro.h"
 
 @implementation BEProcessResult
 @end
@@ -16,15 +17,17 @@
 @interface BEFrameProcessor() {
     
     EAGLContext *_glContext;
-    
+
     BOOL                    _effectOn;
     BEEffectManager         *_effectManager;
     BERender                *_render;
-    
+    BEResourceHelper        *_resourceHelper;
+
     unsigned char           *_pixelBuffPointer;
     unsigned char           *_buffOutPointer;
     unsigned int            _pixelBufferPointerLength;
     unsigned int            _buffOutPointerLength;
+    BOOL                    _shouldResetComposer;
 }
 
 @end
@@ -36,23 +39,22 @@
  * license只是为了追踪使用情况，可以随时申请无任何限制license
  */
 
-static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.labcv.demo_labcv_test_v3.0.0.licbag";
-
-- (instancetype)initWithContext:(EAGLContext *)context videoSize:(CGSize)size {
+- (instancetype)initWithContext:(EAGLContext *)context resourceDelegate:(id<BEResourceHelperDelegate>)delegate  {
     self = [super init];
     if (self) {
         _glContext = context;
-        _videoDimensions = size;
         
         _pixelBuffPointer = NULL;
         _buffOutPointer = NULL;
-        
         _effectOn = YES;
+        _shouldResetComposer = YES;
         
         _effectManager = [[BEEffectManager alloc] init];
         _render = [[BERender alloc] init];
+        _resourceHelper = [[BEResourceHelper alloc] init];
+        _resourceHelper.delegate = delegate;
 
-        [self _setupEffectSDK];
+        [self _setupEffectSDK:[_resourceHelper licensePath] model:[_resourceHelper modelDirPath] composer:[_resourceHelper composerPath]];
     }
     return self;
 }
@@ -60,8 +62,8 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
 /*
  * 初始化SDK
  */
-- (void)_setupEffectSDK {
-    [_effectManager setupEffectMangerWithLicenseVersion:LICENSE_PATH];
+- (void)_setupEffectSDK:(NSString *)license model:(NSString *)model composer:(NSString *)composer {
+    [_effectManager setupEffectManagerWithLicense:license model:model composer:composer];
 }
 
 - (void)_releaseSDK {
@@ -69,11 +71,11 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
     [_effectManager releaseEffectManager];
 }
 
-- (void)reset {
-    NSLog(@"BEFrameProcessor reset");
-    [self _releaseSDK];
-    [self _setupEffectSDK];
-}
+//- (void)reset {
+//    NSLog(@"BEFrameProcessor reset");
+//    [self _releaseSDK];
+//    [self _setupEffectSDK];
+//}
 
 - (void)dealloc {
     NSLog(@"BEFrameProcessor dealloc %@", NSStringFromSelector(_cmd));
@@ -103,7 +105,7 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
     width = width + (int) iLeft + (int) iRight;
     height = height + (int) iTop + (int) iBottom;
     bytesPerRow = bytesPerRow + (int) iLeft + (int) iRight;
-    
+
     baseAddress = [self preProcessBuffer:baseAddress width:width height:height bytePerRow:bytesPerRow];
     
     // 设置 OpenGL 环境 , 需要与初始化 SDK 时一致
@@ -123,10 +125,8 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
 //    result.texture = textureResult;
 //    result.rawData = [self transforTextureToRawData:textureResult width:width height:height];
     result.pixelBuffer = [self transforTextureToCVPixelBuffer:textureResult pixelBuffer:pixelBuffer width:width height:height bytesPerRow:bytesPerRow];
-    glDeleteTextures(1, &textureResult);
-    result.size  = CGSizeMake(width, height);
-    
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    result.size  = CGSizeMake(width, height);
     return result;
 }
 
@@ -135,7 +135,7 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
     if (bytesPerRow == realBytesPerRow) {
         return buffer;
     }
-    
+
     if(_pixelBuffPointer == NULL) {
         _pixelBuffPointer = (unsigned char*)malloc(width*height*4*(sizeof(unsigned char)));
         _pixelBufferPointerLength = width * height * 4;
@@ -144,7 +144,7 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
         _pixelBuffPointer = (unsigned char *)malloc(width * height * 4);
         _pixelBufferPointerLength = width * height * 4;
     }
-    
+
     unsigned char* to = _pixelBuffPointer;
     unsigned char* from = buffer;
     for(int i =0; i<height; i++) {
@@ -164,7 +164,7 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
         _buffOutPointer = (unsigned char *)malloc(width * height * 4 * sizeof(unsigned char));
         _buffOutPointerLength = width * height * 4;
     }
-    
+
     [_render transforTextureToImage:texture buffer:_buffOutPointer width:width height:height format:GL_RGBA];
     return _buffOutPointer;
 }
@@ -178,7 +178,7 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
         _buffOutPointer = (unsigned char *)malloc(width * height * 4 * sizeof(unsigned char));
         _buffOutPointerLength = width * height * 4;
     }
-    
+
     [_render transforTextureToImage:texture buffer:_buffOutPointer width:width height:height format:GL_BGRA];
     unsigned char *baseAddres = (unsigned char *)CVPixelBufferGetBaseAddress(pixelBuffer);
     unsigned char *from = _buffOutPointer;
@@ -192,7 +192,7 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
             from += realBytesPerRow;
         }
     }
-    
+
     return pixelBuffer;
 }
 
@@ -211,23 +211,27 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
  * 设置贴纸资源
  */
 - (void)setStickerPath:(NSString *)path{
+    if (path != nil && ![path isEqualToString:@""]) {
+        _shouldResetComposer = true;
+    }
     [_effectManager setStickerPath:path];
 }
 
-- (void)updateComposerNodes:(NSArray<NSNumber *> *)nodes {
+- (void)setComposerMode:(int)mode {
+    _composerMode = mode;
+    [_effectManager setComposerMode:mode];
+}
+
+- (void)updateComposerNodes:(NSArray<NSString *> *)nodes {
+    [self be_checkAndSetComposer];
+    
     [_effectManager updateComposerNodes:nodes];
 }
 
-- (void)updateComposerNodeIntensity:(BEEffectNode)node intensity:(CGFloat)intensity {
-    [_effectManager updateComposerNodeIntensity:node intensity:intensity];
+- (void)updateComposerNodeIntensity:(NSString *)node key:(NSString *)key intensity:(CGFloat)intensity {
+    [_effectManager updateComposerNodeIntensity:node key:key intensity:intensity];
 }
 
-/*
- * 设置license
- */
-- (void) setRenderLicense:(NSString *)license{
-    [_effectManager setEffectMangerLicense:license];
-}
 /*
  * 设置滤镜资源路径和系数
  */
@@ -264,12 +268,28 @@ static NSString * LICENSE_PATH = @"/labcv_test_20190920_20191022_com.bytedance.l
     _effectOn = on;
 }
 
-#pragma mark - 特效相关功能设置
-/*
- * 重新切换回美颜特效的状态，与贴纸分离
- */
-- (void)effectManagerSetInitalStatus{
-    [_effectManager initEffectCompose];
+- (NSArray<NSString *> *)availableFeatures {
+    return [_effectManager availableFeatures];
+}
+
+- (NSString *)sdkVersion {
+    return [_effectManager sdkVersion];
+}
+
+- (BEResourceHelper *)resourceHelper {
+    return _resourceHelper;
+}
+
+#pragma mark - private
+- (void)be_checkAndSetComposer {
+    if ([self be_shouldResetComposer]) {
+        [_effectManager initEffectCompose:[_resourceHelper composerPath]];
+        _shouldResetComposer = false;
+    }
+}
+
+- (BOOL)be_shouldResetComposer {
+    return _shouldResetComposer && _composerMode == 0;
 }
 
 @end

@@ -5,11 +5,12 @@
 #import "BEEffectResponseModel.h"
 #import <Masonry/Masonry.h>
 #import "BEModernEffectPickerControlFactory.h"
+#import "BEDeviceInfoHelper.h"
 
 @interface BEModernFilterPickerView ()<UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, strong) UICollectionView *collectionView;
-@property (nonatomic, copy) NSArray <BEEffect *>*filters;
+@property (nonatomic, copy) NSArray <BEEffect *> *filters;
 @property (nonatomic, weak) NSIndexPath* currentSelectedCellIndexPath;
 @end
 
@@ -21,8 +22,13 @@
     if (self) {
         [self addSubview:self.collectionView];
         [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(self.mas_top).with.offset(15);
-            make.leading.bottom.trailing.equalTo(self);
+            make.height.mas_equalTo(80);
+            make.leading.trailing.equalTo(self);
+            if (BEDeviceInfoHelper.isIPhoneXSeries) {
+                make.bottom.equalTo(self).with.offset(-20);
+            } else {
+                make.bottom.equalTo(self).with.offset(-10);
+            }
         }];
     }
     return self;
@@ -39,9 +45,24 @@
 - (void)setAllCellsUnSelected{
     if (_currentSelectedCellIndexPath){
         [self.collectionView deselectItemAtIndexPath:_currentSelectedCellIndexPath animated:false];
-        _currentSelectedCellIndexPath = nil;
-        [self.collectionView selectItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
     }
+    _currentSelectedCellIndexPath = nil;
+    [self.collectionView selectItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
+}
+
+- (void)setSelectItem:(NSString *)filterPath {
+    NSInteger index = 0;
+    if (filterPath == nil || [filterPath isEqualToString:@""]) {
+        index = 0;
+    } else {
+        for (int i = 0; i < self.filters.count; i++) {
+            if ([filterPath isEqualToString:self.filters[i].filePath]) {
+                index = i;
+                break;
+            }
+        }
+    }
+    [self.collectionView selectItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionNone];
 }
 
 #pragma mark - UICollectionViewDataSource

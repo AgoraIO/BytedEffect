@@ -6,17 +6,23 @@
 #import "BEStudioConstants.h"
 #import "BEModernEffectPickerControlFactory.h"
 #import "BEMacro.h"
+#import "BETextSliderView.h"
+#import "BEDeviceInfoHelper.h"
+#import "BEGlobalData.h"
 
-@interface BECameraContainerView() <UIGestureRecognizerDelegate>
+@interface BECameraContainerView() <UIGestureRecognizerDelegate, TextSliderViewDelegate>
 
 @property (nonatomic, strong) UIButton *settingsButton;
 @property (nonatomic, strong) UIButton *switchCameraButton;
 
 @property (nonatomic, strong) UIButton *effectButton;
 @property (nonatomic, strong) UIButton *stickerButton;
+@property (nonatomic, strong) UIButton *animojiButton;
 
 @property (nonatomic, strong) UILabel *effectLabel;
 @property (nonatomic, strong) UILabel *stickerLabel;
+@property (nonatomic, strong) UILabel *animojiLabel;
+
 
 @property (nonatomic, strong) UIImageView *watermarkView;
 @property (nonatomic, strong) UIButton* saveButton;
@@ -24,6 +30,9 @@
 @property (nonatomic, strong) UIControl *tapView;
 @property (nonatomic, strong) UIView *currentShowView;
 
+@property (nonatomic, strong) UISwitch *switchExclusive;
+
+//@property (nonatomic, strong) BETextSliderView *exposureSlider;
 @end
 
 @implementation BECameraContainerView
@@ -34,9 +43,9 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     
     self = [super initWithFrame:frame];
-
+    
     if (self) {
-       // [self addSubview:self.settingsButton];
+        // [self addSubview:self.settingsButton];
         [self addSubview:self.switchCameraButton];
         [self addSubview:self.watermarkView];
         
@@ -45,24 +54,52 @@
 #endif
         [self addSubview:self.effectButton];
         [self addSubview:self.stickerButton];
+        if (BEGlobalData.animojiEnable) {
+            [self addSubview:self.animojiButton];
+        };
+        
         
         [self addSubview:self.effectLabel];
         [self addSubview:self.stickerLabel];
+        if (BEGlobalData.animojiEnable) {
+            [self addSubview:self.animojiLabel];
+        }
+        //        [self addSubview:self.exposureSlider];
+        [self addSubview:self.switchExclusive];
         
-        [self.switchCameraButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.trailing.equalTo(self).offset(-30);
-            make.top.equalTo(self.mas_top).with.offset(30);
-            make.size.mas_equalTo(CGSizeMake(30, 30));
-        }];
+        NSInteger effectOffset;
+        NSInteger stickerOffset;
+        if (BEGlobalData.animojiEnable) {
+            effectOffset = -80;
+            stickerOffset = 0;
+        } else {
+            effectOffset = -50;
+            stickerOffset = 50;
+        }
         
         [self.watermarkView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self).offset(30);
+            if (BEDeviceInfoHelper.isIPhoneXSeries) {
+                make.top.equalTo(self).offset(40);
+            } else {
+                make.top.equalTo(self).offset(30);
+            }
             make.leading.equalTo(self).offset(26);
             make.size.mas_equalTo(CGSizeMake(128, 30));
         }];
         
+        [self.switchCameraButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.trailing.equalTo(self).offset(-30);
+            make.centerY.equalTo(self.watermarkView);
+            make.size.mas_equalTo(CGSizeMake(30, 30));
+        }];
+        
+        [self.switchExclusive mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(self.watermarkView);
+            make.right.equalTo(self.switchCameraButton.mas_left).with.offset(-10);
+        }];
+        
         [self.effectButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(self).with.offset(-80);
+            make.centerX.mas_equalTo(self).with.offset(effectOffset);
             make.bottom.equalTo(self.mas_bottom).with.offset(-80);
             make.size.mas_equalTo(CGSizeMake(32, 32));
         }];
@@ -74,7 +111,7 @@
         }];
         
         [self.stickerButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(self).with.offset(80);
+            make.centerX.mas_equalTo(self).with.offset(stickerOffset);
             make.bottom.equalTo(self.mas_bottom).with.offset(-80);
             make.size.mas_equalTo(CGSizeMake(32, 32));
         }];
@@ -85,6 +122,25 @@
             make.size.mas_equalTo(CGSizeMake(50, 32));
         }];
         
+        if (BEGlobalData.animojiEnable) {
+            [self.animojiButton mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.centerX.mas_equalTo(self).with.offset(80);
+                make.bottom.equalTo(self.mas_bottom).with.offset(-80);
+                make.size.mas_equalTo(CGSizeMake(32, 32));
+            }];
+            
+            [self.animojiLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self.animojiButton.mas_bottom);
+                make.centerX.mas_equalTo(self.animojiButton);
+                make.size.mas_equalTo(CGSizeMake(50, 32));
+            }];
+        }
+        
+        //        [self.exposureSlider  mas_makeConstraints:^(MASConstraintMaker *make) {
+        //            make.centerX.mas_equalTo(self);
+        //            make.bottom.mas_equalTo(self).offset(-200);
+        //            make.size.mas_equalTo(CGSizeMake(200, 60));
+        //        }];
         
 #if APP_IS_DEBUG
         [self.saveButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -92,11 +148,11 @@
             make.bottom.mas_equalTo(self).offset(-140);
             make.size.mas_equalTo(CGSizeMake(50, 50));
         }];
+        
 #endif
         UIGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap)];
         gesture.delegate = self;
         [self addGestureRecognizer:gesture];
-
     }
     return self;
 }
@@ -126,6 +182,12 @@
     }
 }
 
+- (void)onAnimojiButtonClicked {
+    if ([self.delegate respondsToSelector:@selector(onAnimojiButtonClicked:)]) {
+        [self.delegate onAnimojiButtonClicked:self.switchCameraButton];
+    }
+}
+
 - (void)onSaveButtonClicked:(UIButton*) sender{
     if ([self.delegate respondsToSelector:@selector(onSaveButtonClicked:)]){
         [self.delegate onSaveButtonClicked:sender];
@@ -135,6 +197,13 @@
 - (void)onTap {
     [self be_hideView];
 }
+
+- (void)onSwitchDidChanged:(UISwitch *)sender {
+    if ([self.delegate respondsToSelector:@selector(onExclusiveSwitchChanged:)]) {
+        [self.delegate onExclusiveSwitchChanged:sender];
+    }
+}
+
 #pragma mark - public
 
 - (void)showBottomView:(UIView *)view show:(BOOL)show {
@@ -147,12 +216,15 @@
 
 - (void)showBottomButton{
     self.saveButton.hidden = NO;
-
+    
     self.effectButton.hidden = NO;
     self.stickerButton.hidden = NO;
     
     self.effectLabel.hidden = NO;
     self.stickerLabel.hidden = NO;
+    
+    self.animojiButton.hidden = NO;
+    self.animojiLabel.hidden = NO;
 }
 
 - (void)hiddenBottomButton{
@@ -163,6 +235,13 @@
     
     self.effectLabel.hidden = YES;
     self.stickerLabel.hidden = YES;
+    
+    self.animojiButton.hidden = YES;
+    self.animojiLabel.hidden = YES;
+}
+
+- (void)setExclusive:(BOOL)exclusive {
+    self.switchExclusive.on = exclusive;
 }
 
 #pragma mark - private
@@ -211,6 +290,11 @@
 #pragma mark - UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
     return touch.view == self;
+}
+
+#pragma mark - TextSliderViewDelegate
+- (void)progressDidChange:(CGFloat)progress {
+    [[NSNotificationCenter defaultCenter] postNotificationName:BEEffectExporsureValueChangedNotification object:nil userInfo:@{BEEffectNotificationUserInfoKey: @(progress)}];
 }
 
 #pragma mark - getter && setter
@@ -294,9 +378,39 @@
         _stickerLabel.textAlignment = NSTextAlignmentCenter;
         _stickerLabel.numberOfLines = 1;
         _stickerLabel.font = [UIFont boldSystemFontOfSize:15];
-
+        
     }
     return _stickerLabel;
+}
+
+/*
+ * Animoji 按钮
+ */
+- (UIButton *)animojiButton {
+    if (!_animojiButton) {
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        UIImage *image = [UIImage imageNamed:@"iconSticker"];
+        [button setImage:image forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(onAnimojiButtonClicked) forControlEvents:UIControlEventTouchUpInside];
+        _animojiButton = button;
+    }
+    return _animojiButton;
+}
+
+/*
+ * Animoji label
+ */
+- (UILabel *)animojiLabel{
+    if (!_animojiLabel){
+        _animojiLabel = [[UILabel alloc] init];
+        _animojiLabel.text = NSLocalizedString(@"moji", nil);
+        _animojiLabel.textColor = [UIColor whiteColor];
+        _animojiLabel.textAlignment = NSTextAlignmentCenter;
+        _animojiLabel.numberOfLines = 1;
+        _animojiLabel.font = [UIFont boldSystemFontOfSize:15];
+        
+    }
+    return _animojiLabel;
 }
 
 - (NSArray<NSString *> *)segmentItems {
@@ -322,6 +436,24 @@
         [_tapView addTarget:self action:@selector(onTap) forControlEvents:UIControlEventTouchUpInside];
     }
     return _tapView;
+}
+
+//- (BETextSliderView *) exposureSlider{
+//    if (!_exposureSlider){
+//        _exposureSlider = [[BETextSliderView alloc] init];
+//        _exposureSlider.backgroundColor = [UIColor clearColor];
+//        _exposureSlider.delegate = self;
+//    }
+//    return _exposureSlider;
+//}
+
+- (UISwitch *)switchExclusive {
+    if (!_switchExclusive) {
+        _switchExclusive = [UISwitch new];
+        _switchExclusive.on = YES;
+        [_switchExclusive addTarget:self action:@selector(onSwitchDidChanged:) forControlEvents:UIControlEventValueChanged];
+    }
+    return _switchExclusive;
 }
 
 @end

@@ -38,7 +38,7 @@
     self = [super init];
     if (self) {
         self.isPaused = YES;
-        self.isFlipped = NO;
+        self.isFlipped = YES;
         self.videoOrientation = AVCaptureVideoOrientationPortrait;
         [self _setupCaptureSession];
         self.observerArray = [NSMutableArray array];
@@ -159,6 +159,68 @@
     }
 }
 
+- (CGFloat)maxBias {
+    return 1.58;
+}
+
+- (CGFloat)minBias {
+    return -1.38;
+}
+
+- (CGFloat)ratio {
+    return [self maxBias] - [self minBias];
+}
+
+- (void)setExposure:(float)exposure {
+    if (_device == nil) return ;
+    
+    NSError *error;
+   
+    //syn exposureTargetBias logic
+    CGFloat bias = [self maxBias] - exposure * [self ratio];
+    bias = MIN(MAX(bias, [self minBias]), [self maxBias]);
+    
+    [_device lockForConfiguration:&error];
+    [_device setExposureTargetBias:bias completionHandler:nil];
+    
+    if ([_device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]){
+        [_device setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+    }
+    
+    [_device unlockForConfiguration];
+    [_session commitConfiguration];
+}
+
+- (void) setExposurePointOfInterest:(CGPoint) point{
+    if (_device == nil) return ;
+    
+    [_device lockForConfiguration:nil];
+    if ([_device isExposurePointOfInterestSupported]) {
+        [_device setExposurePointOfInterest:point];
+    }
+    
+    if ([_device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]){
+        [_device setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+    }
+    
+    [_device unlockForConfiguration];
+}
+
+- (void) setFocusPointOfInterest:(CGPoint) point{
+    if (_device == nil)  return ;
+    
+    [_device lockForConfiguration:nil];
+    
+    if ([_device isFocusPointOfInterestSupported])
+        [_device setFocusPointOfInterest:point];
+    
+    if ([_device isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]){
+        [_device setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+    }
+    
+    [_device unlockForConfiguration];
+}
+
 #pragma mark - Private
 - (void)_requestCameraAuthorization:(void (^)(BOOL granted))handler {
     AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
@@ -189,6 +251,7 @@
 - (void)__setupCaptureSession {
     _session = [[AVCaptureSession alloc] init];
     [_session beginConfiguration];
+    
     if ([_session canSetSessionPreset:AVCaptureSessionPreset1280x720]) {
         [_session setSessionPreset:AVCaptureSessionPreset1280x720];
         _sessionPreset = AVCaptureSessionPreset1280x720;
@@ -198,6 +261,9 @@
     }
     [_session commitConfiguration];
     _device = [self _cameraDeviceWithPosition:AVCaptureDevicePositionFront];
+    [self _setCameraParaments];
+    [self setExposure:0.5];
+    
     _devicePosition = AVCaptureDevicePositionFront;
     _bufferQueue = dispatch_queue_create("HTSCameraBufferQueue", NULL);
     
@@ -229,7 +295,24 @@
         [self _throwError:VideoCaptureErrorFailedAddDeviceInput];
         NSLog( @"Could not add device input to the session" );
     }
+    
+    //支持人脸检测，取得人脸框信息测光用
+    _metaDataOutput = [[AVCaptureMetadataOutput alloc] init];
+    if ([_session canAddOutput:_metaDataOutput]) {
+        [_session addOutput:_metaDataOutput];
+
+        //指定对象输出的元数据类型，AV Foundation支持多种类型 这里限制使用人脸元数据
+        NSArray *metadataObjectTypes = @[AVMetadataObjectTypeFace];
+        _metaDataOutput.metadataObjectTypes = metadataObjectTypes;
+
+        //人脸检测用到的硬件加速，而且许多重要的任务都在主线程，一般指定主线程
+        dispatch_queue_t mainQueue = dispatch_get_main_queue();
+        //指定AVCaptureMetadataOutputObjectsDelegate
+        [_metaDataOutput setMetadataObjectsDelegate:self  queue:mainQueue];
+    }
+    
     [_session commitConfiguration];
+    
     
     [self setFlip:_isFlipped];
     [self setOrientation:_videoOrientation];
@@ -237,6 +320,26 @@
     [self registerNotification];
     [self startRunning];
 }
+
+- (void)_setCameraParaments {
+    [_device lockForConfiguration:nil];
+    
+    //设置自动对焦
+    if ([_device isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]){
+        [_device setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+    }
+    
+    //设置自动曝光
+    if ([_device isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]){
+        [_device setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
+    }
+    
+    //设置曝光补偿的值
+//    [_device setExposureTargetBias:0.98 completionHandler:nil];
+
+    [_device unlockForConfiguration];
+}
+
 
 - (void)registerNotification
 {
@@ -306,6 +409,20 @@
             [_delegate videoCapture:self didOutputSampleBuffer:sampleBuffer];
         }
     }
+}
+
+
+#pragma mark - AVCaptureMetadataOutputObjectsDelegate
+- (void)captureOutput:(AVCaptureOutput *)output didOutputMetadataObjects:(NSArray<__kindof AVMetadataObject *> *)metadataObjects fromConnection:(AVCaptureConnection *)connection{
+
+    //将人脸数据传给委托对象
+
+    if (!_isPaused) {
+        if (_metadelegate && [_metadelegate respondsToSelector:@selector(captureOutput:didOutputMetadataObjects:)]) {
+            [_metadelegate captureOutput:self didOutputMetadataObjects:metadataObjects];
+        }
+    }
+    
 }
 
 #pragma mark - getter && setter

@@ -70,7 +70,7 @@ static CGFloat const BEModernFilterCellContentPadding = 2.f;
         _titleLabel = [[UILabel alloc] init];
         _titleLabel.textColor = [UIColor whiteColor];
         _titleLabel.textAlignment = NSTextAlignmentCenter;
-        _titleLabel.font = [UIFont systemFontOfSize:13];
+        _titleLabel.font = [UIFont systemFontOfSize:11];
         _titleLabel.numberOfLines = 0;
         _titleLabel.backgroundColor = [UIColor clearColor];
     }
@@ -83,7 +83,7 @@ static CGFloat const BEModernFilterCellContentPadding = 2.f;
         _borderLayer.frame = self.contentView.bounds;
         CGRect layerRect = CGRectInset(self.contentView.bounds, BEModernFilterCellContentPadding/2, BEModernFilterCellContentPadding/2);
         _borderLayer.path = [UIBezierPath bezierPathWithRect:layerRect].CGPath;
-        _borderLayer.strokeColor = [UIColor purpleColor].CGColor;
+        _borderLayer.strokeColor = [UIColor whiteColor].CGColor;
         _borderLayer.lineWidth = BEModernFilterCellContentPadding;
         _borderLayer.hidden = YES;
         _borderLayer.fillColor = nil;

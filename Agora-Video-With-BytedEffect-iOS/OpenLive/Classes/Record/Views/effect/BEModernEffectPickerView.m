@@ -13,17 +13,18 @@
 #import "BEButtonViewCell.h"
 #import "BETextSliderView.h"
 #import "BECategoryView.h"
+#import "BEGlobalData.h"
+
+NSInteger TYPE_NO_SELECT = -2;
 
 @interface BEModernEffectPickerView ()<UICollectionViewDelegate, UICollectionViewDataSource, BEEffectSwitchTabViewDelegate, UIGestureRecognizerDelegate, TextSliderViewDelegate>
 
 @property (nonatomic, strong) UIView *vBackground;
 @property (nonatomic, strong) UICollectionView *contentCollectionView;
 @property (nonatomic, strong) BECategoryView *categoryView;
-//@property (nonatomic, strong) BEEffectSwitchTabView *switchTabView;
 @property (nonatomic, strong) BETextSliderView *textSlider;
 @property (nonatomic, strong) UIButton *btnNormal;
 @property (nonatomic, strong) UIButton *btnDefault;
-
 @property (nonatomic, strong) UIButton *btnBack;
 @property (nonatomic, strong) UILabel *lTitle;
 @property (nonatomic, strong) BEFaceBeautyViewController *vcMakeupOption;
@@ -35,19 +36,30 @@
 /**
  集合，保存当前选择的所有特效 id
  */
-@property (nonatomic, strong) NSMutableSet<NSNumber *> *selectComposerNodes;
+@property (nonatomic, strong) NSMutableSet<NSNumber *> *selectedNodeSet;
 /**
  字典，保存某一个层级的特效种选择的某一种类，如选择了口红特效中的胡萝卜红，键为口红 id，
  值为胡萝卜红 id，用于显示 option view 的时候保存状态
  */
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *selectNodes;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, NSNumber *> *selectedNodeofPage;
 /**
  字典，保存所有的 ButtonItemModel
  */
-@property (nonatomic, strong) NSMutableDictionary<NSNumber *, BEButtonItemModel*> *cellWithIntensitySelectedModels;
+@property (nonatomic, strong) NSMutableDictionary<NSNumber *, BEButtonItemModel *> *buttonItemModelCache;
+/**
+ 字典，保存所有设置过 intensity 小项 ID
+ */
+@property (nonatomic, strong) NSMutableSet<NSNumber *> *buttonItemModelWithIntensity;
+/**
+ 字典，保存所有小项的默认值
+ */
+@property (nonatomic, strong) NSDictionary<NSNumber *, NSNumber *> *defaultValue;
 
-@property (nonatomic, assign) float filterIntensity;
-@property (nonatomic, strong) NSMutableArray<NSNumber*> *clearStatus;
+@property (nonatomic, strong) NSMutableArray *savedData;
+
+@property (nonatomic, strong) NSString *filterPath;
+@property (nonatomic, assign) CGFloat filterIntensity;
+@property (nonatomic, assign) BOOL closeFilter;
 @end
 
 @implementation BEModernEffectPickerView
@@ -74,25 +86,26 @@
         [self addSubview:self.btnBack];
         [self addSubview:self.btnDefault];
         
-        [self.vBackground mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.bottom.right.equalTo(self);
-            make.top.equalTo(self).with.offset(40);
+        [self.btnDefault mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.size.mas_equalTo(CGSizeMake(60, 30));
+            make.right.equalTo(self.btnNormal);
+            make.top.mas_equalTo(self);
         }];
         [self.btnNormal mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.size.mas_equalTo(CGSizeMake(40, 40));
-            make.right.equalTo(self);
-            make.top.mas_equalTo(0);
+            make.size.mas_equalTo(CGSizeMake(60, 30));
+            make.right.equalTo(self).with.offset(-5);
+            make.top.equalTo(self.btnDefault.mas_bottom).with.offset(5);
         }];
-        [self.btnDefault mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.size.mas_equalTo(CGSizeMake(40, 40));
-            make.right.equalTo(self.btnNormal.mas_left);
-            make.centerY.equalTo(self.btnNormal);
+        [self.vBackground mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.bottom.right.equalTo(self);
+            make.top.equalTo(self.btnNormal.mas_bottom).with.offset(5);
         }];
         [self.textSlider mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.mas_top).with.offset(-20);
-            make.centerX.mas_equalTo(self);
+//            make.top.equalTo(self.mas_top).with.offset(-20);
+            make.bottom.equalTo(self.vBackground.mas_top).with.offset(-10);
+            make.left.mas_equalTo(self.mas_left).mas_offset(20);
             make.height.mas_equalTo(60);
-            make.width.mas_equalTo(220);
+            make.width.mas_equalTo(self.bounds.size.width * 0.7);
         }];
         
         [self.categoryView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -108,10 +121,12 @@
     }
     [self loadData];
     [self addObserver];
-    
-    _cellWithIntensitySelectedModels =  [NSMutableDictionary dictionary];
-    _selectComposerNodes = [NSMutableSet set];
-    _selectNodes = [NSMutableDictionary<NSNumber *,NSNumber *> dictionary];
+
+    _selectedNodeSet = [NSMutableSet set];
+    _selectedNodeofPage = [NSMutableDictionary<NSNumber *,NSNumber *> dictionary];
+    _buttonItemModelCache = [NSMutableDictionary dictionary];
+    _buttonItemModelWithIntensity = [NSMutableSet set];
+    _savedData = [NSMutableArray array];
 
     return self;
 }
@@ -131,9 +146,6 @@
         }
     }
     
-    _clearStatus  = [NSMutableArray array];
-    for (int i = 0; i < self.categories.count; i ++)
-        [_clearStatus addObject:[NSNumber numberWithBool:false]];
     [self.contentCollectionView reloadData];
 }
 
@@ -144,6 +156,21 @@
                                              selector:@selector(onItemSelect:)
                                                  name:BEEffectButtonItemSelectNotification
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(onFilterSelect:)
+                                                 name:BEEffectFilterDidChangeNotification
+                                               object:nil];
+}
+
+- (void)onFilterSelect:(NSNotification *)aNote {
+    NSString *path = aNote.userInfo[BEEffectNotificationUserInfoKey];
+    self.filterPath = path;
+    self.filterIntensity = [[[self defaultValue] objectForKey:@(BETypeFilter)] floatValue];
+    self.textSlider.progress = self.filterIntensity;
+    [[NSNotificationCenter defaultCenter]
+         postNotificationName:BEEffectFilterIntensityDidChangeNotification
+         object:nil
+         userInfo:@{BEEffectNotificationUserInfoKey:@(self.filterIntensity)}];
 }
 
 - (void)onItemSelect:(NSNotification *)aNote {
@@ -154,66 +181,83 @@
 
 - (void)onItemSelect:(BEButtonItemModel *)model parent:(BEEffectNode)parent {
     BEEffectNode type = model.ID;
-    
+    // 保存 model
+    [self.buttonItemModelCache setObject:model forKey:@(model.ID)];
     // 保存选择状态
-    [self.selectNodes setObject:@(type) forKey:@(parent)];
+    [self.selectedNodeofPage setObject:@(type) forKey:@(parent)];
     
     if (type == BETypeClose) {
         // 关闭
-        NSInteger mask;
-        if ((parent & MASK) == 0) {
-            mask = ~MASK;
-        } else {
-            mask = ~SUB_MASK;
-        }
-        [self be_removeObjectsFromSet:self.selectComposerNodes mask:mask type:parent];
-        [self be_removeObjectFromDict:self.selectNodes mask:mask type:parent];
-        
-        //关闭的时候，将当前tab下的使用过的slider的值变为0，然后将他们变为未使用的状态
-        for (NSNumber *buttonType in _cellWithIntensitySelectedModels){
-            BEButtonItemModel *model = [_cellWithIntensitySelectedModels objectForKey:buttonType];
-            if ((model.ID & ~MASK) ==  parent){
-                if (model.cell != nil) {
-                    [model.cell setPointOn:NO];
-                }
-                model.intensity = 0.0;
-            }
-        }
+        NSInteger mask = ((parent & MASK) == 0 ? ~MASK : ~SUB_MASK);
+        [self be_removeObjectsFromSet:self.selectedNodeSet mask:mask type:parent];
+        [self be_removeObjectFromDict:self.selectedNodeofPage mask:mask type:parent];
+        [self be_removeObjectsFromSet:self.buttonItemModelWithIntensity mask:mask type:parent];
+        [self be_closeModelFromDict:self.buttonItemModelCache mask:mask type:parent];
     } else {
         // 美体选中即生效
         if (parent == BETypeBeautyBody) {
             model.intensity = 1;
-            if (model.cell != nil) {
-                [model.cell setPointOn:YES];
-            }
         }
         if (parent == BETypeMakeup) {
             // 美妆二级菜单
+
+            // 染发不显示滑杆
+            self.textSlider.hidden = (type == BETypeMakeupHair);
+
             [self be_showMakeupOptions:type title:model.title isShow:YES animation:YES];
-            return;
         } else {
             if ((parent & ~MASK) == BETypeMakeup) {
                 // 美妆三级菜单
-                [self be_removeObjectsFromSet:self.selectComposerNodes mask:~SUB_MASK type:parent];
+                [self be_removeObjectsFromSet:self.selectedNodeSet mask:~SUB_MASK type:parent];
             }
             
-            [self.selectComposerNodes addObject:@(type)];
+            [self.selectedNodeSet addObject:@(type)];
         }
     }
     
+    // 初次打开额外设置默认值
+    if (![self.buttonItemModelWithIntensity containsObject:@(model.ID & ~SUB_MASK)]) {
+        if ((model.ID & ~MASK) == BETypeMakeup) {
+            if ((model.ID & SUB_MASK)) {
+                // 美妆三级菜单
+                BEButtonItemModel *parentModel = [self.buttonItemModelCache objectForKey:@(parent)];
+                [self be_getDefaultIntensity:parentModel];
+            }
+        } else {
+            [self be_getDefaultIntensity:model];
+        }
+    }
+
     //有强度的cell来保存这些值
     if (parent == BETypeBeautyFace
         || parent == BETypeBeautyReshape
-        || parent == BETypeBeautyBody) {
-        [_cellWithIntensitySelectedModels setObject:model forKey:@(type)];
+        || parent == BETypeBeautyBody
+//        || parent == BETypeMakeup
+        || parent == BETypeMakeupLip
+        || parent == BETypeMakeupBlusher
+        || parent == BETypeMakeupEyelash
+        || parent == BETypeMakeupPupil
+        || parent == BETypeMakeupEyeshadow
+        || parent == BETypeMakeupEyebrow
+        || parent == BETypeMakeupFacial) {
+        [self.buttonItemModelWithIntensity addObject:@(type & ~SUB_MASK)];
     }
     
-    self.textSlider.progress = model.intensity;
+    CGFloat realIntensity = [self be_getRealIntensity:model];
+    self.textSlider.progress = realIntensity;
+    if (parent == BETypeMakeup && type != BETypeClose) {
+        return ;
+    }
     self.currentSelectItem = type;
     [[NSNotificationCenter defaultCenter]
                  postNotificationName:BEEffectUpdateComposerNodesNotification
                  object:nil
-                 userInfo:@{ BEEffectNotificationUserInfoKey: [self.selectComposerNodes copy] }];
+                 userInfo:@{ BEEffectNotificationUserInfoKey: [self.selectedNodeSet copy] }];
+    
+    [[NSNotificationCenter defaultCenter]
+                 postNotificationName:BEEffectUpdateComposerNodeIntensityNotification
+                 object:nil
+                      userInfo:@{BEEffectNotificationUserInfoKey:@[@(self.currentSelectItem), @(realIntensity)]}];
 }
 
 #pragma mark - public
@@ -225,6 +269,10 @@
     [self.categoryView selectItemAtIndex:0 animated:NO];
     [self.contentCollectionView reloadData];
     [self.contentCollectionView selectItemAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:NO scrollPosition:UICollectionViewScrollPositionLeft];
+}
+
+- (void)setDefaultEffect {
+    [self onBtnDefaultTap];
 }
 
 #pragma mark - Private
@@ -250,15 +298,28 @@
     [dict removeObjectsForKeys:arr];
 }
 
+- (void)be_closeModelFromDict:(NSMutableDictionary<NSNumber *, BEButtonItemModel *> *)dict mask:(NSInteger)mask type:(BEEffectNode)type {
+    //关闭的时候，将当前tab下的使用过的slider的值变为0，然后将他们变为未使用的状态
+    for (NSNumber *buttonType in dict) {
+        BEButtonItemModel *model = [dict objectForKey:buttonType];
+        if ((model.ID & mask) ==  type) {
+            model.intensity = 0.0;
+        }
+    }
+}
+
 - (void)be_showMakeupOptions:(BEEffectNode)type title:(NSString *)title isShow:(BOOL)show animation:(BOOL)animation {
     if (show) {
         self.lTitle.text = title;
         self.categoryView.switchTabView.alpha = 0;
         self.contentCollectionView.alpha = 0;
         [self.vcMakeupOption setType:type];
-        NSNumber *node = [self.selectNodes objectForKey:@(type)];
+        NSNumber *node = [self.selectedNodeofPage objectForKey:@(type)];
         if (node != nil) {
             [self.vcMakeupOption setSelectNode:[node longValue]];
+            self.currentSelectItem = [node longValue];
+        } else {
+            self.currentSelectItem = BETypeClose;
         }
         [self.be_topViewController addChildViewController:self.vcMakeupOption];
         [self addSubview:self.vcMakeupOption.view];
@@ -269,7 +330,6 @@
                 make.left.right.equalTo(self.contentCollectionView);
                 make.height.equalTo(self.contentCollectionView);
             }];
-            [self layoutIfNeeded];
             [UIView animateWithDuration:0.3 animations:^{
                 self.btnBack.alpha = 1;
                 self.lTitle.alpha = 1;
@@ -317,7 +377,36 @@
     [self progressDidChange:value];
 }
 
+- (void)be_getDefaultIntensity:(BEButtonItemModel *)model {
+    NSNumber *intensity = [self.defaultValue objectForKey:@(model.ID)];
+    if (intensity != nil) {
+        model.intensity = [intensity floatValue];
+    } else {
+        NSLog(@"be_getDefaultIntensity: no such id %ld default value", model.ID);
+    }
+}
+
+- (CGFloat)be_getRealIntensity:(BEButtonItemModel *)model {
+    if ((model.ID & SUB_MASK)) {
+        model = [self.buttonItemModelCache objectForKey:@(model.ID & ~SUB_MASK)];
+    }
+    return model.intensity;
+}
+
+- (CGFloat)be_getRealIntensityWithID:(BEEffectNode)ID {
+    if (ID & SUB_MASK) {
+        return [self.buttonItemModelCache objectForKey:@(ID & ~SUB_MASK)].intensity;
+    } else {
+        return [self.buttonItemModelCache objectForKey:@(ID)].intensity;
+    }
+}
+
 #pragma mark - UICollectionViewDataSource
+
+-(NSInteger )numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+    [collectionView.collectionViewLayout invalidateLayout];
+    return 1;
+}
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.categories.count;
@@ -330,26 +419,39 @@
     Class cellClass = [BEEffectContentCollectionViewCellFactory contentCollectionViewCellWithPanelTabType:model.type];
     BEEffectContentCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:[cellClass be_identifier] forIndexPath:indexPath];
     
-    switch (row) {
-        case 0:
-            ((BEEffectFaceBeautyViewCell *)cell).type = BETypeBeautyFace;
-            break;
-        case 1:
-            ((BEEffectFaceBeautyViewCell *)cell).type = BETypeBeautyReshape;
-            break;
-        case 2:
-            ((BEEffectFaceBeautyViewCell *)cell).type = BETypeBeautyBody;
-            break;
-        case 3:
-            ((BEEffectFaceBeautyViewCell *)cell).type = BETypeMakeup;
-            break;
-        default:
-            break;
+    if ([cell isKindOfClass:[BEEffectFaceBeautyViewCell class]]) {
+        NSArray<NSNumber *> *array = [BEModernEffectPickerView effectNodeArray];
+        BEEffectFaceBeautyViewCell *c = (BEEffectFaceBeautyViewCell *)cell;
+        // 设置数据
+        c.type = [array[row] longValue];
+        // 设置选中单位
+        BEEffectNode selectNode = [[self.selectedNodeofPage objectForKey:@(c.type)] longValue];
+        if (selectNode == 0) {
+            selectNode = BETypeClose;
+        }
+        [c setSelectNode:selectNode];
     }
     
-    if (self.clearStatus[row] == [NSNumber numberWithBool:YES]){
-        [cell setCellUnSelected];
-        self.clearStatus[row] = [NSNumber numberWithBool:NO];
+    if ([cell isKindOfClass:[BEEffecFiltersCollectionViewCell class]]) {
+        if (self.closeFilter) {
+            [cell setCellUnSelected];
+            self.closeFilter = NO;
+        } else {
+            [(BEEffecFiltersCollectionViewCell *)cell setSelectItem:self.filterPath];
+        }
+    }
+    
+    if (BEGlobalData.beautyEnable) {
+        cell.contentView.userInteractionEnabled = YES;
+        NSArray<UITapGestureRecognizer *> *gestures = [cell gestureRecognizers];
+        for (UITapGestureRecognizer *gesture in gestures) {
+            if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
+                [cell removeGestureRecognizer:gesture];
+            }
+        }
+    } else {
+        cell.contentView.userInteractionEnabled = NO;
+        [cell addGestureRecognizer:[self tapGestureRecongnizer]];
     }
     return cell;
 }
@@ -359,21 +461,25 @@
     if (index < 0 || index >= [self.contentCollectionView numberOfItemsInSection:0]) {
         return;
     }
-    if (index == self.categories.count - 1){
+    if (index == self.categories.count - 1) {
         self.currentSelectItem = BETypeFilter;
     }
     
-    //美体美妆，隐藏 slider
-    self.textSlider.hidden = (index == 3 || index == 2);
+    //美体，隐藏 slider
+    self.textSlider.hidden = (index == 2);
     
-    //每次切换tab的时候
+    //每次切换tab的时候切换 currentSelectItem
     if (index < self.categories.count - 1) {
-        NSNumber *number = [NSNumber
-                            numberWithInteger:(index + 1) << OFFSET];
-        self.currentSelectItem = (BEEffectNode)[[self.selectNodes objectForKey:number] integerValue];
-        BEButtonItemModel *model = [self.cellWithIntensitySelectedModels
-                                    objectForKey:[NSNumber numberWithInteger:self.currentSelectItem]];
-        self.textSlider.progress = model.intensity;
+        NSNumber *curPage = [BEModernEffectPickerView effectNodeArray][index];
+        self.currentSelectItem = [[self.selectedNodeofPage objectForKey:curPage] longValue];
+        self.textSlider.progress = [self.buttonItemModelCache objectForKey:@(self.currentSelectItem)].intensity;
+        // 如果是美妆，则继续寻找三级菜单的选中
+        if ((self.currentSelectItem & ~MASK) == BETypeMakeup) {
+            self.currentSelectItem = [[self.selectedNodeofPage objectForKey:[NSNumber numberWithLong:self.currentSelectItem]] longValue];
+        }
+    } else if (index < self.categories.count) {
+        self.textSlider.progress = self.filterIntensity;
+        self.currentSelectItem = BETypeFilter;
     }
     
     [self.contentCollectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:YES];
@@ -400,16 +506,23 @@
         return;
     }
     
-    BEButtonItemModel *model = [_cellWithIntensitySelectedModels objectForKey:@(self.currentSelectItem)];
+    BEButtonItemModel *model = [self.buttonItemModelCache objectForKey:@(self.currentSelectItem)];
     
     //确定每一个父节点被选择不会改变
     if (model.ID == BETypeClose) {
         return;
     }
-    
+
+
+    //三级菜单不会标点，移动滑杆映射到二级菜单
+    if ((model.ID & SUB_MASK)) {
+        model = [self.buttonItemModelCache objectForKey:@(model.ID & ~SUB_MASK)];
+    }
+
     model.intensity = value;
+
     if (model.cell != nil) {
-        [model.cell setUsedStatus:value > 0];
+        [model.cell setPointOn:value];
     }
     
     [[NSNotificationCenter defaultCenter]
@@ -424,24 +537,87 @@
 
 #pragma mark - BECloseableProtocol
 - (void)onClose {
-    [self.selectNodes removeAllObjects];
-    [self.selectComposerNodes removeAllObjects];
+    if (self.savedData.count > 0) return;
+    self.savedData[0] = [self.selectedNodeofPage mutableCopy];
+    self.savedData[1] = [self.selectedNodeSet mutableCopy];
+    self.savedData[2] = [self.buttonItemModelCache mutableCopy];
+    self.savedData[3] = [self.buttonItemModelWithIntensity mutableCopy];
     
-    for (int i = 0; i < self.clearStatus.count; i ++){
-        self.clearStatus[i] = [NSNumber numberWithBool:YES];
-    }
-    
-    self.textSlider.progress = 0.0;
-    for (NSNumber *number in self.cellWithIntensitySelectedModels) {
-        BEButtonItemModel *model = [self.cellWithIntensitySelectedModels objectForKey:number];
+    NSMutableDictionary<NSNumber *, NSNumber *> *savedIntensities = [NSMutableDictionary dictionary];
+    for (NSNumber *number in self.buttonItemModelCache) {
+        BEButtonItemModel *model = [self.buttonItemModelCache objectForKey:number];
         if (model != nil) {
+            [savedIntensities setObject:@(model.intensity) forKey:number];
             model.intensity = 0;
         }
     }
-    [self.cellWithIntensitySelectedModels removeAllObjects];
+    self.savedData[4] = savedIntensities;
+    self.savedData[5] = self.filterPath;
+    self.savedData[6] = @(self.filterIntensity);
+    self.savedData[7] = @(self.currentSelectItem);
     
+    [self.selectedNodeofPage removeAllObjects];
+    [self.selectedNodeSet removeAllObjects];
+    [self.buttonItemModelCache removeAllObjects];
+    [self.buttonItemModelWithIntensity removeAllObjects];
+    self.filterPath = nil;
+    self.filterIntensity = 0;
+    self.currentSelectItem = BETypeClose;
+    self.closeFilter = YES;
+    self.textSlider.progress = 0.0;
     [self be_showMakeupOptions:0 title:nil isShow:NO animation:NO];
     [self.contentCollectionView reloadData];
+}
+
+- (void)recoverEffect {
+    if (self.savedData.count == 0) return;
+    
+    self.selectedNodeofPage = self.savedData[0];
+    self.selectedNodeSet = self.savedData[1];
+    self.buttonItemModelCache = self.savedData[2];
+    self.buttonItemModelWithIntensity = self.savedData[3];
+    NSDictionary<NSNumber *, NSNumber *> *savedIntensities = self.savedData[4];
+    self.filterPath = self.savedData[5];
+    self.filterIntensity = [self.savedData[6] floatValue];
+    self.currentSelectItem = [self.savedData[7] longValue];
+    self.closeFilter = NO;
+    
+    CGFloat intensity = 0.0;
+    for (NSNumber *number in self.buttonItemModelCache) {
+        BEButtonItemModel *model = [self.buttonItemModelCache objectForKey:number];
+        if (model != nil) {
+            model.intensity = [[savedIntensities objectForKey:number] floatValue];
+            if (model.ID == self.currentSelectItem) {
+                intensity = model.intensity;
+            }
+        }
+    }
+    
+    [[NSNotificationCenter defaultCenter]
+                 postNotificationName:BEEffectUpdateComposerNodesNotification
+                 object:nil
+                 userInfo:@{ BEEffectNotificationUserInfoKey: [self.selectedNodeSet copy] }];
+    
+    for (NSNumber *number in self.selectedNodeSet) {
+        [[NSNotificationCenter defaultCenter]
+                     postNotificationName:BEEffectUpdateComposerNodeIntensityNotification
+                     object:nil
+                          userInfo:@{BEEffectNotificationUserInfoKey:@[number, @([self be_getRealIntensityWithID:[number longValue]])]}];
+    }
+    
+    if (self.filterPath != nil && ![self.filterPath isEqualToString:@""]) {
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName:BEEffectFilterDidChangeNotification
+            object:nil
+            userInfo:@{BEEffectNotificationUserInfoKey: self.filterPath}];
+    }
+    
+    if (self.currentSelectItem == BETypeFilter) {
+        intensity = self.filterIntensity;
+    }
+    self.textSlider.progress = intensity;
+    [self.contentCollectionView reloadData];
+    [self.savedData removeAllObjects];
 }
 
 #pragma mark - button selector
@@ -466,12 +642,32 @@
 }
 
 - (void)onBtnDefaultTap {
+    if (self.onDefaultTapDelegate != nil) {
+        [self.onDefaultTapDelegate onDefaultTap];
+    }
+    [self.savedData removeAllObjects];
+    
     // ugly
     // 两种思路，一种是通过各 cell 调用，完成自己所掌功能的默认值设置
     // 一种是在此处统一设置默认值，这就破坏了 model 数据的内聚
     // 前者暂时无法在 cell invisible 时获取对象，暂采用第二种方法
+    
+    // save pre-data
     NSInteger currentSelect = _currentSelectItem;
     CGFloat currentProgress = self.textSlider.progress;
+    NSNumber *beautyFaceSelect = [self.selectedNodeofPage objectForKey:@(BETypeBeautyFace)];
+    NSNumber *beautyReshapeSelect = [self.selectedNodeofPage objectForKey:@(BETypeBeautyReshape)];
+    
+    // close beauty body and makeup when set default
+    [self onItemSelect:[BEButtonItemModel initWithId:BETypeClose] parent:BETypeMakeup];
+    [self onItemSelect:[BEButtonItemModel initWithId:BETypeClose] parent:BETypeBeautyBody];
+    if ([self.vcMakeupOption.view superview]) {
+        [self be_showMakeupOptions:0 title:nil isShow:false animation:YES];
+    }
+    
+    // close filter
+    self.closeFilter = YES;
+    [[NSNotificationCenter defaultCenter] postNotificationName:BEEffectFilterDidChangeNotification object:nil userInfo:@{BEEffectNotificationUserInfoKey:@""}];
     
     NSArray<BEButtonItemModel *> *array = [BEEffectDataManager buttonItemArrayWithDefaultIntensity];
     for (BEButtonItemModel *model in array) {
@@ -488,6 +684,21 @@
     
     _currentSelectItem = currentSelect;
     self.textSlider.progress = currentProgress;
+    BEGlobalData.beautyEnable = YES;
+    
+    // recover saved data
+    // when previous select node is close, remove it
+    if (beautyFaceSelect == nil || [beautyFaceSelect longValue] == BETypeClose) {
+        beautyFaceSelect = @(TYPE_NO_SELECT);
+    }
+    if (beautyReshapeSelect == nil || [beautyReshapeSelect longValue] == BETypeClose) {
+        beautyReshapeSelect = @(TYPE_NO_SELECT);
+    }
+    [self.selectedNodeofPage setObject:beautyFaceSelect forKey:@(BETypeBeautyFace)];
+    [self.selectedNodeofPage setObject:beautyReshapeSelect forKey:@(BETypeBeautyReshape)];
+    // 由于 UICollectionView 复用导致 progressDidChange 函数中改变 model.cell 状态
+    // 却映射到了其他位置，需要重新加载数据，刷新各 cell 状态
+    [self.contentCollectionView reloadData];
 }
 
 #pragma mark - getter && setter
@@ -548,7 +759,13 @@
 {
     if (!_btnNormal) {
         _btnNormal = [UIButton new];
-        [_btnNormal setImage:[UIImage imageNamed:@"iconEffect.png"] forState:UIControlStateNormal];
+        [_btnNormal setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
+        [_btnNormal setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.4]];
+        [[_btnNormal layer] setCornerRadius:5];
+        [[_btnNormal layer] setMasksToBounds:YES];
+        [[_btnNormal layer] setBorderColor:[UIColor colorWithWhite:0 alpha:0.6].CGColor];
+        [[_btnNormal layer] setBorderWidth:1];
+        [_btnNormal setTitle:NSLocalizedString(@"setting_compare", nil) forState:UIControlStateNormal];
         [_btnNormal addTarget:self action:@selector(onBtnNormalTouchDown)
              forControlEvents:UIControlEventTouchDown];
         [_btnNormal addTarget:self action:@selector(onBtnNormalTouchUp)
@@ -564,7 +781,13 @@
 - (UIButton *)btnDefault {
     if (!_btnDefault) {
         _btnDefault = [UIButton new];
-        [_btnDefault setImage:[UIImage imageNamed:@"iconEffect.png"] forState:UIControlStateNormal];
+        [_btnDefault setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
+        [_btnDefault setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.4]];
+        [[_btnDefault layer] setCornerRadius:5];
+        [[_btnDefault layer] setMasksToBounds:YES];
+        [[_btnDefault layer] setBorderColor:[UIColor colorWithWhite:0 alpha:0.6].CGColor];
+        [[_btnDefault layer] setBorderWidth:1];
+        [_btnDefault setTitle:NSLocalizedString(@"setting_reset", nil) forState:UIControlStateNormal];
         [_btnDefault addTarget:self action:@selector(onBtnDefaultTap) forControlEvents:UIControlEventTouchUpInside];
     }
     return _btnDefault;
@@ -598,6 +821,29 @@
         _vcMakeupOption = [BEFaceBeautyViewController new];
     }
     return _vcMakeupOption;
+}
+
+- (UITapGestureRecognizer *)tapGestureRecongnizer {
+    UITapGestureRecognizer *tapGestureRecongnizer = [[UITapGestureRecognizer alloc] initWithTarget:self.onTapDelegate action:@selector(onTap)];
+    return tapGestureRecongnizer;
+}
+
+- (NSDictionary<NSNumber *,NSNumber *> *)defaultValue {
+    return [BEEffectDataManager defaultValue];
+}
+
++ (NSArray<NSNumber *> *)effectNodeArray {
+    static dispatch_once_t onceToken;
+    static NSArray<NSNumber *> *array;
+    dispatch_once(&onceToken, ^{
+        array = @[
+                 [NSNumber numberWithLong:BETypeBeautyFace],
+                 [NSNumber numberWithLong:BETypeBeautyReshape],
+                 [NSNumber numberWithLong:BETypeBeautyBody],
+                 [NSNumber numberWithLong:BETypeMakeup],
+                 [NSNumber numberWithLong:BETypeFilter]];
+    });
+    return array;
 }
 
 @end

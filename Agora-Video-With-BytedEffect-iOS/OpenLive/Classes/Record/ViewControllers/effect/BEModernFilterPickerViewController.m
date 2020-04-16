@@ -1,11 +1,11 @@
 // Copyright (C) 2019 Beijing Bytedance Network Technology Co., Ltd.
 
-#import "BEMacro.h"
 #import "BEModernFilterPickerViewController.h"
 #import "BEModernFilterPickerView.h"
 #import "BEEffectDataManager.h"
 #import <Masonry/Masonry.h>
 #import "BEStudioConstants.h"
+#import "BEMacro.h"
 
 @interface BEModernFilterPickerViewController ()<BEModernFilterPickerViewDelegate>
 
@@ -31,6 +31,10 @@
 #pragma mark - public
 - (void)setAllCellsUnSelected{
     [self.filterPickerView setAllCellsUnSelected];
+}
+
+- (void)setSelectItem:(NSString *)filterPath {
+    [self.filterPickerView setSelectItem:filterPath];
 }
 
 #pragma mark - BEModernFilterPickerViewDelegate

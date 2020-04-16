@@ -18,3 +18,8 @@ NSString *const BEEffectNormalButtonNotification = @"BEEffectNormalButtonNotific
 NSString *const BEEffectButtonItemSelectNotification = @"BEEffectButtonItemSelectNotification";
 NSString *const BEEffectUpdateComposerNodesNotification = @"BEEffectUpdateComposerNodesNotification";
 NSString *const BEEffectUpdateComposerNodeIntensityNotification = @"BEEffectUpdateComposerNodeIntensityNotification";
+
+NSString *const BEEffectExporsureValueChangedNotification = @"kBEEffectExporsureValueChangedNotification";
+
+NSString *const BEFUserDefaultExclusive = @"kBEFUserDefaultExclusive";
+NSString *const BESdkErrorNotification = @"kBESdkErrorNotification";
