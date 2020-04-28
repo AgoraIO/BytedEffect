@@ -76,7 +76,7 @@ public class EffectRenderHelper {
         mImageWidth = imageWidth;
         mImageHeight = imageHeight;
         LogUtils.d("Effect SDK version =" + mRenderManager.getSDKVersion());
-        int ret = mRenderManager.init(context, ResourceHelper.getModelDir(context), ResourceHelper.getLicensePath(context), imageWidth, imageHeight);
+        int ret = mRenderManager.init(context, ResourceHelper.getModelDir(context), ResourceHelper.getLicensePath(context));
         if (ret != BEF_RESULT_SUC) {
             LogUtils.e("mRenderManager.init failed!! ret =" + ret);
         }
