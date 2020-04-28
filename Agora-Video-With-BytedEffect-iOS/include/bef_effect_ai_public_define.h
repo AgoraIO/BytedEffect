@@ -106,6 +106,9 @@ typedef int bef_intensity_type;
 
 #define BEF_RESULT_SDK_FUNC_NOT_INCLUDE                -128 // SDK 未包含功能
 #define BEF_RESULT_GL_ERROR_OCCUR                      -150 // opengl发生错误
+// 注意 EffectSDK 内部使用了-114 -115， 我们使用TOB的宏进行隔离 并转换到 -151 -152，后续错误码需要避开
+//#define BEF_RESULT_GL_CONTECT               -151 //无效的glcontext
+//#define BEF_RESULT_GL_TEXTURE               -152 //无效的gltexture
 
 
 #define BEF_EFFECT_FEATURE_LEN                          128 //feature name 默认长度

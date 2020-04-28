@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03287F4E24587526003A8468 /* AgoraRtcKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03287F4D24587526003A8468 /* AgoraRtcKit.framework */; };
 		07D24CF81D866704002C69BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D24CF71D866704002C69BF /* main.m */; };
 		07D24CFB1D866704002C69BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D24CFA1D866704002C69BF /* AppDelegate.m */; };
 		07D24D011D866704002C69BF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07D24CFF1D866704002C69BF /* Main.storyboard */; };
@@ -26,7 +27,6 @@
 		07D24D341D867644002C69BF /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D24D2B1D867644002C69BF /* SettingsViewController.m */; };
 		07D24D351D867644002C69BF /* VideoViewLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D24D2D1D867644002C69BF /* VideoViewLayouter.m */; };
 		07D24D361D867644002C69BF /* VideoSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 07D24D2F1D867644002C69BF /* VideoSession.m */; };
-		07D29C3A1E9E187D00C3583C /* AgoraRtcEngineKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07D29C391E9E187D00C3583C /* AgoraRtcEngineKit.framework */; };
 		07D29C3C1E9E192A00C3583C /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 07D29C3B1E9E192A00C3583C /* libresolv.tbd */; };
 		0B30174223599D5F00B967C4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B30173723599D5F00B967C4 /* Localizable.strings */; };
 		0B30174323599D5F00B967C4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B30173923599D5F00B967C4 /* InfoPlist.strings */; };
@@ -96,6 +96,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		03287F4D24587526003A8468 /* AgoraRtcKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraRtcKit.framework; sourceTree = "<group>"; };
 		07D24CF31D866704002C69BF /* OpenLive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OpenLive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07D24CF71D866704002C69BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		07D24CF91D866704002C69BF /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -125,7 +126,6 @@
 		07D24D2D1D867644002C69BF /* VideoViewLayouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoViewLayouter.m; sourceTree = "<group>"; };
 		07D24D2E1D867644002C69BF /* VideoSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoSession.h; sourceTree = "<group>"; };
 		07D24D2F1D867644002C69BF /* VideoSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoSession.m; sourceTree = "<group>"; };
-		07D29C391E9E187D00C3583C /* AgoraRtcEngineKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AgoraRtcEngineKit.framework; sourceTree = "<group>"; };
 		07D29C3B1E9E192A00C3583C /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		0B30173823599D5F00B967C4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
 		0B30173A23599D5F00B967C4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = InfoPlist.strings; sourceTree = "<group>"; };
@@ -258,7 +258,7 @@
 				A7C50EF5212168BD00774322 /* Accelerate.framework in Frameworks */,
 				704E32D31FEB50A10027B6DB /* SystemConfiguration.framework in Frameworks */,
 				07D29C3C1E9E192A00C3583C /* libresolv.tbd in Frameworks */,
-				07D29C3A1E9E187D00C3583C /* AgoraRtcEngineKit.framework in Frameworks */,
+				03287F4E24587526003A8468 /* AgoraRtcKit.framework in Frameworks */,
 				07D24D211D866809002C69BF /* CoreTelephony.framework in Frameworks */,
 				07D24D1F1D866802002C69BF /* CoreMedia.framework in Frameworks */,
 				07D24D1D1D8667FB002C69BF /* CoreMotion.framework in Frameworks */,
@@ -296,6 +296,7 @@
 		07D24CF51D866704002C69BF /* OpenLive */ = {
 			isa = PBXGroup;
 			children = (
+				03287F4D24587526003A8468 /* AgoraRtcKit.framework */,
 				0B69408923B0FA1A00E7EF16 /* Classes */,
 				07D24CFF1D866704002C69BF /* Main.storyboard */,
 				07D24D261D867644002C69BF /* MainViewController.h */,
@@ -314,7 +315,6 @@
 				07D24D2D1D867644002C69BF /* VideoViewLayouter.m */,
 				07D24D281D867644002C69BF /* ProfileCell.h */,
 				07D24D291D867644002C69BF /* ProfileCell.m */,
-				07D29C391E9E187D00C3583C /* AgoraRtcEngineKit.framework */,
 				382885BC2249E57A0023BCFA /* Resources */,
 				07D24CF61D866704002C69BF /* Supporting Files */,
 			);

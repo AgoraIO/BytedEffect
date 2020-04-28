@@ -1,1 +1,5 @@
+*.a
+.DS_Store
 xcuserdata
+Pods
+AgoraRtcKit.framework

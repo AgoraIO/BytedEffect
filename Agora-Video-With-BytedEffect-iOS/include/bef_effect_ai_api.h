@@ -35,16 +35,33 @@ BEF_SDK_API void bef_effect_ai_destroy(bef_effect_handle_t handle);
 BEF_SDK_API bef_effect_result_t bef_effect_ai_init(bef_effect_handle_t handle, int width, int height, const char *strModeDir, const char* deviceName);
 
 /**
+ * should set imageMode = true while processing images with only faceMakeup sticker has been set
+ * @param handle
+ * @param imageMode
+ * @return
+ */
+BEF_SDK_API bef_effect_result_t bef_effect_ai_set_image_mode(bef_effect_handle_t handle, bool imageMode);
+
+/**
 * @brief Return all available features name, can only be called after bef_effect_ai_init
-* @param handle       Effect handle
 * @return            If succeed return BEF_EFFECT_RESULT_SUC, `features` will contain all available feature name item, each item has length of BEF_EFFECT_FEATURE_LEN,
             `len` would point to a number which stands for the amount of features.
             BEF_RESULT_FAIL is returned if the given space is not big enough (according to `len`) to hold data returned by this api.
             BEF_RESULT_INVALID_EFFECT_HANDLE is returned if this api been called before `bef_effect_ai_init`.
 */
-BEF_SDK_API bef_effect_result_t bef_effect_available_features(bef_effect_handle_t handle, char (*features)[BEF_EFFECT_FEATURE_LEN], int* len);
+BEF_SDK_API bef_effect_result_t bef_effect_available_features(char (*features)[BEF_EFFECT_FEATURE_LEN], int* len);
+
+
 
 /**
+ * @brief Set camera toward
+ * @param handle        Effect handle that  initialized
+ * @param position      Camera positin
+ * @return if succeed return IES_RESULT_SUC,  other value please see bef_effect_base_define.h
+ */
+BEF_SDK_API bef_effect_result_t bef_effect_ai_set_camera_device_position(bef_effect_handle_t handle,  bef_ai_camera_position position);
+
+ /**
  * @brief Set frame size.
  * @param handle     Effect handle
  * @param width      Texture width

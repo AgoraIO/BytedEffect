@@ -49,7 +49,9 @@
 - (void)setupEffectManagerWithLicense:(NSString *)license model:(NSString *)model composer:(NSString *)composer {
     _licensePath = [license mutableCopy];
     
-    NSLog(@"sdk version is: %s", bef_effect_ai_get_version());
+    char version[10];
+    bef_effect_ai_get_version(version, 10);
+    NSLog(@"sdk version is: %s", version);
     
     bef_effect_result_t result = bef_effect_ai_create(&_renderMangerHandle);
     if (result != BEF_RESULT_SUC) {
@@ -287,12 +289,9 @@
     //Dynamic lookup feature availability
     char features[30][BEF_EFFECT_FEATURE_LEN];
     int feature_len = 30;
-    int code = bef_effect_available_features(_renderMangerHandle, features, &feature_len);
+    int *pf = &feature_len;
+    int code = bef_effect_available_features(features, pf);
     if (code == BEF_RESULT_SUC) {
-        NSLog(@"Here is all features available:");
-        for (int i = 0; i < feature_len; ++i) {
-            NSLog(@"%s\n", features[i]);
-        }
         NSMutableArray *array = [NSMutableArray arrayWithCapacity:feature_len];
         for (int i = 0; i < feature_len; i++) {
             [array addObject:[NSString stringWithUTF8String:features[i]]];
@@ -311,7 +310,8 @@
 }
 
 - (NSString *)sdkVersion {
-    char *version = bef_effect_ai_get_version();
+    char version[10];
+    bef_effect_ai_get_version(version, 10);
     return [NSString stringWithUTF8String:version];
 }
 
