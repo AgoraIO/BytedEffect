@@ -60,6 +60,10 @@
         return;
     }
 
+    NSFileManager* fm = [NSFileManager defaultManager];
+    if([fm fileExistsAtPath:_licensePath]){
+        NSLog(@"file exists");
+    }
     result = bef_effect_ai_check_license(_renderMangerHandle, _licensePath.UTF8String);
     if (result != BEF_RESULT_SUC) {
         [self be_sendNotification:@"Effect Initialization failed"];
@@ -84,7 +88,6 @@
  */
 - (void)initEffectCompose:(NSString *)composer {
     bef_effect_result_t result;
-    
     // 传入compose 文件的路径
     result = bef_effect_ai_set_effect(_renderMangerHandle, [composer UTF8String]);
     if (result != BEF_RESULT_SUC) {

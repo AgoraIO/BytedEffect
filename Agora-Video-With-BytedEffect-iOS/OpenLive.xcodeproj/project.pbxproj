@@ -79,16 +79,11 @@
 		0B69411923B0FA1A00E7EF16 /* UICollectionViewCell+BEAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B6940ED23B0FA1A00E7EF16 /* UICollectionViewCell+BEAdd.m */; };
 		0BADBB2923556F2100A81922 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BADBB2823556F2100A81922 /* UIKit.framework */; };
 		0BEA5F6E23557BB9004072A4 /* ModelResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5F6623557BB9004072A4 /* ModelResource.bundle */; };
-		0BEA5F6F23557BB9004072A4 /* BuildinMakeup.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5F6723557BB9004072A4 /* BuildinMakeup.bundle */; };
 		0BEA5F7023557BB9004072A4 /* ComposeMakeup.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5F6823557BB9004072A4 /* ComposeMakeup.bundle */; };
-		0BEA5F7123557BB9004072A4 /* BeautyResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5F6923557BB9004072A4 /* BeautyResource.bundle */; };
-		0BEA5F7223557BB9004072A4 /* ReshapeResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5F6A23557BB9004072A4 /* ReshapeResource.bundle */; };
 		0BEA5F7323557BB9004072A4 /* StickerResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5F6B23557BB9004072A4 /* StickerResource.bundle */; };
 		0BEA5F7423557BB9004072A4 /* LicenseBag.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5F6C23557BB9004072A4 /* LicenseBag.bundle */; };
 		0BEA5F7523557BB9004072A4 /* FilterResource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0BEA5F6D23557BB9004072A4 /* FilterResource.bundle */; };
 		382885B52249DC390023BCFA /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 382885B42249DC390023BCFA /* CoreML.framework */; };
-		382885BF2249E57A0023BCFA /* srmetal.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 382885BD2249E57A0023BCFA /* srmetal.metallib */; };
-		382885C02249E57A0023BCFA /* model.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 382885BE2249E57A0023BCFA /* model.bundle */; };
 		38D618B8224A5FAE004A6C87 /* BeautyEffectTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D618B7224A5FAE004A6C87 /* BeautyEffectTableViewController.m */; };
 		5D951A437AE740A6631DE1F9 /* Pods_OpenLive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84757568F5EF760A7D4FD922 /* Pods_OpenLive.framework */; };
 		704E32D31FEB50A10027B6DB /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 704E32D21FEB50A10027B6DB /* SystemConfiguration.framework */; };
@@ -228,10 +223,7 @@
 		0BADBB31235572F100A81922 /* byted_effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = byted_effect.h; sourceTree = "<group>"; };
 		0BADBB32235572F100A81922 /* bef_effect_ai_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bef_effect_ai_api.h; sourceTree = "<group>"; };
 		0BEA5F6623557BB9004072A4 /* ModelResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ModelResource.bundle; sourceTree = "<group>"; };
-		0BEA5F6723557BB9004072A4 /* BuildinMakeup.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = BuildinMakeup.bundle; sourceTree = "<group>"; };
 		0BEA5F6823557BB9004072A4 /* ComposeMakeup.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ComposeMakeup.bundle; sourceTree = "<group>"; };
-		0BEA5F6923557BB9004072A4 /* BeautyResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = BeautyResource.bundle; sourceTree = "<group>"; };
-		0BEA5F6A23557BB9004072A4 /* ReshapeResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ReshapeResource.bundle; sourceTree = "<group>"; };
 		0BEA5F6B23557BB9004072A4 /* StickerResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = StickerResource.bundle; sourceTree = "<group>"; };
 		0BEA5F6C23557BB9004072A4 /* LicenseBag.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = LicenseBag.bundle; sourceTree = "<group>"; };
 		0BEA5F6D23557BB9004072A4 /* FilterResource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FilterResource.bundle; sourceTree = "<group>"; };
@@ -591,10 +583,7 @@
 			isa = PBXGroup;
 			children = (
 				0BEA5F6623557BB9004072A4 /* ModelResource.bundle */,
-				0BEA5F6723557BB9004072A4 /* BuildinMakeup.bundle */,
 				0BEA5F6823557BB9004072A4 /* ComposeMakeup.bundle */,
-				0BEA5F6923557BB9004072A4 /* BeautyResource.bundle */,
-				0BEA5F6A23557BB9004072A4 /* ReshapeResource.bundle */,
 				0BEA5F6B23557BB9004072A4 /* StickerResource.bundle */,
 				0BEA5F6C23557BB9004072A4 /* LicenseBag.bundle */,
 				0BEA5F6D23557BB9004072A4 /* FilterResource.bundle */,
@@ -655,7 +644,7 @@
 				TargetAttributes = {
 					07D24CF21D866704002C69BF = {
 						CreatedOnToolsVersion = 8.0;
-						DevelopmentTeam = YRL53AJH7P;
+						DevelopmentTeam = GM72UGLGZW;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
@@ -690,21 +679,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				0B30174523599D5F00B967C4 /* Localizable.strings in Resources */,
-				0BEA5F7123557BB9004072A4 /* BeautyResource.bundle in Resources */,
-				382885C02249E57A0023BCFA /* model.bundle in Resources */,
 				0BEA5F7423557BB9004072A4 /* LicenseBag.bundle in Resources */,
 				0B30174223599D5F00B967C4 /* Localizable.strings in Resources */,
 				0B30174323599D5F00B967C4 /* InfoPlist.strings in Resources */,
-				0BEA5F7223557BB9004072A4 /* ReshapeResource.bundle in Resources */,
 				0B30174623599D5F00B967C4 /* InfoPlist.strings in Resources */,
-				382885BF2249E57A0023BCFA /* srmetal.metallib in Resources */,
 				0B30174423599D5F00B967C4 /* LaunchScreen.strings in Resources */,
 				07D24D061D866704002C69BF /* LaunchScreen.storyboard in Resources */,
 				0BEA5F7323557BB9004072A4 /* StickerResource.bundle in Resources */,
 				07D24D031D866704002C69BF /* Assets.xcassets in Resources */,
 				07D24D011D866704002C69BF /* Main.storyboard in Resources */,
 				0BEA5F7023557BB9004072A4 /* ComposeMakeup.bundle in Resources */,
-				0BEA5F6F23557BB9004072A4 /* BuildinMakeup.bundle in Resources */,
 				0BEA5F6E23557BB9004072A4 /* ModelResource.bundle in Resources */,
 				0BEA5F7523557BB9004072A4 /* FilterResource.bundle in Resources */,
 			);
@@ -1002,7 +986,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = YRL53AJH7P;
+				DEVELOPMENT_TEAM = GM72UGLGZW;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1034,7 +1018,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = YRL53AJH7P;
+				DEVELOPMENT_TEAM = GM72UGLGZW;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

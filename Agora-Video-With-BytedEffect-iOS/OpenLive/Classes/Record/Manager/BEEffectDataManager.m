@@ -218,17 +218,17 @@ static NSArray* stickersArray = nil;
                                       // 美颜
                                       @(BETypeBeautyFaceSharpe):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_IOS"
+                                           initWithPath:@"/beauty_IOS_camera"
                                            key:@"sharp"],
                                       
                                       @(BETypeBeautyFaceSmooth):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_IOS"
+                                           initWithPath:@"/beauty_IOS_camera"
                                            key:@"smooth"],
                                       
                                       @(BETypeBeautyFaceWhiten):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_IOS"
+                                           initWithPath:@"/beauty_IOS_camera"
                                            key:@"whiten"],                                
                                       
                                       @(BETypeBeautyFaceBrightenEye):
@@ -251,82 +251,82 @@ static NSArray* stickersArray = nil;
                                       // 美形
                                       @(BETypeBeautyReshapeFaceOverall):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Overall"],
                                       
                                       @(BETypeBeautyReshapeFaceCut):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_CutFace"],
                                       
                                       @(BETypeBeautyReshapeFaceSmall):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Face"],
                                       
                                       @(BETypeBeautyReshapeEye):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Eye"],
                                       
                                       @(BETypeBeautyReshapeEyeRotate):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_RotateEye"],
                                       
                                       @(BETypeBeautyReshapeCheek):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Zoom_Cheekbone"],
                                       
                                       @(BETypeBeautyReshapeJaw):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Zoom_Jawbone"],
                                       
                                       @(BETypeBeautyReshapeNoseLean):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Nose"],
                                       
                                       @(BETypeBeautyReshapeNoseLong):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_MovNose"],
                                       
                                       @(BETypeBeautyReshapeChin):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Chin"],
                                       
                                       @(BETypeBeautyReshapeForehead):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Forehead"],
                                       
                                       @(BETypeBeautyReshapeMouthZoom):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_ZoomMouth"],
                                       
                                       @(BETypeBeautyReshapeMouthSmile):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_MouthCorner"],
                                       
                                       @(BETypeBeautyReshapeEyeSpacing):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Eye_Spacing"],
                                       
                                       @(BETypeBeautyReshapeEyeMove):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_Eye_Move"],
                                       
                                       @(BETypeBeautyReshapeMouthMove):
                                           [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
+                                           initWithPath:@"/reshape_camera"
                                            key:@"Internal_Deform_MovMouth"],
                                       
                                       
