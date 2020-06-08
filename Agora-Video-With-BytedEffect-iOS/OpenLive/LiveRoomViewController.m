@@ -12,11 +12,12 @@
 #import "VideoViewLayouter.h"
 #import "BeautyEffectTableViewController.h"
 #import "KeyCenter.h"
-#import "BEVideoCapture.h"
-#import "BEFrameProcessor.h"
 #import "BEVideoRecorderViewController.h"
 
-@interface LiveRoomViewController () <AgoraRtcEngineDelegate, BeautyEffectTableVCDelegate, AgoraVideoSourceProtocol, BEVideoCaptureDelegate, UIPopoverPresentationControllerDelegate>
+#import <AGMBase/AGMBase.h>
+#import <AGMCapturer/AGMCapturer.h>
+
+@interface LiveRoomViewController () <AgoraRtcEngineDelegate, BeautyEffectTableVCDelegate, AgoraVideoSourceProtocol, UIPopoverPresentationControllerDelegate>
 @property (weak, nonatomic) IBOutlet UILabel *roomNameLabel;
 @property (weak, nonatomic) IBOutlet UIView *remoteContainerView;
 @property (weak, nonatomic) IBOutlet UIButton *broadcastButton;
@@ -36,9 +37,12 @@
 @property (assign, nonatomic) BOOL isBeautyOn;
 @property (strong, nonatomic) AgoraBeautyOptions *beautyOptions;
 
-@property (nonatomic, strong) BEVideoCapture *capture;
-//@property (nonatomic, strong) BEFrameProcessor *processor;
 @property (nonatomic, strong) BEVideoRecorderViewController *vc;
+
+#pragma Capturer
+@property (nonatomic, strong) AGMCameraCapturer *cameraCapturer;
+@property (nonatomic, strong) AGMCapturerVideoConfig *videoConfig;
+@property (nonatomic, strong) AGMVideoAdapterFilter *videoAdapterFilter;
 
 @end
 
@@ -123,8 +127,8 @@
     [_vc.view mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
-    [self _createCamera];
-    
+    [self initCapturer];
+    [self initBEProcessor];
     [self loadAgoraKit];
     
     self.beautyOptions = [[AgoraBeautyOptions alloc] init];
@@ -136,24 +140,69 @@
     self.isBeautyOn = YES;
 }
 
-- (void)_createCamera {
-    _capture = [[BEVideoCapture alloc] init];
-    _capture.isOutputWithYUV = NO;
-    _capture.delegate = self;
+- (void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
+#define DEGREES_TO_RADIANS(x) (x * M_PI/180.0)
+    CGAffineTransform rotation = CGAffineTransformMakeRotation( DEGREES_TO_RADIANS(90));
+    switch (orientation) {
+        case UIInterfaceOrientationPortrait:
+            rotation = CGAffineTransformMakeRotation( DEGREES_TO_RADIANS(90));
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            rotation = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(180));
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            rotation = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(0));
+            break;
+            
+        default:
+            break;
+    }
+    self.videoAdapterFilter.affineTransform = rotation;
     
-//    _glView = [[BEGLView alloc] initWithFrame: [UIScreen mainScreen].bounds];
-//    [self.view insertSubview:_glView belowSubview:_cameraContainerView];
-//    [_glView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.edges.equalTo(self.view);
-//    }];
+}
+
+- (void)initCapturer {
+    #pragma mark Capturer
+        self.videoConfig = [AGMCapturerVideoConfig defaultConfig];
+        self.videoConfig.videoSize = CGSizeMake(480, 640);
+        self.videoConfig.sessionPreset = AGMCaptureSessionPreset480x640;
+        self.videoConfig.fps = 15;
+        self.cameraCapturer = [[AGMCameraCapturer alloc] initWithConfig:self.videoConfig];
+        
+    #pragma mark Filter
+        self.videoAdapterFilter = [[AGMVideoAdapterFilter alloc] init];
+        self.videoAdapterFilter.ignoreAspectRatio = YES;
+    #pragma mark push pixelBuffer
+        __weak typeof(self) weakSelf = self;
+        [self.cameraCapturer addVideoSink:self.videoAdapterFilter];
+        //        #define DEGREES_TO_RADIANS(x) (x * M_PI/180.0)
+        // Device Orientation Portrait
+        //    CGAffineTransform rotation = CGAffineTransformMakeRotation( DEGREES_TO_RADIANS(90));
+        // Device Orientation LandscapeLeft
+        //    CGAffineTransform rotation = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(180));
+        // Device Orientation LandscapeRight
+        //    CGAffineTransform rotation = CGAffineTransformMakeRotation(DEGREES_TO_RADIANS(0));
+        //    self.videoAdapterFilter.affineTransform = rotation;
+        [self.videoAdapterFilter setFrameProcessingCompletionBlock:^(AGMVideoSource * _Nonnull videoSource, CMTime time) {
+            CVPixelBufferRef pixelBuffer = videoSource.framebufferForOutput.pixelBuffer;
+            double timeStamp = (double)time.value / time.timescale;
+            BEProcessResult *result = [weakSelf.vc process:pixelBuffer timeStamp:timeStamp];
+            if (result == nil) {
+                return;
+            }
+            [weakSelf.consumer consumePixelBuffer:result.pixelBuffer withTimestamp:time rotation:AgoraVideoRotationNone];
+        }];
+}
+
+
+- (void)initBEProcessor {
     EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
     [EAGLContext setCurrentContext:context];
-//    _processor = [[BEFrameProcessor alloc] initWithContext:context videoSize:_capture.videoSize];
-//    _processor.cameraPosition = _capture.devicePosition;
-    _capture.sessionPreset = AVCaptureSessionPreset1280x720;
     [_vc initProcessor:context];
-    
-    [_capture startRunning];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -170,6 +219,8 @@
 }
 
 - (IBAction)doSwitchCameraPressed:(UIButton *)sender {
+    [self.cameraCapturer switchCamera];
+    // Switching camera need to call below function
     [self.rtcEngine switchCamera];
 }
 
@@ -208,6 +259,7 @@
 }
 
 - (IBAction)doLeavePressed:(UIButton *)sender {
+    [self.cameraCapturer stop];
     [self leaveChannel];
 }
 
@@ -421,32 +473,14 @@
 }
 
 - (void)shouldStart {
-    [_capture resume];
+    [self.cameraCapturer start];
 }
 
 - (void)shouldStop {
-    [_capture pause];
+    [self.cameraCapturer stop];
 }
 
 - (void)shouldDispose {
-    [_capture stopRunning];
-}
-
-#pragma mark - BEVideoCaptureDelegate
-- (void)videoCapture:(BEVideoCapture *)camera didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer {
-    CVImageBufferRef imageRef = CMSampleBufferGetImageBuffer(sampleBuffer);
-    CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-    double timeStamp = (double)sampleTime.value/sampleTime.timescale;
-    BEProcessResult *result = [_vc process:imageRef timeStamp:timeStamp];
-    if (result == nil) {
-        return;
-    }
-    [self.consumer consumePixelBuffer:result.pixelBuffer
-                        withTimestamp:sampleTime
-                             rotation:AgoraVideoRotationNone];
-}
-
-- (void)videoCapture:(BEVideoCapture *)camera didFailedToStartWithError:(VideoCaptureError)error {
     
 }
 

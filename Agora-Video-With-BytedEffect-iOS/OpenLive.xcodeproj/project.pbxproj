@@ -36,6 +36,8 @@
 		0BADBB2923556F2100A81922 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BADBB2823556F2100A81922 /* UIKit.framework */; };
 		14A5E957248E1835006631F1 /* srmetal.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 14A5E955248E1835006631F1 /* srmetal.metallib */; };
 		14A5E958248E1835006631F1 /* model.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 14A5E956248E1835006631F1 /* model.bundle */; };
+		14A5E95B248E1CDD006631F1 /* AGMCapturer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14A5E959248E1CDD006631F1 /* AGMCapturer.framework */; };
+		14A5E95D248E1CDD006631F1 /* AGMBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 14A5E95A248E1CDD006631F1 /* AGMBase.framework */; };
 		382885B52249DC390023BCFA /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 382885B42249DC390023BCFA /* CoreML.framework */; };
 		38D618B8224A5FAE004A6C87 /* BeautyEffectTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D618B7224A5FAE004A6C87 /* BeautyEffectTableViewController.m */; };
 		5D951A437AE740A6631DE1F9 /* Pods_OpenLive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84757568F5EF760A7D4FD922 /* Pods_OpenLive.framework */; };
@@ -134,6 +136,8 @@
 		0BADBB32235572F100A81922 /* bef_effect_ai_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bef_effect_ai_api.h; sourceTree = "<group>"; };
 		14A5E955248E1835006631F1 /* srmetal.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; path = srmetal.metallib; sourceTree = "<group>"; };
 		14A5E956248E1835006631F1 /* model.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = model.bundle; sourceTree = "<group>"; };
+		14A5E959248E1CDD006631F1 /* AGMCapturer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AGMCapturer.framework; sourceTree = "<group>"; };
+		14A5E95A248E1CDD006631F1 /* AGMBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AGMBase.framework; sourceTree = "<group>"; };
 		382885B42249DC390023BCFA /* CoreML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreML.framework; path = System/Library/Frameworks/CoreML.framework; sourceTree = SDKROOT; };
 		38D618B6224A5FAE004A6C87 /* BeautyEffectTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BeautyEffectTableViewController.h; sourceTree = "<group>"; };
 		38D618B7224A5FAE004A6C87 /* BeautyEffectTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BeautyEffectTableViewController.m; sourceTree = "<group>"; };
@@ -247,12 +251,14 @@
 				A7C50EF5212168BD00774322 /* Accelerate.framework in Frameworks */,
 				704E32D31FEB50A10027B6DB /* SystemConfiguration.framework in Frameworks */,
 				07D29C3C1E9E192A00C3583C /* libresolv.tbd in Frameworks */,
+				14A5E95B248E1CDD006631F1 /* AGMCapturer.framework in Frameworks */,
 				07D24D211D866809002C69BF /* CoreTelephony.framework in Frameworks */,
 				07D24D1F1D866802002C69BF /* CoreMedia.framework in Frameworks */,
 				07D24D1D1D8667FB002C69BF /* CoreMotion.framework in Frameworks */,
 				07D24D1B1D8667F5002C69BF /* AudioToolbox.framework in Frameworks */,
 				07D24D191D8667EC002C69BF /* libc++.tbd in Frameworks */,
 				07D24D171D8667E7002C69BF /* VideoToolbox.framework in Frameworks */,
+				14A5E95D248E1CDD006631F1 /* AGMBase.framework in Frameworks */,
 				07D24D151D8667DC002C69BF /* AVFoundation.framework in Frameworks */,
 				5D951A437AE740A6631DE1F9 /* Pods_OpenLive.framework in Frameworks */,
 			);
@@ -326,6 +332,8 @@
 		07D24D131D8667DC002C69BF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				14A5E95A248E1CDD006631F1 /* AGMBase.framework */,
+				14A5E959248E1CDD006631F1 /* AGMCapturer.framework */,
 				0B69408523B0F89700E7EF16 /* libeffect-sdk.a */,
 				0BADBB2823556F2100A81922 /* UIKit.framework */,
 				382885B42249DC390023BCFA /* CoreML.framework */,

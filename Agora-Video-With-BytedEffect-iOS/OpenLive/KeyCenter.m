@@ -10,7 +10,7 @@
 
 @implementation KeyCenter
 + (NSString *)AppId {
-    return @"fda6a89b2857451f8d3479a2fda2fbdf";
+    return <#Agora App Id#>;
 }
 
 // assign token to nil if you have not enabled app certificate
