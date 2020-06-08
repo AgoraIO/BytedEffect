@@ -13,7 +13,7 @@ static NSString *COMPOSER_PATH = @"ComposeMakeup";
 static NSString *FILTER_PATH = @"FilterResource";
 static NSString *STICKER_PATH = @"StickerResource";
 static NSString *MODEL_PATH = @"ModelResource";
-static NSString *LICENSE_NAME = @"/labcv_test_20191212_20191231_com.bytedance.labcv.demo_labcv_test_v3.7.0.licbag";
+static NSString *LICENSE_NAME = @"/Agora_test_20200602_20200701_io.agora.ad.bytedeffects_Agora_test_v3.9.0.licbag";
 
 static NSString *BUNDLE = @"bundle";
 

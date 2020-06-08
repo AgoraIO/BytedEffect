@@ -7,7 +7,8 @@
 
 #include "bef_effect_ai_public_define.h"
 
-BEF_SDK_API char* bef_effect_ai_get_version();
+BEF_SDK_API bef_effect_result_t bef_effect_ai_get_version(char* version, const int size);
+
 
 
 #endif //ANDROIDDEMO_BEF_EFFECT_AI_VERSION_H

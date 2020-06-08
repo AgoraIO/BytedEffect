@@ -43,7 +43,6 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong) BEEffectDataManager *stickerDataManager;
 @property (nonatomic, strong) BEEffectDataManager *animojiDataManager;
 @property (nonatomic, copy) NSArray<BEEffectSticker*> *stickers;
-@property (nonatomic, strong) AVCaptureVideoPreviewLayer *previewLayer;
 @property (nonatomic, assign) BOOL isSavingCurrentImage;
 
 @property (nonatomic, assign) BOOL touchExposureEnable;
@@ -112,41 +111,11 @@ typedef enum : NSUInteger {
     }];
 }
 
-- (void)_createCamera {
-    _capture = [[BEVideoCapture alloc] init];
-    _capture.isOutputWithYUV = NO;
-    _capture.delegate = self;
-    _capture.metadelegate = self;
-    
-    _glView = [[BEGLView alloc] initWithFrame: [UIScreen mainScreen].bounds];
-    [self.view addSubview:_glView];
-    [_glView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view);
-    }];
-    EAGLContext *context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2 sharegroup:self.glView.context.sharegroup];
-    [EAGLContext setCurrentContext:context];
-    _processor = [[BEFrameProcessor alloc] initWithContext:context resourceDelegate:nil];
-//    _processor.delegate = self;
-    _capture.sessionPreset = self.captureSessionPreset;
-    
-    [_capture startRunning];
-}
-
 - (void)be_initData {
     BOOL exclusive = [[NSUserDefaults standardUserDefaults] boolForKey:BEFUserDefaultExclusive];
     [_processor setComposerMode:exclusive ? 0 : 1];
     [_cameraContainerView setExclusive:exclusive];
 }
-
-//- (void)_faceBeautyPickerDidSelectFaceBeautyData:(BEFaceBeautyModel *)data
-//{
-//
-//    BEEffectFaceBeautyType type = data.detailType;
-//    
-//    float value = [data getValueWithType:data.detailType];
-//    [_processor setIndensity:value  type:type];
-//}
-
 
 #pragma mark - Notification
 - (void)addObserver {

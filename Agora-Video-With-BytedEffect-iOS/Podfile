@@ -10,6 +10,7 @@ target 'OpenLive' do
   pod 'KVOController', '1.2.0'
   pod 'Toast', '~> 4.0.0'
   pod 'Mantle', '2.1.0'
+  pod 'AgoraRtcEngine_iOS', '~> 3.0.0'
   # Pods for OpenLive
 
 end

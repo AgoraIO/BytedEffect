@@ -1,0 +1,298 @@
+{
+  "transform_params" : {
+    "L1" : {
+      "bias_a" : 0,
+      "bias_g" : 0,
+      "bias_r" : 0,
+      "bias_b" : 0,
+      "center_mean" : 0,
+      "is_network_bgr" : 0,
+      "scale" : 1
+    }
+  },
+  "properties" : {
+
+  },
+  "storage" : "model.espresso.weights",
+  "format_version" : 200,
+  "layers" : [
+    {
+      "bottom" : "L1",
+      "MLCustomLayerWeights" : 1,
+      "weights" : {
+        "MLCustomLayerWeights" : 3
+      },
+      "parameters_json" : "{\"width\":224,\"engineName\":\"Div\",\"height\":224}",
+      "class_name" : "MLCustomLayerWrapper",
+      "top" : "L17",
+      "type" : "brick",
+      "name" : "L17"
+    },
+    {
+      "pad_r" : 0,
+      "fused_relu" : 1,
+      "fused_tanh" : 0,
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "top" : "L21",
+      "blob_weights" : 7,
+      "K" : 1,
+      "blob_biases" : 5,
+      "name" : "L19",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 0,
+      "has_biases" : 1,
+      "C" : 12,
+      "bottom" : "L17",
+      "weights" : {
+
+      },
+      "pad_mode" : 0,
+      "Nx" : 1,
+      "pad_value" : 0,
+      "Ny" : 1,
+      "n_parallel" : 1
+    },
+    {
+      "pad_r" : 1,
+      "fused_relu" : 1,
+      "fused_tanh" : 0,
+      "pad_fill_mode" : 0,
+      "pad_b" : 1,
+      "pad_l" : 1,
+      "top" : "L25",
+      "blob_weights" : 11,
+      "K" : 12,
+      "blob_biases" : 9,
+      "name" : "L23",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 1,
+      "has_biases" : 1,
+      "C" : 8,
+      "bottom" : "L21",
+      "weights" : {
+
+      },
+      "pad_mode" : 0,
+      "Nx" : 3,
+      "pad_value" : 0,
+      "Ny" : 3,
+      "n_parallel" : 1
+    },
+    {
+      "pad_r" : 0,
+      "fused_relu" : 0,
+      "fused_tanh" : 0,
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "top" : "L28",
+      "blob_weights" : 15,
+      "K" : 8,
+      "blob_biases" : 13,
+      "name" : "L27",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 0,
+      "has_biases" : 1,
+      "C" : 12,
+      "bottom" : "L25",
+      "weights" : {
+
+      },
+      "pad_mode" : 0,
+      "Nx" : 1,
+      "pad_value" : 0,
+      "Ny" : 1,
+      "n_parallel" : 1
+    },
+    {
+      "alpha" : 1,
+      "bottom" : "L21,L28",
+      "operation" : 0,
+      "weights" : {
+
+      },
+      "fused_relu" : 0,
+      "top" : "L29",
+      "type" : "elementwise",
+      "name" : "L29",
+      "beta" : 0
+    },
+    {
+      "mode" : 0,
+      "weights" : {
+
+      },
+      "top" : "L30",
+      "type" : "activation",
+      "name" : "L30",
+      "bottom" : "L29"
+    },
+    {
+      "pad_r" : 1,
+      "fused_relu" : 1,
+      "fused_tanh" : 0,
+      "pad_fill_mode" : 0,
+      "pad_b" : 1,
+      "pad_l" : 1,
+      "top" : "L34",
+      "blob_weights" : 19,
+      "K" : 12,
+      "blob_biases" : 17,
+      "name" : "L32",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 1,
+      "has_biases" : 1,
+      "C" : 8,
+      "bottom" : "L30",
+      "weights" : {
+
+      },
+      "pad_mode" : 0,
+      "Nx" : 3,
+      "pad_value" : 0,
+      "Ny" : 3,
+      "n_parallel" : 1
+    },
+    {
+      "pad_r" : 0,
+      "fused_relu" : 0,
+      "fused_tanh" : 0,
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "top" : "L37",
+      "blob_weights" : 23,
+      "K" : 8,
+      "blob_biases" : 21,
+      "name" : "L36",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 0,
+      "has_biases" : 1,
+      "C" : 12,
+      "bottom" : "L34",
+      "weights" : {
+
+      },
+      "pad_mode" : 0,
+      "Nx" : 1,
+      "pad_value" : 0,
+      "Ny" : 1,
+      "n_parallel" : 1
+    },
+    {
+      "alpha" : 1,
+      "bottom" : "L30,L37",
+      "operation" : 0,
+      "weights" : {
+
+      },
+      "fused_relu" : 0,
+      "top" : "L38",
+      "type" : "elementwise",
+      "name" : "L38",
+      "beta" : 0
+    },
+    {
+      "mode" : 0,
+      "weights" : {
+
+      },
+      "top" : "L39",
+      "type" : "activation",
+      "name" : "L39",
+      "bottom" : "L38"
+    },
+    {
+      "pad_r" : 0,
+      "fused_relu" : 1,
+      "fused_tanh" : 0,
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "top" : "L43",
+      "blob_weights" : 27,
+      "K" : 12,
+      "blob_biases" : 25,
+      "name" : "L41",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 0,
+      "has_biases" : 1,
+      "C" : 40,
+      "bottom" : "L39",
+      "weights" : {
+
+      },
+      "pad_mode" : 0,
+      "Nx" : 1,
+      "pad_value" : 0,
+      "Ny" : 1,
+      "n_parallel" : 1
+    },
+    {
+      "bottom" : "L43",
+      "MLCustomLayerWeights" : 29,
+      "weights" : {
+        "MLCustomLayerWeights" : 31
+      },
+      "parameters_json" : "{\"width\":224,\"engineName\":\"Pixelshuffle\",\"height\":224}",
+      "class_name" : "MLCustomLayerWrapper",
+      "top" : "L46",
+      "type" : "brick",
+      "name" : "ps"
+    },
+    {
+      "pad_r" : 0,
+      "fused_relu" : 1,
+      "fused_tanh" : 0,
+      "pad_fill_mode" : 0,
+      "pad_b" : 0,
+      "pad_l" : 0,
+      "top" : "L50",
+      "blob_weights" : 35,
+      "K" : 10,
+      "blob_biases" : 33,
+      "name" : "L48",
+      "has_batch_norm" : 0,
+      "type" : "convolution",
+      "n_groups" : 1,
+      "pad_t" : 0,
+      "has_biases" : 1,
+      "C" : 1,
+      "bottom" : "L46",
+      "weights" : {
+
+      },
+      "pad_mode" : 0,
+      "Nx" : 1,
+      "pad_value" : 0,
+      "Ny" : 1,
+      "n_parallel" : 1
+    },
+    {
+      "bottom" : "L50",
+      "MLCustomLayerWeights" : 37,
+      "weights" : {
+        "MLCustomLayerWeights" : 39
+      },
+      "parameters_json" : "{\"width\":224,\"engineName\":\"Mul\",\"height\":224}",
+      "class_name" : "MLCustomLayerWrapper",
+      "top" : "L52",
+      "type" : "brick",
+      "name" : "L52"
+    }
+  ]
+}

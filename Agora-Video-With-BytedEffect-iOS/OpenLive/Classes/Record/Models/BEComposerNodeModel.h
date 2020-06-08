@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
 
 static const NSInteger OFFSET = 24;
 static const NSInteger MASK = 0xFFFFFF;
@@ -25,34 +24,35 @@ typedef NS_ENUM(NSInteger, BEEffectNode) {
     BETypeFilter                   = 5 << OFFSET,
     BETypeSticker                  = 6 << OFFSET,
     BETypeAnimoji                  = 7 << OFFSET,
+    BETypeArscan                   = 8 << OFFSET,
     
     // 二级菜单
     // 美颜
     BETypeBeautyFaceSmooth         = BETypeBeautyFace      + (1 << SUB_OFFSET),
     BETypeBeautyFaceWhiten         = BETypeBeautyFace      + (2 << SUB_OFFSET),
     BETypeBeautyFaceSharpe         = BETypeBeautyFace      + (3 << SUB_OFFSET),
-    BETypeBeautyFaceBrightenEye    = BETypeBeautyFace      + (4 << SUB_OFFSET),
-    BETypeBeautyFaceRemovePouch    = BETypeBeautyFace      + (5 << SUB_OFFSET),
-    BETypeBeautyFaceRemoveSmileFolds = BETypeBeautyFace      + (6 << SUB_OFFSET),
-    BETypeBeautyFaceWhitenTeeth    = BETypeBeautyFace      + (7 << SUB_OFFSET),
     
     // 美形
-    BETypeBeautyReshapeFaceOverall = BETypeBeautyReshape   + (1 << SUB_OFFSET),
-    BETypeBeautyReshapeEye         = BETypeBeautyReshape   + (2 << SUB_OFFSET),
-    BETypeBeautyReshapeFaceSmall   = BETypeBeautyReshape   + (3 << SUB_OFFSET),
-    BETypeBeautyReshapeFaceCut     = BETypeBeautyReshape   + (4 << SUB_OFFSET),
-    BETypeBeautyReshapeCheek       = BETypeBeautyReshape   + (5 << SUB_OFFSET),
-    BETypeBeautyReshapeJaw         = BETypeBeautyReshape   + (6 << SUB_OFFSET),
-    BETypeBeautyReshapeNoseLean    = BETypeBeautyReshape   + (7 << SUB_OFFSET),
-    BETypeBeautyReshapeNoseLong    = BETypeBeautyReshape   + (8 << SUB_OFFSET),
-    BETypeBeautyReshapeChin        = BETypeBeautyReshape   + (9 << SUB_OFFSET),
-    BETypeBeautyReshapeForehead    = BETypeBeautyReshape   + (10 << SUB_OFFSET),
-    BETypeBeautyReshapeEyeRotate   = BETypeBeautyReshape   + (11 << SUB_OFFSET),
-    BETypeBeautyReshapeMouthZoom   = BETypeBeautyReshape   + (12 << SUB_OFFSET),
-    BETypeBeautyReshapeMouthSmile  = BETypeBeautyReshape   + (13 << SUB_OFFSET),
-    BETypeBeautyReshapeEyeSpacing  = BETypeBeautyReshape   + (14 << SUB_OFFSET),
-    BETypeBeautyReshapeEyeMove     = BETypeBeautyReshape   + (15 << SUB_OFFSET),
-    BETypeBeautyReshapeMouthMove   = BETypeBeautyReshape   + (16 << SUB_OFFSET),
+    BETypeBeautyReshapeFaceOverall      = BETypeBeautyReshape    + (1 << SUB_OFFSET),
+    BETypeBeautyReshapeEye              = BETypeBeautyReshape    + (2 << SUB_OFFSET),
+    BETypeBeautyReshapeFaceSmall        = BETypeBeautyReshape    + (3 << SUB_OFFSET),
+    BETypeBeautyReshapeFaceCut          = BETypeBeautyReshape    + (4 << SUB_OFFSET),
+    BETypeBeautyReshapeCheek            = BETypeBeautyReshape    + (5 << SUB_OFFSET),
+    BETypeBeautyReshapeJaw              = BETypeBeautyReshape    + (6 << SUB_OFFSET),
+    BETypeBeautyReshapeNoseLean         = BETypeBeautyReshape    + (7 << SUB_OFFSET),
+    BETypeBeautyReshapeNoseLong         = BETypeBeautyReshape    + (8 << SUB_OFFSET),
+    BETypeBeautyReshapeChin             = BETypeBeautyReshape    + (9 << SUB_OFFSET),
+    BETypeBeautyReshapeForehead         = BETypeBeautyReshape    + (10 << SUB_OFFSET),
+    BETypeBeautyReshapeEyeRotate        = BETypeBeautyReshape    + (11 << SUB_OFFSET),
+    BETypeBeautyReshapeMouthZoom        = BETypeBeautyReshape    + (12 << SUB_OFFSET),
+    BETypeBeautyReshapeMouthSmile       = BETypeBeautyReshape    + (13 << SUB_OFFSET),
+    BETypeBeautyReshapeEyeSpacing       = BETypeBeautyReshape    + (14 << SUB_OFFSET),
+    BETypeBeautyReshapeEyeMove          = BETypeBeautyReshape    + (15 << SUB_OFFSET),
+    BETypeBeautyReshapeMouthMove        = BETypeBeautyReshape    + (16 << SUB_OFFSET),
+    BETypeBeautyReshapeBrightenEye      = BETypeBeautyReshape    + (17 << SUB_OFFSET),
+    BETypeBeautyReshapeRemovePouch      = BETypeBeautyReshape    + (18 << SUB_OFFSET),
+    BETypeBeautyReshapeRemoveSmileFolds = BETypeBeautyReshape    + (19 << SUB_OFFSET),
+    BETypeBeautyReshapeWhitenTeeth      = BETypeBeautyReshape    + (20 << SUB_OFFSET),
     
     // 美体
     BETypeBeautyBodyThin           = BETypeBeautyBody      + (1 << SUB_OFFSET),

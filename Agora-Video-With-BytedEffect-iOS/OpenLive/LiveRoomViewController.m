@@ -437,7 +437,6 @@
     CVImageBufferRef imageRef = CMSampleBufferGetImageBuffer(sampleBuffer);
     CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
     double timeStamp = (double)sampleTime.value/sampleTime.timescale;
-//    BEProcessResult *result =  [_processor process:imageRef timeStamp:timeStamp];
     BEProcessResult *result = [_vc process:imageRef timeStamp:timeStamp];
     if (result == nil) {
         return;
