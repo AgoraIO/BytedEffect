@@ -34,8 +34,8 @@
 		0B30174623599D5F00B967C4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0B30174023599D5F00B967C4 /* InfoPlist.strings */; };
 		0B69408623B0F89700E7EF16 /* libeffect-sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B69408523B0F89700E7EF16 /* libeffect-sdk.a */; };
 		0BADBB2923556F2100A81922 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BADBB2823556F2100A81922 /* UIKit.framework */; };
-		14A5E952248E15DF006631F1 /* srmetal.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 14A5E950248E15DF006631F1 /* srmetal.metallib */; };
-		14A5E953248E15DF006631F1 /* model.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 14A5E951248E15DF006631F1 /* model.bundle */; };
+		14A5E957248E1835006631F1 /* srmetal.metallib in Resources */ = {isa = PBXBuildFile; fileRef = 14A5E955248E1835006631F1 /* srmetal.metallib */; };
+		14A5E958248E1835006631F1 /* model.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 14A5E956248E1835006631F1 /* model.bundle */; };
 		382885B52249DC390023BCFA /* CoreML.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 382885B42249DC390023BCFA /* CoreML.framework */; };
 		38D618B8224A5FAE004A6C87 /* BeautyEffectTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 38D618B7224A5FAE004A6C87 /* BeautyEffectTableViewController.m */; };
 		5D951A437AE740A6631DE1F9 /* Pods_OpenLive.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84757568F5EF760A7D4FD922 /* Pods_OpenLive.framework */; };
@@ -132,8 +132,8 @@
 		0BADBB30235572F100A81922 /* bef_effect_ai_yuv_process.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bef_effect_ai_yuv_process.h; sourceTree = "<group>"; };
 		0BADBB31235572F100A81922 /* byted_effect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = byted_effect.h; sourceTree = "<group>"; };
 		0BADBB32235572F100A81922 /* bef_effect_ai_api.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bef_effect_ai_api.h; sourceTree = "<group>"; };
-		14A5E950248E15DF006631F1 /* srmetal.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; path = srmetal.metallib; sourceTree = "<group>"; };
-		14A5E951248E15DF006631F1 /* model.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = model.bundle; sourceTree = "<group>"; };
+		14A5E955248E1835006631F1 /* srmetal.metallib */ = {isa = PBXFileReference; lastKnownFileType = "archive.metal-library"; path = srmetal.metallib; sourceTree = "<group>"; };
+		14A5E956248E1835006631F1 /* model.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = model.bundle; sourceTree = "<group>"; };
 		382885B42249DC390023BCFA /* CoreML.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreML.framework; path = System/Library/Frameworks/CoreML.framework; sourceTree = SDKROOT; };
 		38D618B6224A5FAE004A6C87 /* BeautyEffectTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BeautyEffectTableViewController.h; sourceTree = "<group>"; };
 		38D618B7224A5FAE004A6C87 /* BeautyEffectTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BeautyEffectTableViewController.m; sourceTree = "<group>"; };
@@ -264,11 +264,11 @@
 		07D24CEA1D866704002C69BF = {
 			isa = PBXGroup;
 			children = (
+				14A5E954248E1835006631F1 /* AgoraResources */,
 				0BEA5F6523557BB9004072A4 /* Resource */,
 				0BADBB2E235572F100A81922 /* include */,
 				07D24CF51D866704002C69BF /* OpenLive */,
 				07D24CF41D866704002C69BF /* Products */,
-				84E60BFD2480BCEA00AA04AF /* Resources */,
 				07D24D131D8667DC002C69BF /* Frameworks */,
 				3E35820C539F902A4C016A04 /* Pods */,
 			);
@@ -385,6 +385,16 @@
 			);
 			name = Resource;
 			path = OpenLive/Resource;
+			sourceTree = "<group>";
+		};
+		14A5E954248E1835006631F1 /* AgoraResources */ = {
+			isa = PBXGroup;
+			children = (
+				14A5E955248E1835006631F1 /* srmetal.metallib */,
+				14A5E956248E1835006631F1 /* model.bundle */,
+			);
+			name = AgoraResources;
+			path = Pods/AgoraRtcEngine_iOS/AgoraRtcKit.framework/AgoraResources;
 			sourceTree = "<group>";
 		};
 		3E35820C539F902A4C016A04 /* Pods */ = {
@@ -595,15 +605,6 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
-		84E60BFD2480BCEA00AA04AF /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				14A5E951248E15DF006631F1 /* model.bundle */,
-				14A5E950248E15DF006631F1 /* srmetal.metallib */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -675,14 +676,14 @@
 				0B30174223599D5F00B967C4 /* Localizable.strings in Resources */,
 				0B30174323599D5F00B967C4 /* InfoPlist.strings in Resources */,
 				84AE0DD224863DE0007EFC9A /* ModelResource.bundle in Resources */,
-				14A5E952248E15DF006631F1 /* srmetal.metallib in Resources */,
+				14A5E957248E1835006631F1 /* srmetal.metallib in Resources */,
 				0B30174623599D5F00B967C4 /* InfoPlist.strings in Resources */,
 				84AE0DD324863DE0007EFC9A /* ComposeMakeup.bundle in Resources */,
 				0B30174423599D5F00B967C4 /* LaunchScreen.strings in Resources */,
 				07D24D061D866704002C69BF /* LaunchScreen.storyboard in Resources */,
 				07D24D031D866704002C69BF /* Assets.xcassets in Resources */,
 				07D24D011D866704002C69BF /* Main.storyboard in Resources */,
-				14A5E953248E15DF006631F1 /* model.bundle in Resources */,
+				14A5E958248E1835006631F1 /* model.bundle in Resources */,
 				84AE0DD424863DE0007EFC9A /* LicenseBag.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
