@@ -14,6 +14,7 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
+  - AgoraRtcEngine_iOS (3.0.1)
   - Bugly (2.5.0)
   - KVOController (1.2.0)
   - Mantle (2.1.0):
@@ -24,6 +25,7 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking
+  - AgoraRtcEngine_iOS (~> 3.0.0)
   - Bugly (= 2.5.0)
   - KVOController (= 1.2.0)
   - Mantle (= 2.1.0)
@@ -33,6 +35,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AFNetworking
+    - AgoraRtcEngine_iOS
     - Bugly
     - KVOController
     - Mantle
@@ -41,12 +44,13 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  AgoraRtcEngine_iOS: 649f5e2b602c1a80264165e89a5e4d9986957b3a
   Bugly: 3ca9f255c01025582df26f9222893b383c7e4b4e
   KVOController: d72ace34afea42468329623b3379ab3cd1d286b6
   Mantle: 2fa750afa478cd625a94230fbf1c13462f29395b
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: 84a7b96ac9b23746927ac3831d8c675096806b1f
+PODFILE CHECKSUM: 0754eecf75a1579c9b94f5caee018fce8bc5d120
 
-COCOAPODS: 1.8.3
+COCOAPODS: 1.9.3

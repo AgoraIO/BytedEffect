@@ -213,178 +213,182 @@ static NSArray* stickersArray = nil;
 + (NSDictionary *)composerNodeDic {
     static dispatch_once_t onceToken;
     static NSDictionary *composerNodeDict;
+    NSString *beautyPath = @"/beauty_IOS_live";
+    NSString *reshapePath = @"/reshape_live";
     dispatch_once(&onceToken, ^{
         composerNodeDict = @{
-                                      // 美颜
-                                      @(BETypeBeautyFaceSharpe):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_IOS"
-                                           key:@"sharp"],
-                                      
-                                      @(BETypeBeautyFaceSmooth):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_IOS"
-                                           key:@"smooth"],
-                                      
-                                      @(BETypeBeautyFaceWhiten):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_IOS"
-                                           key:@"whiten"],                                
-                                      
-                                      @(BETypeBeautyFaceBrightenEye):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_BRIGHTEN_EYE"],
-                                      
-                                      @(BETypeBeautyFaceRemovePouch):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_REMOVE_POUCH"],
-                                      
-                                      @(BETypeBeautyFaceRemoveSmileFolds):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_SMILES_FOLDS"],
-                                      
-                                      @(BETypeBeautyFaceWhitenTeeth):
-                                               [[BEComposerNodeModel alloc]
-                                                initWithPath:@"/beauty_4Items"
-                                                key:@"BEF_BEAUTY_WHITEN_TEETH"],
-                                      
-                                      // 美形
-                                      @(BETypeBeautyReshapeFaceOverall):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Overall"],
-                                      
-                                      @(BETypeBeautyReshapeFaceCut):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_CutFace"],
-                                      
-                                      @(BETypeBeautyReshapeFaceSmall):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Face"],
-                                      
-                                      @(BETypeBeautyReshapeEye):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Eye"],
-                                      
-                                      @(BETypeBeautyReshapeEyeRotate):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_RotateEye"],
-                                      
-                                      @(BETypeBeautyReshapeCheek):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Zoom_Cheekbone"],
-                                      
-                                      @(BETypeBeautyReshapeJaw):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Zoom_Jawbone"],
-                                      
-                                      @(BETypeBeautyReshapeNoseLean):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Nose"],
-                                      
-                                      @(BETypeBeautyReshapeNoseLong):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_MovNose"],
-                                      
-                                      @(BETypeBeautyReshapeChin):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Chin"],
-                                      
-                                      @(BETypeBeautyReshapeForehead):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Forehead"],
-                                      
-                                      @(BETypeBeautyReshapeMouthZoom):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_ZoomMouth"],
-                                      
-                                      @(BETypeBeautyReshapeMouthSmile):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_MouthCorner"],
-                                      
-                                      @(BETypeBeautyReshapeEyeSpacing):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Eye_Spacing"],
-                                      
-                                      @(BETypeBeautyReshapeEyeMove):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_Eye_Move"],
-                                      
-                                      @(BETypeBeautyReshapeMouthMove):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/reshape"
-                                           key:@"Internal_Deform_MovMouth"],
-                                      
-                                      
-                                      
-                                      // 美体
-                                      @(BETypeBeautyBodyThin):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/body/thin"
-                                           key:@""],
-                                      
-                                      @(BETypeBeautyBodyLegLong):
-                                          [[BEComposerNodeModel alloc]
-                                           initWithPath:@"/body/longleg"
-                                           key:@""],
-                                      
-                                      // 美妆
-                                      @(BETypeMakeupLip):
-                                          [BEComposerNodeModel
-                                           initWithPathArray:@[@"/lip/fuguhong", @"/lip/shaonvfen", @"/lip/yuanqiju", @"/lip/xiyouse", @"/lip/xiguahong", @"/lip/sironghong", @"/lip/zangjuse", @"/lip/meizise", @"/lip/shanhuse", @"/lip/doushafen" ]
-                                           keyArray:@[@"Internal_Makeup_Lips", @"", @"", @""]],
-                                      
-                                      @(BETypeMakeupBlusher):
-                                          [BEComposerNodeModel
-                                           initWithPathArray:@[@"/blush/weixun", @"/blush/richang", @"/blush/mitao", @"/blush/tiancheng", @"/blush/qiaopi", @"/blush/xinji", @"/blush/shaishang"]
-                                           keyArray:@[@"Internal_Makeup_Blusher", @"", @"", @""]],
-                                      
-        //                              @(BETypeMakeupEyelash):
-        //                                  [BEComposerNodeModel
-        //                                   initWithPathArray:@[@"/eyelash/nongmi", @"/eyelash/shanxing", @"/eyelash/wumei", @"/eyelash/wumei"]
-        //                                   keyArray:@[@"Internal_Makeup_Eye", @"", @"", @""]],
-                                      
-                                      
-                                        @(BETypeMakeupFacial):
-                                            [BEComposerNodeModel
-                                             initWithPathArray:@[@"/facial/xiurong01", @"/facial/xiurong02", @"/facial/xiurong03", @"/facial/xiurong04"]
-                                             keyArray:@[@"Internal_Makeup_Facial", @"", @"", @""]],
-                                      
-                                      @(BETypeMakeupPupil):
-                                          [BEComposerNodeModel
-                                           initWithPathArray:@[@"/pupil/hunxuezong", @"/pupil/kekezong", @"/pupil/mitaofen", @"/pupil/shuiguanghei", @"/pupil/xingkonglan", @"/pupil/chujianhui"]
-                                           keyArray:@[@"Internal_Makeup_Pupil", @"", @"", @""]],
-                                      
-                                      @(BETypeMakeupHair):
-                                          [BEComposerNodeModel
-                                           initWithPathArray:@[@"/hair/anlan", @"/hair/molv", @"/hair/shenzong"]
-                                           keyArray:@[@"", @"", @""]],
-                                      
-                                      @(BETypeMakeupEyeshadow):
-                                          [BEComposerNodeModel
-                                           initWithPathArray:@[@"/eyeshadow/dadizong", @"/eyeshadow/wanxiahong", @"/eyeshadow/shaonvfen",@"/eyeshadow/qizhifen",@"/eyeshadow/meizihong",@"/eyeshadow/jiaotangzong",@"/eyeshadow/yuanqiju",@"/eyeshadow/naichase"]
-                                           keyArray:@[@"Internal_Makeup_Eye", @"", @"", @""]],
-                                      
-                                      @(BETypeMakeupEyebrow):
-                                          [BEComposerNodeModel
-                                           initWithPathArray:@[@"/eyebrow/BR01", @"/eyebrow/BK01", @"/eyebrow/BK02", @"/eyebrow/BK03"]
-                                           keyArray:@[@"Internal_Makeup_Brow", @"", @"", @""]],
-                                      
-                                      };
+            // 美颜
+            @(BETypeBeautyFaceSharpe):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:beautyPath
+                 key:@"sharp"],
+            
+            @(BETypeBeautyFaceSmooth):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:beautyPath
+                 key:@"smooth"],
+            
+            @(BETypeBeautyFaceWhiten):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:beautyPath
+                 key:@"whiten"],
+            
+            @(BETypeBeautyReshapeBrightenEye):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_BRIGHTEN_EYE"],
+            
+            @(BETypeBeautyReshapeRemovePouch):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_REMOVE_POUCH"],
+            
+            @(BETypeBeautyReshapeRemoveSmileFolds):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:@"/beauty_4Items"                                           key:@"BEF_BEAUTY_SMILES_FOLDS"],
+            
+            @(BETypeBeautyReshapeWhitenTeeth):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:@"/beauty_4Items"
+                 key:@"BEF_BEAUTY_WHITEN_TEETH"],
+            
+            // 美形
+            @(BETypeBeautyReshapeFaceOverall):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Overall"],
+            
+            @(BETypeBeautyReshapeFaceCut):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_CutFace"],
+            
+            @(BETypeBeautyReshapeFaceSmall):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Face"],
+            
+            @(BETypeBeautyReshapeEye):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Eye"],
+            
+            @(BETypeBeautyReshapeEyeRotate):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_RotateEye"],
+            
+            @(BETypeBeautyReshapeCheek):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Zoom_Cheekbone"],
+            
+            @(BETypeBeautyReshapeJaw):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Zoom_Jawbone"],
+            
+            @(BETypeBeautyReshapeNoseLean):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Nose"],
+            
+            @(BETypeBeautyReshapeNoseLong):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_MovNose"],
+            
+            @(BETypeBeautyReshapeChin):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Chin"],
+            
+            @(BETypeBeautyReshapeForehead):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Forehead"],
+            
+            @(BETypeBeautyReshapeMouthZoom):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_ZoomMouth"],
+            
+            @(BETypeBeautyReshapeMouthSmile):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_MouthCorner"],
+            
+            @(BETypeBeautyReshapeEyeSpacing):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Eye_Spacing"],
+            
+            @(BETypeBeautyReshapeEyeMove):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_Eye_Move"],
+            
+            @(BETypeBeautyReshapeMouthMove):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:reshapePath
+                 key:@"Internal_Deform_MovMouth"],
+            
+            
+            
+            // 美体
+            @(BETypeBeautyBodyThin):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:@"/body/allslimqy"
+                 key:@"BEF_BEAUTY_BODY_THIN"],
+            
+            @(BETypeBeautyBodyLegLong):
+                [[BEComposerNodeModel alloc]
+                 initWithPath:@"/body/allslimqy"
+                 key:@"BEF_BEAUTY_BODY_LONG_LEG"],
+            
+            
+            
+            // 美妆
+            @(BETypeMakeupLip):
+                [BEComposerNodeModel
+                 initWithPathArray:@[@"/lip/fuguhong", @"/lip/shaonvfen", @"/lip/yuanqiju", @"/lip/xiyouse", @"/lip/xiguahong", @"/lip/sironghong", @"/lip/zangjuse", @"/lip/meizise", @"/lip/shanhuse", @"/lip/doushafen" ]
+                 keyArray:@[@"Internal_Makeup_Lips", @"", @"", @""]],
+            
+            @(BETypeMakeupBlusher):
+                [BEComposerNodeModel
+                 initWithPathArray:@[@"/blush/weixun", @"/blush/richang", @"/blush/mitao", @"/blush/tiancheng", @"/blush/qiaopi", @"/blush/xinji", @"/blush/shaishang"]
+                 keyArray:@[@"Internal_Makeup_Blusher", @"", @"", @""]],
+            
+            //                              @(BETypeMakeupEyelash):
+            //                                  [BEComposerNodeModel
+            //                                   initWithPathArray:@[@"/eyelash/nongmi", @"/eyelash/shanxing", @"/eyelash/wumei", @"/eyelash/wumei"]
+            //                                   keyArray:@[@"Internal_Makeup_Eye", @"", @"", @""]],
+            
+            
+            @(BETypeMakeupFacial):
+                [BEComposerNodeModel
+                 initWithPathArray:@[@"/facial/xiurong01", @"/facial/xiurong02", @"/facial/xiurong03", @"/facial/xiurong04"]
+                 keyArray:@[@"Internal_Makeup_Facial", @"", @"", @""]],
+            
+            @(BETypeMakeupPupil):
+                [BEComposerNodeModel
+                 initWithPathArray:@[@"/pupil/hunxuezong", @"/pupil/kekezong", @"/pupil/mitaofen", @"/pupil/shuiguanghei", @"/pupil/xingkonglan", @"/pupil/chujianhui"]
+                 keyArray:@[@"Internal_Makeup_Pupil", @"", @"", @""]],
+            
+            @(BETypeMakeupHair):
+                [BEComposerNodeModel
+                 initWithPathArray:@[@"/hair/anlan", @"/hair/molv", @"/hair/shenzong"]
+                 keyArray:@[@"", @"", @""]],
+            
+            @(BETypeMakeupEyeshadow):
+                [BEComposerNodeModel
+                 initWithPathArray:@[@"/eyeshadow/dadizong", @"/eyeshadow/wanxiahong", @"/eyeshadow/shaonvfen",@"/eyeshadow/qizhifen",@"/eyeshadow/meizihong",@"/eyeshadow/jiaotangzong",@"/eyeshadow/yuanqiju",@"/eyeshadow/naichase"]
+                 keyArray:@[@"Internal_Makeup_Eye", @"", @"", @""]],
+            
+            @(BETypeMakeupEyebrow):
+                [BEComposerNodeModel
+                 initWithPathArray:@[@"/eyebrow/BR01", @"/eyebrow/BK01", @"/eyebrow/BK02", @"/eyebrow/BK03"]
+                 keyArray:@[@"Internal_Makeup_Brow", @"", @"", @""]],
+            
+        };
     });
     return composerNodeDict;
 }
@@ -467,34 +471,6 @@ static NSArray* stickersArray = nil;
                    title:NSLocalizedString(@"beauty_face_sharpen", nil)
                    desc:@""],
                   
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyFaceBrightenEye
-                   selectImg:@"iconFaceBeautySkinSelected.png"
-                   unselectImg:@"iconFaceBeautySkinNormal.png"
-                   title:NSLocalizedString(@"beauty_face_brighten_eye", nil)
-                   desc:@""],
-                  
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyFaceRemovePouch
-                   selectImg:@"iconFaceBeautySkinSelected.png"
-                   unselectImg:@"iconFaceBeautySkinNormal.png"
-                   title:NSLocalizedString(@"beauty_face_remove_pouch", nil)
-                   desc:@""],
-                  
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyFaceRemoveSmileFolds
-                   selectImg:@"iconFaceBeautySharpSelected.png"
-                   unselectImg:@"iconFaceBeautySharpNormal.png"
-                   title:NSLocalizedString(@"beauty_face_smile_folds", nil)
-                   desc:@""],
-                  
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyFaceWhitenTeeth
-                   selectImg:@"iconFaceBeautySharpSelected.png"
-                   unselectImg:@"iconFaceBeautySharpNormal.png"
-                   title:NSLocalizedString(@"beauty_face_whiten_teeth", nil)
-                   desc:@""],
-                  
                   ];
         
                  
@@ -507,109 +483,109 @@ static NSArray* stickersArray = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         array = @[
-                  [BEButtonItemModel
-                   initWithID:BETypeClose
-                   selectImg:@"iconCloseButtonSelected.png"
-                   unselectImg:@"iconCloseButtonNormal.png"
-                   title:NSLocalizedString(@"close", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeFaceOverall
-                   selectImg:@"iconFaceBeautyLiftingSelected.png"
-                   unselectImg:@"iconFaceBeautyLiftingNormal.png"
-                   title:NSLocalizedString(@"beauty_reshape_face_overall", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeFaceCut
-                   selectImg:@"iconBeautyReshapeFaceCutSelect"
-                   unselectImg:@"iconBeautyReshapeFaceCutNormal"
-                   title:NSLocalizedString(@"beauty_reshape_face_cut", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeFaceSmall
-                   selectImg:@"iconBeautyReshapeFaceSmallSelect"
-                   unselectImg:@"iconBeautyReshapeFaceSmallNormal"
-                   title:NSLocalizedString(@"beauty_reshape_face_small", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeEye
-                   selectImg:@"iconFaceBeautyBigEyeSelected.png"
-                   unselectImg:@"iconFaceBeautyBigEyeNormal.png"
-                   title:NSLocalizedString(@"beauty_reshape_eye", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeEyeRotate
-                   selectImg:@"iconBeautyReshapeEyeRotateSelect"
-                   unselectImg:@"iconBeautyReshapeEyeRotateNormal"
-                   title:NSLocalizedString(@"beauty_reshape_eye_rotate", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeCheek
-                   selectImg:@"iconBeautyReshapeCheekSelect"
-                   unselectImg:@"iconBeautyReshapeCheekNormal"
-                   title:NSLocalizedString(@"beauty_reshape_cheek", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeJaw
-                   selectImg:@"iconBeautyReshapeJawSelect"
-                   unselectImg:@"iconBeautyReshapeJawNormal"
-                   title:NSLocalizedString(@"beauty_reshape_jaw", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeNoseLean
-                   selectImg:@"iconBeautyReshapeNoseLeanSelect"
-                   unselectImg:@"iconBeautyReshapeNoseLeanNormal"
-                   title:NSLocalizedString(@"beauty_reshape_nose_lean", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeNoseLong
-                   selectImg:@"iconBeautyReshapeNoseLongSelect"
-                   unselectImg:@"iconBeautyReshapeNoseLongNormal"
-                   title:NSLocalizedString(@"beauty_reshape_nose_long", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeChin
-                   selectImg:@"iconBeautyReshapeChinSelect"
-                   unselectImg:@"iconBeautyReshapeChinNormal"
-                   title:NSLocalizedString(@"beauty_reshape_chin", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeForehead
-                   selectImg:@"iconBeautyReshapeForeheadSelect"
-                   unselectImg:@"iconBeautyReshapeForeheadNormal"
-                   title:NSLocalizedString(@"beauty_reshape_forehead", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeMouthZoom
-                   selectImg:@"iconBeautyReshapeMouthZoomSelect"
-                   unselectImg:@"iconBeautyReshapeMouthZoomNormal"
-                   title:NSLocalizedString(@"beauty_reshape_mouth_zoom", nil)
-                   desc:@""],
-                  [BEButtonItemModel
-                   initWithID:BETypeBeautyReshapeMouthSmile
-                   selectImg:@"iconBeautyReshapeMouthSmileSelect"
-                   unselectImg:@"iconBeautyReshapeMouthSmileNormal"
-                   title:NSLocalizedString(@"beauty_reshape_mouth_smile", nil)
-                   desc:@""],
-                 [BEButtonItemModel
-                 initWithID:BETypeBeautyReshapeEyeSpacing
-                 selectImg:@"iconBeautyReshapeEyeRotateSelect"
-                 unselectImg:@"iconBeautyReshapeEyeRotateNormal"
-                 title:NSLocalizedString(@"beauty_reshape_eye_spacing", nil)
-                  desc:@""],
-                [BEButtonItemModel
-                initWithID:BETypeBeautyReshapeEyeMove
-                selectImg:@"iconBeautyReshapeEyeRotateSelect"
-                unselectImg:@"iconBeautyReshapeEyeRotateNormal"
-                title:NSLocalizedString(@"beauty_reshape_eye_move", nil)
-                 desc:@""],
-                [BEButtonItemModel
-                initWithID:BETypeBeautyReshapeMouthMove
-                selectImg:@"iconBeautyReshapeMouthZoomSelect"
-                unselectImg:@"iconBeautyReshapeMouthZoomNormal"
-                title:NSLocalizedString(@"beauty_reshape_mouth_move", nil)
-                 desc:@""],
-            ];
+            [BEButtonItemModel
+             initWithID:BETypeClose
+             selectImg:@"iconCloseButtonSelected.png"
+             unselectImg:@"iconCloseButtonNormal.png"
+             title:NSLocalizedString(@"close", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeFaceOverall
+             selectImg:@"iconFaceBeautyLiftingSelected.png"
+             unselectImg:@"iconFaceBeautyLiftingNormal.png"
+             title:NSLocalizedString(@"beauty_reshape_face_overall", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeFaceCut
+             selectImg:@"iconBeautyReshapeFaceCutSelect"
+             unselectImg:@"iconBeautyReshapeFaceCutNormal"
+             title:NSLocalizedString(@"beauty_reshape_face_cut", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeFaceSmall
+             selectImg:@"iconBeautyReshapeFaceSmallSelect"
+             unselectImg:@"iconBeautyReshapeFaceSmallNormal"
+             title:NSLocalizedString(@"beauty_reshape_face_small", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeEye
+             selectImg:@"iconFaceBeautyBigEyeSelected.png"
+             unselectImg:@"iconFaceBeautyBigEyeNormal.png"
+             title:NSLocalizedString(@"beauty_reshape_eye", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeEyeRotate
+             selectImg:@"iconBeautyReshapeEyeRotateSelect"
+             unselectImg:@"iconBeautyReshapeEyeRotateNormal"
+             title:NSLocalizedString(@"beauty_reshape_eye_rotate", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeCheek
+             selectImg:@"iconBeautyReshapeCheekSelect"
+             unselectImg:@"iconBeautyReshapeCheekNormal"
+             title:NSLocalizedString(@"beauty_reshape_cheek", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeJaw
+             selectImg:@"iconBeautyReshapeJawSelect"
+             unselectImg:@"iconBeautyReshapeJawNormal"
+             title:NSLocalizedString(@"beauty_reshape_jaw", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeNoseLean
+             selectImg:@"iconBeautyReshapeNoseLeanSelect"
+             unselectImg:@"iconBeautyReshapeNoseLeanNormal"
+             title:NSLocalizedString(@"beauty_reshape_nose_lean", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeNoseLong
+             selectImg:@"iconBeautyReshapeNoseLongSelect"
+             unselectImg:@"iconBeautyReshapeNoseLongNormal"
+             title:NSLocalizedString(@"beauty_reshape_nose_long", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeChin
+             selectImg:@"iconBeautyReshapeChinSelect"
+             unselectImg:@"iconBeautyReshapeChinNormal"
+             title:NSLocalizedString(@"beauty_reshape_chin", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeForehead
+             selectImg:@"iconBeautyReshapeForeheadSelect"
+             unselectImg:@"iconBeautyReshapeForeheadNormal"
+             title:NSLocalizedString(@"beauty_reshape_forehead", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeMouthZoom
+             selectImg:@"iconBeautyReshapeMouthZoomSelect"
+             unselectImg:@"iconBeautyReshapeMouthZoomNormal"
+             title:NSLocalizedString(@"beauty_reshape_mouth_zoom", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeMouthSmile
+             selectImg:@"iconBeautyReshapeMouthSmileSelect"
+             unselectImg:@"iconBeautyReshapeMouthSmileNormal"
+             title:NSLocalizedString(@"beauty_reshape_mouth_smile", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeEyeSpacing
+             selectImg:@"iconBeautyReshapeEyeRotateSelect"
+             unselectImg:@"iconBeautyReshapeEyeRotateNormal"
+             title:NSLocalizedString(@"beauty_reshape_eye_spacing", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeEyeMove
+             selectImg:@"iconBeautyReshapeEyeRotateSelect"
+             unselectImg:@"iconBeautyReshapeEyeRotateNormal"
+             title:NSLocalizedString(@"beauty_reshape_eye_move", nil)
+             desc:@""],
+            [BEButtonItemModel
+             initWithID:BETypeBeautyReshapeMouthMove
+             selectImg:@"iconBeautyReshapeMouthZoomSelect"
+             unselectImg:@"iconBeautyReshapeMouthZoomNormal"
+             title:NSLocalizedString(@"beauty_reshape_mouth_move", nil)
+             desc:@""],
+        ];
     });
     return array;
 }
