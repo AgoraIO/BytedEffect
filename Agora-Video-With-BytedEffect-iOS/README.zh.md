@@ -55,6 +55,10 @@
 三个文件复制到本项目的 OpenLive 文件夹下。
 最后使用 XCode 打开 OpenLive.xcodeproj，连接 iPhone／iPad 测试设备，设置有效的开发者签名后即可运行。
 
+### SDK 下载
+[AgoraModule_Base_iOS-1.2.2](https://download.agora.io/components/release/AgoraModule_Base_iOS-1.2.2.zip)
+[AgoraModule_Capturer_iOS-1.2.2](https://download.agora.io/components/release/AgoraModule_Capturer_iOS-1.2.2.zip)
+
 
 ## 联系我们
 
