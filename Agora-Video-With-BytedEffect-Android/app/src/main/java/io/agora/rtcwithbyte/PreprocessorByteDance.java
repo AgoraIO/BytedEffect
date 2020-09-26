@@ -5,6 +5,7 @@ import android.opengl.GLES20;
 
 import com.byteddance.effect.EffectHelper;
 import com.byteddance.effect.ResourceHelper;
+import com.byteddance.model.ComposerNode;
 
 import java.io.File;
 
@@ -87,4 +88,17 @@ public class PreprocessorByteDance implements IPreprocessor {
     public boolean initialized() {
         return mEffectHelper != null && mEffectHelper.initialized();
     }
+
+    public boolean updateComposeNode(ComposerNode node, boolean update){
+        return mEffectHelper.updateComposeNode(node, update);
+    }
+
+    public boolean setComposeNodes(String[] nodes) {
+        return mEffectHelper.setComposeNodes(nodes);
+    }
+
+    public boolean setSticker(String sticker){
+        return mEffectHelper.setSticker(sticker);
+    }
+
 }

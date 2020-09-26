@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="agora_app_id" translatable="false"><!--APPID--></string>
+    <string name="home_function_name_beauty" translatable="false">Face Beauty</string>
+    <string name="home_function_name_makeup" translatable="false">Markup</string>
+    <string name="home_function_name_sticker" translatable="false">Sticker</string>
+    <string name="home_function_name_beauty_body" translatable="false">Body Beauty</string>
+    <string name="sorry_no_permission" translatable="false">Sorry, Your license is not supported for these functions.</string>
+</resources>

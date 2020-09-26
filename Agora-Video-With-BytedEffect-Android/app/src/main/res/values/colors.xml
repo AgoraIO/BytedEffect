@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="faceUnityYellow">#ffcb15</color>
+    <color name="warmGrayColor">#857570</color>
+    <color name="brickRedColor">#971b10</color>
+
+    <color name="transparent">#00000000</color>
+    <color name="percent15translucentBlack">#26000000</color>
+    <color name="percent30translucentBlack">#4D000000</color>
+    <color name="percent40translucentBlack">#66000000</color>
+    <color name="percent50translucentBlack">#80000000</color>
+    <color name="percent60translucentBlack">#99000000</color>
+    <color name="percent70translucentWhite">#00FFFFFF</color>
+</resources>

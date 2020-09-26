@@ -1,6 +1,7 @@
 package io.agora.rtcwithbyte;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 import io.agora.capture.framework.modules.channels.ChannelManager;
 import io.agora.capture.framework.modules.channels.VideoChannel;
@@ -26,12 +27,12 @@ public class RtcVideoConsumer implements IVideoConsumer, IVideoSource {
     private volatile VideoModule mVideoModule;
     private int mChannelId;
 
-    public RtcVideoConsumer(VideoModule videoModule) {
-        this(videoModule, ChannelManager.ChannelID.CAMERA);
+    public RtcVideoConsumer() {
+        this(ChannelManager.ChannelID.CAMERA);
     }
 
-    private RtcVideoConsumer(VideoModule videoModule, int channelId) {
-        mVideoModule = videoModule;
+    private RtcVideoConsumer(int channelId) {
+        mVideoModule = VideoModule.instance();
         mChannelId = channelId;
     }
 
@@ -62,14 +63,12 @@ public class RtcVideoConsumer implements IVideoConsumer, IVideoSource {
     }
 
     @Override
-    public void setMirrorMode(int i) {
+    public void setMirrorMode(int mode) {
 
     }
 
     @Override
     public Object getDrawingTarget() {
-        // Rtc engine does not draw the frames
-        // on any target window surface
         return null;
     }
 
@@ -95,12 +94,14 @@ public class RtcVideoConsumer implements IVideoConsumer, IVideoSource {
 
     @Override
     public boolean onInitialize(IVideoFrameConsumer consumer) {
+        Log.i(TAG, "onInitialize");
         mRtcConsumer = consumer;
         return true;
     }
 
     @Override
     public boolean onStart() {
+        Log.i(TAG, "onStart");
         connectChannel(mChannelId);
         mValidInRtc = true;
         return true;
@@ -114,6 +115,7 @@ public class RtcVideoConsumer implements IVideoConsumer, IVideoSource {
 
     @Override
     public void onDispose() {
+        Log.i(TAG , "onDispose");
         mValidInRtc = false;
         mRtcConsumer = null;
         disconnectChannel(mChannelId);

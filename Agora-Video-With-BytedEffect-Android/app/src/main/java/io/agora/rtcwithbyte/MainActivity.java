@@ -1,24 +1,59 @@
 package io.agora.rtcwithbyte;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.TextureView;
-import android.view.View;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.SurfaceView;
+import android.view.TextureView;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.byteddance.effect.ResourceHelper;
+import com.byteddance.model.ComposerNode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import io.agora.capture.video.camera.CameraVideoManager;
 import io.agora.capture.video.camera.Constant;
 import io.agora.capture.video.camera.VideoCapture;
+import io.agora.rtc.RtcEngine;
+import io.agora.rtc.video.VideoCanvas;
+import io.agora.rtc.video.VideoEncoderConfiguration;
 
-public class MainActivity extends AppCompatActivity {
+import static io.agora.rtcwithbyte.ItemGetContract.MASK;
+import static io.agora.rtcwithbyte.ItemGetContract.NODE_ALL_SLIM;
+import static io.agora.rtcwithbyte.ItemGetContract.NODE_BEAUTY_CAMERA;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_BODY;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_BODY_LONG_LEG;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_BODY_SHRINK_HEAD;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_BODY_THIN;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_FACE;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_FACE_SHARPEN;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_FACE_SMOOTH;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_FACE_WHITEN;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_BLUSHER;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_EYEBROW;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_EYESHADOW;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_LIP;
+import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_PUPIL;
+
+public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipViewCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST = 1;
+    private EffectOptionContainer mEffectContainer;
+    private ExternParam externParam;
 
     private static final String[] PERMISSIONS = {
             Manifest.permission.CAMERA
@@ -30,13 +65,51 @@ public class MainActivity extends AppCompatActivity {
     private boolean mPermissionGranted;
     private boolean mFinished;
     private boolean mIsMirrored = true;
+    private int mRemoteUid = -1;
+    private FrameLayout mRemoteViewContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        UnzipTask mTask = new UnzipTask(this);
+        mTask.execute(ResourceHelper.RESOURCE);
+    }
+
+    private void updateEffectsByParam() {
+        if(externParam != null ){
+            if(externParam.getNodeArray()!=null && externParam.getNodeArray().length > 0){
+                mByteDanceEffect.setComposeNodes(externParam.getNodeArray());
+                for(ComposerNode node : externParam.getNodes()){
+                    mByteDanceEffect.updateComposeNode(node, true);
+                }
+            }
+            mByteDanceEffect.setSticker(externParam.getSticker());
+        }
+    }
+
+    private void initUI() {
         setContentView(R.layout.activity_main);
         mVideoSurface = findViewById(R.id.local_video_surface);
-        checkCameraPermission();
+        mEffectContainer = findViewById(R.id.effect_container);
+        mEffectContainer.setEffectOptionItemListener(new EffectListener());
+        externParam = new ExternParam();
+        initRemoteViewLayout();
+    }
+
+    private void initRoom() {
+        rtcEngine().setVideoSource(new RtcVideoConsumer());
+        joinChannel();
+    }
+
+    private void joinChannel() {
+        rtcEngine().setVideoEncoderConfiguration(new VideoEncoderConfiguration(
+                VideoEncoderConfiguration.VD_640x360,
+                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_24,
+                VideoEncoderConfiguration.STANDARD_BITRATE,
+                VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
+        rtcEngine().setClientRole(io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER);
+
+        rtcEngine().joinChannel(null, "BytedDemoChannel", null, 0);
     }
 
     private void checkCameraPermission() {
@@ -78,9 +151,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initCamera() {
-        mByteDanceEffect = new PreprocessorByteDance(this);
-        mCameraVideoManager = new CameraVideoManager(this, mByteDanceEffect);
-
+        mCameraVideoManager = videoManager();
+        mByteDanceEffect = (PreprocessorByteDance) mCameraVideoManager.getPreprocessor();
         mCameraVideoManager.setCameraStateListener(new VideoCapture.VideoCaptureStateListener() {
             @Override
             public void onFirstCapturedFrame(int width, int height) {
@@ -111,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         // Can attach other consumers here,
         // For example, rtc consumer or rtmp module
         mCameraVideoManager.startCapture();
+        updateEffectOptionPanel();
     }
 
     public void onCameraChange(View view) {
@@ -156,5 +229,173 @@ public class MainActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         if (!mFinished && mCameraVideoManager != null) mCameraVideoManager.stopCapture();
+    }
+
+    @Override
+    public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
+        Log.i(TAG, "onJoinChannelSuccess " + channel + " " + (uid & 0xFFFFFFFFL));
+    }
+
+    @Override
+    public void onUserOffline(int uid, int reason) {
+//        Log.i(TAG, "onUserJoined " + (uid & 0xFFFFFFFFL));
+    }
+
+    @Override
+    public void onUserJoined(int uid, int elapsed) {
+        Log.i(TAG, "onUserJoined " + (uid & 0xFFFFFFFFL));
+    }
+
+    @Override
+    public Context getContext() {
+        return getApplicationContext();
+    }
+
+    @Override
+    public void onStartTask() {
+
+    }
+
+    @Override
+    public void onEndTask(boolean result) {
+        initUI();
+        checkCameraPermission();
+        initRoom();
+    }
+
+    private class EffectListener implements EffectOptionContainer.OnEffectOptionContainerItemClickListener {
+        @Override
+        public void onEffectOptionItemClicked(int index, int textResource, boolean selected) {
+            Log.i(TAG, "onEffectOptionItemClicked " + index + " " + selected);
+            if (mByteDanceEffect != null) {
+                switch (index) {
+                    case 0:
+                        setBeautificationOn(selected);
+                        break;
+                    case 1:
+                        setMakeupItemParam(selected);
+                        break;
+                    case 2:
+                        setStickerItem(selected);
+                        break;
+                    case 3:
+                        setBeautyBody(selected);
+                        break;
+                }
+            }
+        }
+        @Override
+        public void onEffectNotSupported(int index, int textResource) {
+            Toast.makeText(MainActivity.this, R.string.sorry_no_permission, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setBeautyBody(boolean selected) {
+        List<ComposerNode> list = new ArrayList<>();
+        if(!selected){
+            list.add(new ComposerNode(TYPE_BEAUTY_BODY_THIN, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_THIN", 0));
+            list.add(new ComposerNode(TYPE_BEAUTY_BODY_LONG_LEG, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_LONG_LEG", 0));
+            list.add(new ComposerNode(TYPE_BEAUTY_BODY_SHRINK_HEAD, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_SHRINK_HEAD", 0));
+        }
+        else{
+            if(externParam.getNodes()!=null)
+                list.addAll(Arrays.asList(externParam.getNodes()));
+            list.add(new ComposerNode(TYPE_BEAUTY_BODY_THIN, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_THIN", 1));
+            list.add(new ComposerNode(TYPE_BEAUTY_BODY_LONG_LEG, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_LONG_LEG", 1));
+            list.add(new ComposerNode(TYPE_BEAUTY_BODY_SHRINK_HEAD, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_SHRINK_HEAD", 1));
+        }
+        externParam.setNodes(list.toArray(new ComposerNode[list.size()]));
+        updateEffectsByParam();
+    }
+
+    private void setStickerItem(boolean selected) {
+        if(!selected){
+            externParam.setSticker(null);
+        }
+        else {
+            externParam.setSticker(ResourceHelper.getStickerPath(getApplicationContext(), "zhutouzhuer"));
+        }
+        updateEffectsByParam();
+    }
+
+    private void setBeautificationOn(boolean selected) {
+        List<ComposerNode> list = new ArrayList<>();
+        if(!selected){
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SMOOTH, NODE_BEAUTY_CAMERA, "smooth", 0));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_CAMERA, "whiten", 0));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_CAMERA, "sharp", 0));
+        }
+        else{
+            if(externParam.getNodes()!=null)
+                list.addAll(Arrays.asList(externParam.getNodes()));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SMOOTH, NODE_BEAUTY_CAMERA, "smooth", 1));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_CAMERA, "whiten", 1));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_CAMERA, "sharp", 1));
+        }
+        externParam.setNodes(list.toArray(new ComposerNode[list.size()]));
+        updateEffectsByParam();
+    }
+
+    private void setMakeupItemParam(boolean selected) {
+        List<ComposerNode> list = new ArrayList<>();
+        if(!selected){
+            list.add(new ComposerNode(TYPE_MAKEUP_BLUSHER, "blush/richang", "Internal_Makeup_Blusher", 0));
+            list.add(new ComposerNode(TYPE_MAKEUP_LIP, "lip/sironghong", "Internal_Makeup_Lips", 0));
+            list.add(new ComposerNode(TYPE_MAKEUP_PUPIL, "pupil/hunxuezong", "Internal_Makeup_Pupil", 0));
+            list.add(new ComposerNode(TYPE_MAKEUP_EYESHADOW, "eyeshadow/dadizong", "Internal_Makeup_Eye", 0));
+            list.add(new ComposerNode(TYPE_MAKEUP_EYEBROW, "eyebrow/BK01", "Internal_Makeup_Brow", 0));
+        }
+        else{
+            if(externParam.getNodes()!=null)
+                list.addAll(Arrays.asList(externParam.getNodes()));
+            list.add(new ComposerNode(TYPE_MAKEUP_BLUSHER, "blush/richang", "Internal_Makeup_Blusher", 1));
+            list.add(new ComposerNode(TYPE_MAKEUP_LIP, "lip/sironghong", "Internal_Makeup_Lips", 1));
+            list.add(new ComposerNode(TYPE_MAKEUP_PUPIL, "pupil/hunxuezong", "Internal_Makeup_Pupil", 1));
+            list.add(new ComposerNode(TYPE_MAKEUP_EYESHADOW, "eyeshadow/dadizong", "Internal_Makeup_Eye", 1));
+            list.add(new ComposerNode(TYPE_MAKEUP_EYEBROW, "eyebrow/BK01", "Internal_Makeup_Brow", 1));
+        }
+        externParam.setNodes(list.toArray(new ComposerNode[list.size()]));
+        updateEffectsByParam();
+    }
+
+    private void updateEffectOptionPanel() {
+        // Beautification
+        mEffectContainer.setItemViewStyles(0, false, true);
+
+        // Makeup
+
+        // Sticker
+        mEffectContainer.setItemViewStyles(2, false, true);
+
+        // Body Beauty
+    }
+
+    private void initRemoteViewLayout() {
+        mRemoteViewContainer = findViewById(R.id.remote_video_layout);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        RelativeLayout.LayoutParams params =
+                (RelativeLayout.LayoutParams) mRemoteViewContainer.getLayoutParams();
+        params.width = displayMetrics.widthPixels / 3;
+        params.height = displayMetrics.heightPixels / 3;
+        mRemoteViewContainer.setLayoutParams(params);
+    }
+
+    @Override
+    public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
+        Log.i(TAG, "onRemoteVideoStateChanged " + (uid & 0xFFFFFFFFL) + " " + state + " " + reason);
+        if (mRemoteUid == -1 && state == io.agora.rtc.Constants.REMOTE_VIDEO_STATE_DECODING) {
+            runOnUiThread(() -> {
+                mRemoteUid = uid;
+                setRemoteVideoView(uid);
+            });
+        }
+    }
+
+    private void setRemoteVideoView(int uid) {
+        SurfaceView surfaceView = RtcEngine.CreateRendererView(this);
+        rtcEngine().setupRemoteVideo(new VideoCanvas(
+                surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+        mRemoteViewContainer.addView(surfaceView);
     }
 }

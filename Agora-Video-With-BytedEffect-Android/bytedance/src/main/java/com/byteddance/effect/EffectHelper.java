@@ -53,7 +53,7 @@ public class EffectHelper {
         String modelDir = ResourceHelper.getModelDir(context);
         String licence = ResourceHelper.getLicensePath(context);
         mEffectRender = new EffectRender();
-        int ret = mRenderManager.init(context, modelDir, licence, 0, 0);
+        int ret = mRenderManager.init(context, modelDir, licence);
         if (ret != BEF_RESULT_SUC) {
             Log.e(TAG, "mRenderManager.init failed!! ret =" + ret);
         }

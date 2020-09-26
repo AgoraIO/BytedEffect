@@ -12,7 +12,7 @@ public class ResourceHelper {
 
     public static final String RESOURCE = "resource";
     public static final String FILTER_RESOURCE = "FilterResource.bundle/Filter";
-    private static final String LICENSE_NAME = "labcv_test_20200630_20200831_com.bytedance.labcv.demo_labcv_test_v3.9.2.1.licbag";
+    private static final String LICENSE_NAME = "labcv_test_20200823_20200930_com.bytedance.labcv.demo_labcv_test_v3.9.3.1.licbag";
 
     private static String getResourcePath(Context context) {
         return context.getExternalFilesDir("assets").getAbsolutePath() + File.separator + RESOURCE;
