@@ -1,4 +1,4 @@
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.activities;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,6 +9,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import io.agora.rtcwithbyte.R;
 
 public class EffectOptionContainer extends FrameLayout implements View.OnClickListener {
     public interface OnEffectOptionContainerItemClickListener {

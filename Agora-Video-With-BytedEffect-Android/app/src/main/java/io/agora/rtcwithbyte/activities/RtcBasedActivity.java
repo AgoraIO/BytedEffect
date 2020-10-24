@@ -1,4 +1,4 @@
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.activities;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +7,8 @@ import android.view.WindowManager;
 
 import io.agora.capture.video.camera.CameraVideoManager;
 import io.agora.rtc.RtcEngine;
+import io.agora.rtcwithbyte.MyApplication;
+import io.agora.rtcwithbyte.RtcEngineEventHandler;
 
 public abstract class RtcBasedActivity extends AppCompatActivity implements RtcEngineEventHandler {
     @Override

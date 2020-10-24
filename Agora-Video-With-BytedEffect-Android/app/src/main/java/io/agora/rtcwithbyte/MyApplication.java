@@ -8,6 +8,7 @@ import android.util.Log;
 
 import io.agora.capture.video.camera.CameraVideoManager;
 import io.agora.rtc.RtcEngine;
+import io.agora.rtcwithbyte.framework.PreprocessorByteDance;
 
 import static android.content.ContentValues.TAG;
 

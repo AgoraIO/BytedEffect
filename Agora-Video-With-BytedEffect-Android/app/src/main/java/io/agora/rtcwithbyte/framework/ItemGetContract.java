@@ -1,4 +1,4 @@
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.framework;
 
 /**
  * Created by QunZhang on 2019-07-20 23:39

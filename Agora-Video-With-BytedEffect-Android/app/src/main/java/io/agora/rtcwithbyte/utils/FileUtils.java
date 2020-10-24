@@ -1,11 +1,9 @@
 // Copyright (C) 2018 Beijing Bytedance Network Technology Co., Ltd.
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.utils;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Environment;
-
-import com.huawei.multimedia.audiokit.utils.LogUtils;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -1,4 +1,4 @@
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.framework;
 
 import android.opengl.GLES20;
 import android.util.Log;

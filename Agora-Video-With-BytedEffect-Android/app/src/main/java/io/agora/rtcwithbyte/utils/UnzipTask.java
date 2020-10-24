@@ -1,4 +1,4 @@
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.utils;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -38,8 +38,6 @@ public class UnzipTask extends AsyncTask<String, Void, Boolean> {
             e.printStackTrace();
             return false;
         }
-
-//        return FileUtils.unzipAssetFile(mCallback.get().getContext(), zipPath, dstFile);
     }
 
     @Override

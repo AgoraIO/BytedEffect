@@ -46,10 +46,10 @@
         android:onClick="onEffectEnabled"
         android:text="Effect"
         android:visibility="invisible" />
-    <io.agora.rtcwithbyte.EffectOptionContainer
+    <io.agora.rtcwithbyte.activities.EffectOptionContainer
         android:id="@+id/effect_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
-    </io.agora.rtcwithbyte.EffectOptionContainer>
+    </io.agora.rtcwithbyte.activities.EffectOptionContainer>
 </RelativeLayout>

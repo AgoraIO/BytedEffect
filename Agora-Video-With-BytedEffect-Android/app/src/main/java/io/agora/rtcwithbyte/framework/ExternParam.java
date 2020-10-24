@@ -1,4 +1,4 @@
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.framework;
 
 import com.byteddance.model.ComposerNode;
 

@@ -1,4 +1,4 @@
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -30,37 +31,34 @@ import io.agora.capture.video.camera.VideoCapture;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
+import io.agora.rtcwithbyte.framework.ExternParam;
+import io.agora.rtcwithbyte.framework.PreprocessorByteDance;
+import io.agora.rtcwithbyte.R;
+import io.agora.rtcwithbyte.framework.RtcVideoConsumer;
+import io.agora.rtcwithbyte.utils.UnzipTask;
 
-import static io.agora.rtcwithbyte.ItemGetContract.MASK;
-import static io.agora.rtcwithbyte.ItemGetContract.NODE_ALL_SLIM;
-import static io.agora.rtcwithbyte.ItemGetContract.NODE_BEAUTY_CAMERA;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_BODY;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_BODY_LONG_LEG;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_BODY_SHRINK_HEAD;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_BODY_THIN;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_FACE;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_FACE_SHARPEN;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_FACE_SMOOTH;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_BEAUTY_FACE_WHITEN;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_BLUSHER;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_EYEBROW;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_EYESHADOW;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_LIP;
-import static io.agora.rtcwithbyte.ItemGetContract.TYPE_MAKEUP_PUPIL;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.NODE_ALL_SLIM;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.NODE_BEAUTY_LIVE;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_BODY_LONG_LEG;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_BODY_SHRINK_HEAD;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_BODY_THIN;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_FACE_SHARPEN;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_FACE_SMOOTH;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_FACE_WHITEN;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_BLUSHER;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_EYEBROW;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_EYESHADOW;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_LIP;
+import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_PUPIL;
 
 public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipViewCallback {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST = 1;
     private EffectOptionContainer mEffectContainer;
-    private ExternParam externParam;
-
     private static final String[] PERMISSIONS = {
             Manifest.permission.CAMERA
     };
-
     private CameraVideoManager mCameraVideoManager;
-    private PreprocessorByteDance mByteDanceEffect;
     private TextureView mVideoSurface;
     private boolean mPermissionGranted;
     private boolean mFinished;
@@ -68,23 +66,14 @@ public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipVi
     private int mRemoteUid = -1;
     private FrameLayout mRemoteViewContainer;
 
+    private PreprocessorByteDance preprocessor;
+    private ExternParam externParam;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UnzipTask mTask = new UnzipTask(this);
         mTask.execute(ResourceHelper.RESOURCE);
-    }
-
-    private void updateEffectsByParam() {
-        if(externParam != null ){
-            if(externParam.getNodeArray()!=null && externParam.getNodeArray().length > 0){
-                mByteDanceEffect.setComposeNodes(externParam.getNodeArray());
-                for(ComposerNode node : externParam.getNodes()){
-                    mByteDanceEffect.updateComposeNode(node, true);
-                }
-            }
-            mByteDanceEffect.setSticker(externParam.getSticker());
-        }
     }
 
     private void initUI() {
@@ -152,7 +141,7 @@ public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipVi
 
     private void initCamera() {
         mCameraVideoManager = videoManager();
-        mByteDanceEffect = (PreprocessorByteDance) mCameraVideoManager.getPreprocessor();
+        preprocessor = (PreprocessorByteDance) mCameraVideoManager.getPreprocessor();
         mCameraVideoManager.setCameraStateListener(new VideoCapture.VideoCaptureStateListener() {
             @Override
             public void onFirstCapturedFrame(int width, int height) {
@@ -193,9 +182,9 @@ public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipVi
     }
 
     public void onEffectEnabled(View view) {
-        if (mByteDanceEffect != null && mByteDanceEffect.initialized()) {
-            boolean enabled = mByteDanceEffect.isEnabled();
-            mByteDanceEffect.enablePreProcess(!enabled);
+        if (preprocessor != null && preprocessor.initialized()) {
+            boolean enabled = preprocessor.isEnabled();
+            preprocessor.enablePreProcess(!enabled);
         }
     }
 
@@ -267,7 +256,7 @@ public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipVi
         @Override
         public void onEffectOptionItemClicked(int index, int textResource, boolean selected) {
             Log.i(TAG, "onEffectOptionItemClicked " + index + " " + selected);
-            if (mByteDanceEffect != null) {
+            if (preprocessor != null) {
                 switch (index) {
                     case 0:
                         setBeautificationOn(selected);
@@ -321,16 +310,21 @@ public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipVi
     private void setBeautificationOn(boolean selected) {
         List<ComposerNode> list = new ArrayList<>();
         if(!selected){
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SMOOTH, NODE_BEAUTY_CAMERA, "smooth", 0));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_CAMERA, "whiten", 0));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_CAMERA, "sharp", 0));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SMOOTH, NODE_BEAUTY_LIVE, "smooth", 0));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_LIVE, "whiten", 0));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_LIVE, "sharp", 0));
+            externParam.setFilter(null);
         }
         else{
             if(externParam.getNodes()!=null)
                 list.addAll(Arrays.asList(externParam.getNodes()));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SMOOTH, NODE_BEAUTY_CAMERA, "smooth", 1));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_CAMERA, "whiten", 1));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_CAMERA, "sharp", 1));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SMOOTH, NODE_BEAUTY_LIVE, "smooth", 1));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_LIVE, "whiten", 1));
+            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_LIVE, "sharp", 1));
+            ExternParam.FilterItem filterItem = new ExternParam.FilterItem();
+            filterItem.setKey("Filter_01_10");
+            filterItem.setValue(0.6f);
+            externParam.setFilter(filterItem);
         }
         externParam.setNodes(list.toArray(new ComposerNode[list.size()]));
         updateEffectsByParam();
@@ -361,13 +355,8 @@ public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipVi
     private void updateEffectOptionPanel() {
         // Beautification
         mEffectContainer.setItemViewStyles(0, false, true);
-
-        // Makeup
-
         // Sticker
         mEffectContainer.setItemViewStyles(2, false, true);
-
-        // Body Beauty
     }
 
     private void initRemoteViewLayout() {
@@ -397,5 +386,21 @@ public class MainActivity extends RtcBasedActivity implements UnzipTask.IUnzipVi
         rtcEngine().setupRemoteVideo(new VideoCanvas(
                 surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         mRemoteViewContainer.addView(surfaceView);
+    }
+
+    private void updateEffectsByParam() {
+        if(externParam != null ){
+            if(externParam.getNodeArray()!=null && externParam.getNodeArray().length > 0){
+                preprocessor.setComposeNodes(externParam.getNodeArray());
+                for(ComposerNode node : externParam.getNodes()){
+                    preprocessor.updateComposeNode(node, true);
+                }
+            }
+            preprocessor.setSticker(externParam.getSticker());
+            if (null != externParam.getFilter() && !TextUtils.isEmpty(externParam.getFilter().getKey())) {
+                preprocessor.setFilter(ResourceHelper.getFilterResourcePathByName(getContext(), externParam.getFilter().getKey()));
+                preprocessor.updateFilterIntensity(externParam.getFilter().getValue());
+            }
+        }
     }
 }

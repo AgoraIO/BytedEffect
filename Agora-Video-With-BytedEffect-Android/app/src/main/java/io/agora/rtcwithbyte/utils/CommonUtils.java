@@ -1,4 +1,4 @@
-package io.agora.rtcwithbyte;
+package io.agora.rtcwithbyte.utils;
 
 import java.text.SimpleDateFormat;
 
