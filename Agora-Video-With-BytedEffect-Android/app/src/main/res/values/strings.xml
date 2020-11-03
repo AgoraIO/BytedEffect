@@ -6,4 +6,12 @@
     <string name="home_function_name_sticker" translatable="false">Sticker</string>
     <string name="home_function_name_beauty_body" translatable="false">Body Beauty</string>
     <string name="sorry_no_permission" translatable="false">Sorry, Your license is not supported for these functions.</string>
+    <string name="legal_characters_for_agora" translatable="false" >abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&amp;()+,-:;&lt;=.>?@[]^_`{|}~</string>
+
+    <!-- Main Activity -->
+    <string name="room_name_edit_hint">Fill Your Room Name</string>
+    <string name="enter_room_btn">Enter Room</string>
+    <string name="empty_room_name_toast">Please input a room name</string>
+    <string name="msg_permission_granted">All necessary permissions granted</string>
+    <string name="msg_permission_rejected">All necessary permissions need to be granted</string>
 </resources>

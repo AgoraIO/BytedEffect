@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">Agora with Byte</string>
+    <!-- Main Activity -->
+    <string name="room_name_edit_hint">输入房间名</string>
+    <string name="enter_room_btn">加入房间</string>
+    <string name="empty_room_name_toast">请输入房间名</string>
+    <string name="msg_permission_granted">已通过所有必要的权限</string>
+    <string name="msg_permission_rejected">您需要通过所有的必要权限</string>
 </resources>
