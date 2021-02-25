@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         applicationId "com.bytedance.labcv.demo"
-        minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 11
-        versionName "5.4"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 400
+        versionName "4.0"
 
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a"
@@ -22,9 +22,9 @@ android {
         }
     }
 
-    sourceSets {
-        main.assets.srcDirs += ['src/main/assets', 'src/main/effects/bundle', 'src/main/makeup/bundle']
-        main.res.srcDirs += ['src/main/res', 'src/main/effects/res', 'src/main/filters/res', 'src/main/makeup/res']
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     repositories {
@@ -40,22 +40,21 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
 
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:design:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 
-    implementation project(':video_capturer_and_renderer')
+    implementation 'io.agora.rtc:full-sdk:3.0.1'
+    implementation project(path: ':bytedance')
 
-    api 'com.zcw:togglebutton-library:1.0.0'
-    api 'org.adw.library:discrete-seekbar:1.0.1'
-    api 'com.github.hackware1993:MagicIndicator:1.5.0'
-    api 'com.github.castorflex.smoothprogressbar:library:1.1.0'
-    api 'com.google.zxing:core:3.3.3'
-    api 'com.squareup.okhttp3:okhttp:3.6.0'
-
-    implementation 'com.zhihu.android:matisse:0.5.2-beta1'
-    implementation 'com.github.bumptech.glide:glide:3.7.0'
-
-    implementation 'com.wuyr:pathlayoutmanager:1.0.3'
-    implementation 'org.adw.library:discrete-seekbar:1.0.1'
+//    api 'com.zcw:togglebutton-library:1.0.0'
+//    api 'org.adw.library:discrete-seekbar:1.0.1'
+//    api 'com.github.hackware1993:MagicIndicator:1.5.0'
+//    api 'com.github.castorflex.smoothprogressbar:library:1.1.0'
+//    api 'com.google.zxing:core:3.3.3'
+//    api 'com.squareup.okhttp3:okhttp:3.6.0'
+//
+//    implementation 'com.zhihu.android:matisse:0.5.2-beta1'
+//    implementation 'com.github.bumptech.glide:glide:3.7.0'
+//
+//    implementation 'com.wuyr:pathlayoutmanager:1.0.3'
+//    implementation 'org.adw.library:discrete-seekbar:1.0.1'
 }

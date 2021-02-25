@@ -1,0 +1,7 @@
+ComposeMakeup.bundle
+FilterResource.bundle
+LicenseBag.bundle
+ModelResource.bundle
+StickerResource.bundle
+*.a
+include
