@@ -42,19 +42,7 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
 
-    implementation 'io.agora.rtc:full-sdk:3.3.1'
+    implementation 'com.github.agorabuilder:native-full-sdk:3.4.5'
     implementation project(path: ':bytedance')
 
-//    api 'com.zcw:togglebutton-library:1.0.0'
-//    api 'org.adw.library:discrete-seekbar:1.0.1'
-//    api 'com.github.hackware1993:MagicIndicator:1.5.0'
-//    api 'com.github.castorflex.smoothprogressbar:library:1.1.0'
-//    api 'com.google.zxing:core:3.3.3'
-//    api 'com.squareup.okhttp3:okhttp:3.6.0'
-//
-//    implementation 'com.zhihu.android:matisse:0.5.2-beta1'
-//    implementation 'com.github.bumptech.glide:glide:3.7.0'
-//
-//    implementation 'com.wuyr:pathlayoutmanager:1.0.3'
-//    implementation 'org.adw.library:discrete-seekbar:1.0.1'
 }

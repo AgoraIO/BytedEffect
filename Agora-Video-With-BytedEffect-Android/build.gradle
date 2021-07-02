@@ -3,7 +3,6 @@
 buildscript {
     repositories {
         google() // HIGHER PRIORITY
-        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.2'
@@ -16,7 +15,7 @@ buildscript {
 allprojects {
     repositories {
         google() // HIGHER PRIORITY
-        jcenter()
+        maven { url 'https://www.jitpack.io' }
     }
 }
 
