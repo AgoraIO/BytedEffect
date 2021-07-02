@@ -125,4 +125,14 @@ public class RtcVideoConsumer implements IVideoConsumer, IVideoSource {
     public int getBufferType() {
         return MediaIO.BufferType.TEXTURE.intValue();
     }
+
+    @Override
+    public int getCaptureType() {
+        return MediaIO.CaptureType.CAMERA.intValue();
+    }
+
+    @Override
+    public int getContentHint() {
+        return MediaIO.ContentHint.NONE.intValue();
+    }
 }

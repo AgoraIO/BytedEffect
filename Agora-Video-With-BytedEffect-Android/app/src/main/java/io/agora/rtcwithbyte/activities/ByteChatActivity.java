@@ -2,6 +2,7 @@ package io.agora.rtcwithbyte.activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -68,12 +69,15 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
 
     private PreprocessorByteDance preprocessor;
     private ExternParam externParam;
+    private String channelName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UnzipTask mTask = new UnzipTask(this);
         mTask.execute(ResourceHelper.RESOURCE);
+        Intent intent =getIntent();
+        channelName = intent.getStringExtra(io.agora.rtcwithbyte.utils.Constant.ACTION_KEY_ROOM_NAME);
     }
 
     private void initUI() {
@@ -98,7 +102,7 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
                 VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
         rtcEngine().setClientRole(io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER);
 
-        rtcEngine().joinChannel(null, "BytedDemoChannel", null, 0);
+        rtcEngine().joinChannel(null, channelName==null?"BytedDemoChannel":channelName, null, 0);
     }
 
     private void checkCameraPermission() {
@@ -156,6 +160,11 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
                     // be stopped to reset the internal states.
                     mCameraVideoManager.stopCapture();
                 }
+            }
+
+            @Override
+            public void onCameraClosed() {
+
             }
         });
 
@@ -322,7 +331,7 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
             list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_LIVE, "whiten", 1));
             list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_LIVE, "sharp", 1));
             ExternParam.FilterItem filterItem = new ExternParam.FilterItem();
-            filterItem.setKey("Filter_01_10");
+            filterItem.setKey("Filter_01_38");
             filterItem.setValue(0.6f);
             externParam.setFilter(filterItem);
         }

@@ -34,6 +34,10 @@ Agora 功能实现请参考 [Agora 官方文档](https://docs.agora.io/cn/2.1.2/
 
 请联系 labcv_business@bytedance.com 获取 BytedEffect SDK 和对应资源文件
 
+修改 Agora-Video-With-BytedEffect-Android/app/build.gradle 中applicationId为对应的字节授权证书中的id
+
+修改 Agora-Video-With-BytedEffect-Android/bytedance/src/main/java/com/byteddance/effect/ResourceHelper.java 中LICENSE_NAME为对应字节授权证书名
+
 最后使用 Android Studio 打开本项目，连接 Android 测试设备，运行项目。
 
 ## 运行环境
