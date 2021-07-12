@@ -5,9 +5,10 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import io.agora.capture.video.camera.CameraVideoManager;
-import io.agora.rtc.RtcEngine;
+import io.agora.rtc2.Constants;
+import io.agora.rtc2.RtcEngine;
+import io.agora.rtc2.RtcEngineConfig;
 import io.agora.rtcwithbyte.framework.PreprocessorByteDance;
 
 import static android.content.ContentValues.TAG;
@@ -31,10 +32,27 @@ public class MyApplication extends Application {
         }
 
         mRtcEventHandler = new RtcEngineEventHandlerProxy();
+
+        RtcEngineConfig config = new RtcEngineConfig();
+        config.mContext = this;
+        config.mAppId = appId;
+        config.mChannelProfile = Constants.CHANNEL_PROFILE_LIVE_BROADCASTING;
+        config.mEventHandler = mRtcEventHandler;
+        config.mAudioScenario = Constants.AudioScenario
+                .getValue(Constants.AudioScenario.HIGH_DEFINITION);
+//        long provider = ExtensionManager
+//                .nativeGetExtensionProvider(this, ExtensionManager.VENDOR_NAME);
+//        config.addExtension(ExtensionManager.VENDOR_NAME, provider);
+//        config.mExtensionObserver = new IMediaExtensionObserver() {
+//            @Override
+//            public void onEvent(String s, String s1, String s2) {
+//
+//            }
+//        };
+
         try {
-            mRtcEngine = RtcEngine.create(this, appId, mRtcEventHandler);
+            mRtcEngine = RtcEngine.create(config);
             mRtcEngine.enableVideo();
-            mRtcEngine.setChannelProfile(io.agora.rtc.Constants.CHANNEL_PROFILE_LIVE_BROADCASTING);
         } catch (Exception e) {
             throw new RuntimeException("NEED TO check rtc sdk init fatal error\n" + Log.getStackTraceString(e));
         }
@@ -42,8 +60,7 @@ public class MyApplication extends Application {
 
     private void initVideoCapture() {
         Context application = getApplicationContext();
-        mVideoManager = new CameraVideoManager(application,
-                new PreprocessorByteDance(application));
+        mVideoManager = new CameraVideoManager(application, new PreprocessorByteDance(application));
         Log.i(TAG, mVideoManager.toString());
     }
 

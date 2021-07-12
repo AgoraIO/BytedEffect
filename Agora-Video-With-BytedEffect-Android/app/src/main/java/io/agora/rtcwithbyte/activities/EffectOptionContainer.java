@@ -2,19 +2,21 @@ package io.agora.rtcwithbyte.activities;
 
 import android.content.Context;
 import android.graphics.Color;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatTextView;
 
 import io.agora.rtcwithbyte.R;
 
 public class EffectOptionContainer extends FrameLayout implements View.OnClickListener {
     public interface OnEffectOptionContainerItemClickListener {
         void onEffectOptionItemClicked(int index, int textResource, boolean selected);
+
         void onEffectNotSupported(int index, int textResource);
     }
 
@@ -95,7 +97,8 @@ public class EffectOptionContainer extends FrameLayout implements View.OnClickLi
 
         mSelectedArray[selected] = !mSelectedArray[selected];
         setViewStyle(view, mSelectedArray[selected], true);
-        if (mListener != null) mListener.onEffectOptionItemClicked(selected, textRes, mSelectedArray[selected]);
+        if (mListener != null)
+            mListener.onEffectOptionItemClicked(selected, textRes, mSelectedArray[selected]);
     }
 
     private void setViewStyle(AppCompatTextView view, boolean enabled, boolean supported) {

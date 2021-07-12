@@ -1,2 +1,2 @@
-include ':bytedance'
 include ':app'
+include ':agora-bytedance'

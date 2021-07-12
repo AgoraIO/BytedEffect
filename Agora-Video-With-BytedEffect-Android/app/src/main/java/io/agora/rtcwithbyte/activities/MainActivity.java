@@ -26,13 +26,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
         mChannelName = findViewById(R.id.edt_channel);
-        checkPermissions();
-    }
-
-    private void checkPermissions() {
-        if (!permissionsGranted()) {
-            requestPermissions();
-        }
     }
 
     private boolean permissionsGranted() {
@@ -43,9 +36,9 @@ public class MainActivity extends Activity {
 
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[] { Manifest.permission.CAMERA,
+                new String[]{Manifest.permission.CAMERA,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.RECORD_AUDIO },
+                        Manifest.permission.RECORD_AUDIO},
                 REQUEST_CODE_ALL_PERMISSIONS);
     }
 
@@ -70,6 +63,11 @@ public class MainActivity extends Activity {
     }
 
     public void onStartBroadcastClick(View view) {
+        if (!permissionsGranted()) {
+            requestPermissions();
+            return;
+        }
+
         String name = mChannelName.getText().toString();
         if (name.isEmpty()) {
             Toast.makeText(this, R.string.empty_room_name_toast, Toast.LENGTH_SHORT).show();
