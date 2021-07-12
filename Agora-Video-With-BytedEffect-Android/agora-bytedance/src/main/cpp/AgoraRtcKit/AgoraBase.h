@@ -2116,44 +2116,59 @@ struct RtcStats {
 };
 
 /**
-* Video source types definition.
-**/
-enum VIDEO_SOURCE_TYPE {
-  /** Video captured by the camera.
+ * Media source types definition.
+ **/
+enum MEDIA_SOURCE_TYPE {
+  /**
+   * Video captured by the camera.
    */
   VIDEO_SOURCE_CAMERA_PRIMARY,
-  /** Video captured by the secondary camera.
+  /**
+   * Video captured by the secondary camera.
    */
   VIDEO_SOURCE_CAMERA_SECONDARY,
-  /** Video for screen sharing.
+  /**
+   * Video for screen sharing.
    */
   VIDEO_SOURCE_SCREEN_PRIMARY,
-  /** Video for secondary screen sharing.
+  /**
+   * Video for secondary screen sharing.
    */
   VIDEO_SOURCE_SCREEN_SECONDARY,
-  /** Not define.
+  /**
+   * Not define.
    */
   VIDEO_SOURCE_CUSTOM,
-  /** Video for media player sharing.
+  /**
+   * Video for media player sharing.
    */
   VIDEO_SOURCE_MEDIA_PLAYER,
-  /** Video for png image.
+  /**
+   * Video for png image.
    */
   VIDEO_SOURCE_RTC_IMAGE_PNG,
-  /** Video for png image.
+  /**
+   * Video for png image.
    */
   VIDEO_SOURCE_RTC_IMAGE_JPEG,
-  /** Video for png image.
+  /**
+   * Video for png image.
    */
   VIDEO_SOURCE_RTC_IMAGE_GIF,
-  /** Remote video received from network.
+  /**
+   * Remote video received from network.
    */
   VIDEO_SOURCE_REMOTE,
-  /** Video for transcoded.
+  /**
+   * Video for transcoded.
    */
   VIDEO_SOURCE_TRANSCODED,
+  /**
+   * audio for microphone.
+   */
+  AUDIO_SOURCE_MICROPHONE = 50,
 
-  VIDEO_SOURCE_UNKNOWN = 100
+  MEDIA_SOURCE_UNKNOWN = 100
 };
 
 /**
@@ -2682,9 +2697,9 @@ struct VideoTrackInfo {
    */
   bool encodedFrameOnly;
   /**
-   * The video source type: #VIDEO_SOURCE_TYPE
+   * The media source type: #MEDIA_SOURCE_TYPE
    */
-  VIDEO_SOURCE_TYPE sourceType;
+  MEDIA_SOURCE_TYPE sourceType;
 
   VideoTrackInfo()
   : isLocal(false), ownerUid(0), trackId(0), connectionId(0)
@@ -3237,9 +3252,9 @@ struct LiveTranscoding {
  */
 struct TranscodingVideoStream {
   /**
-   * Source type of video stream.
+   * Source type of media stream.
    */
-  VIDEO_SOURCE_TYPE sourceType;
+  MEDIA_SOURCE_TYPE sourceType;
   /**
    * Remote user uid if sourceType is VIDEO_SOURCE_REMOTE.
    */
@@ -3560,7 +3575,7 @@ struct VideoCanvas {
 
   size_t priv_size;
 
-  VIDEO_SOURCE_TYPE sourceType;
+  MEDIA_SOURCE_TYPE sourceType;
 
   VideoCanvas() : view(NULL), renderMode(media::base::RENDER_MODE_HIDDEN), mirrorMode(VIDEO_MIRROR_MODE_AUTO),
       uid(0), userId(NULL), priv(NULL), priv_size(0), sourceType(VIDEO_SOURCE_CAMERA_PRIMARY) {}
@@ -4115,6 +4130,24 @@ enum ENCRYPTION_ERROR_TYPE {
 enum PERMISSION_TYPE {
     RECORD_AUDIO = 0,
     CAMERA = 1,
+};
+
+/**
+ * Type of ear monitoring filter.
+ */
+enum EAR_MONITORING_FILTER_TYPE {
+  /**
+   * 1: Do not add an audio filter to the in-ear monitor.
+   */
+  EAR_MONITORING_FILTER_NONE = (1<<0),
+  /**
+   * 2: Enable audio filters to the in-ear monitor.
+   */
+  EAR_MONITORING_FILTER_BUILT_IN_AUDIO_FILTERS = (1<<1),
+  /**
+   * 4: Enable noise suppression to the in-ear monitor.
+   */
+  EAR_MONITORING_FILTER_NOISE_SUPPRESSION = (1<<2)
 };
 
 }  // namespace rtc

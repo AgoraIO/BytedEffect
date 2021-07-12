@@ -31,11 +31,14 @@ add_library( # Sets the name of the library.
 
              # Sets the library as a shared library.
              SHARED
-        plugin_source_code/ExtensionProvider.cpp
+        plugin_source_code/ExtensionVideoProvider.cpp
+        plugin_source_code/ExtensionAudioProvider.cpp
         plugin_source_code/ExtensionVideoFilter.cpp
+        plugin_source_code/ExtensionAudioFilter.cpp
         plugin_source_code/EGLCore.cpp
         plugin_source_code/JniHelper.cpp
-        plugin_source_code/ByteDanceProcessor.cpp
+        plugin_source_code/VideoProcessor.cpp
+        plugin_source_code/AudioProcessor.cpp
              # Provides a relative path to your source file(s).
         native-lib.cpp)
 

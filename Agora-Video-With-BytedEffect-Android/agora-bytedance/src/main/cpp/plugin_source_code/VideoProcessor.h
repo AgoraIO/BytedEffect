@@ -2,8 +2,8 @@
 // Created by DYF on 2020/7/13.
 //
 
-#ifndef AGORAWITHBYTEDANCE_BYTEDANCEPROCESSOR_H
-#define AGORAWITHBYTEDANCE_BYTEDANCEPROCESSOR_H
+#ifndef AGORAWITHBYTEDANCE_VIDEOPROCESSOR_H
+#define AGORAWITHBYTEDANCE_VIDEOPROCESSOR_H
 
 #include <thread>
 #include <string>
@@ -32,8 +32,6 @@ namespace agora {
             int releaseEffectEngine();
 
             int setParameters(std::string parameter);
-
-            std::string getParameters(std::string parameter);
 
             std::thread::id getThreadId();
 
@@ -105,4 +103,4 @@ namespace agora {
 }
 
 
-#endif //AGORAWITHBYTEDANCE_BYTEDANCEPROCESSOR_H
+#endif //AGORAWITHBYTEDANCE_VIDEOPROCESSOR_H

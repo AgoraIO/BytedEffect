@@ -2,8 +2,8 @@
 // Created by 张涛 on 2020/4/26.
 //
 
-#ifndef AGORAWITHBYTEDANCE_EXTENSIONPROVIDER_H
-#define AGORAWITHBYTEDANCE_EXTENSIONPROVIDER_H
+#ifndef AGORAWITHBYTEDANCE_EXTENSION_VIDEOPROVIDER_H
+#define AGORAWITHBYTEDANCE_EXTENSION_VIDEOPROVIDER_H
 
 #include "AgoraRtcKit/NGIAgoraExtensionProvider.h"
 #include "ExtensionVideoFilter.h"
@@ -13,21 +13,24 @@ namespace agora {
 
         class ByteDanceProcessor;
 
-        class ExtensionProvider : public agora::rtc::IExtensionProvider {
+        class ExtensionVideoProvider : public agora::rtc::IExtensionProvider {
         private:
-            static ExtensionProvider* instance_;
+            static ExtensionVideoProvider* instance_;
             agora_refptr<ByteDanceProcessor> byteDanceProcessor_;
         public:
-            static ExtensionProvider* getInstance(){
+            static void create() {
                 if (instance_ == nullptr){
-                    instance_ = new agora::RefCountedObject<ExtensionProvider>();
+                    instance_ = new agora::RefCountedObject<ExtensionVideoProvider>();
                 }
+            }
+
+            static ExtensionVideoProvider* getInstance(){
                 return instance_;
             };
 
-            ExtensionProvider();
+            ExtensionVideoProvider();
 
-            ~ExtensionProvider();
+            ~ExtensionVideoProvider();
 
             PROVIDER_TYPE getProviderType() override;
 
@@ -43,4 +46,4 @@ namespace agora {
         };
     }
 }
-#endif //AGORAWITHBYTEDANCE_EXTENSIONPROVIDER_H
+#endif //AGORAWITHBYTEDANCE_EXTENSION_VIDEOPROVIDER_H

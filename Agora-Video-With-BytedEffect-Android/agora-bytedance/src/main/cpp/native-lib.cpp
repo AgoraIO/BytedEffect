@@ -2,7 +2,8 @@
 #include <string>
 #include <plugin_source_code/error_code.h>
 //#include "AgoraRtcKit/IAgoraService.h"
-#include "plugin_source_code/ExtensionProvider.h"
+#include "plugin_source_code/ExtensionVideoProvider.h"
+#include "plugin_source_code/ExtensionAudioProvider.h"
 #include "logutils.h"
 #include "plugin_source_code/JniHelper.h"
 //#include "AgoraRtcKit/AgoraRefPtr.h"
@@ -37,10 +38,13 @@ JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved) {
     PRINTF_INFO("JNI_OnUnload");
 //    CHECK_EXTENSION_PROVIDER_VOID;
-    agora::extension::ExtensionProvider* extensionProvider = agora::extension::ExtensionProvider::getInstance();
-    if (extensionProvider) {
-        delete(extensionProvider);
-//        extensionProvider = nullptr;
+    agora::extension::ExtensionVideoProvider* videoProvider = agora::extension::ExtensionVideoProvider::getInstance();
+    if (videoProvider) {
+        delete(videoProvider);
+    }
+    agora::extension::ExtensionAudioProvider* audioProvider = agora::extension::ExtensionAudioProvider::getInstance();
+    if (audioProvider) {
+        delete(audioProvider);
     }
     JniHelper::release();
 }
@@ -48,15 +52,25 @@ JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved) {
 extern "C" JNIEXPORT jlong JNICALL
 Java_io_agora_extension_ExtensionManager_nativeGetExtensionProvider(
         JNIEnv* env,
-        jclass clazz, jobject context, jstring jVendor) {
+        jclass clazz, jobject context, jstring jVendor, jint type) {
     if (AndroidContextHelper::getContext() == nullptr){
         jobject globalContext = env->NewGlobalRef(context);
         AndroidContextHelper::setContext(globalContext);
-//        extensionProvider = new agora::RefCountedObject<agora::extension::ExtensionProvider>();
     }
     const char *vendor = env->GetStringUTFChars(jVendor, nullptr);
-    ExtensionProvider* provider = agora::extension::ExtensionProvider::getInstance();
-    provider->setExtensionVendor(vendor);
+    agora::rtc::IExtensionProvider* provider = nullptr;
+    switch (type) {
+        case agora::rtc::IExtensionProvider::LOCAL_VIDEO_FILTER:
+            agora::extension::ExtensionVideoProvider::create();
+            provider = agora::extension::ExtensionVideoProvider::getInstance();
+            ((ExtensionVideoProvider*)provider)->setExtensionVendor(vendor);
+            break;
+        case agora::rtc::IExtensionProvider::LOCAL_AUDIO_FILTER:
+            agora::extension::ExtensionAudioProvider::create();
+            provider = agora::extension::ExtensionAudioProvider::getInstance();
+            ((ExtensionAudioProvider*)provider)->setExtensionVendor(vendor);
+            break;
+    }
     env->ReleaseStringUTFChars(jVendor, vendor);
     return reinterpret_cast<intptr_t>(provider);
 }

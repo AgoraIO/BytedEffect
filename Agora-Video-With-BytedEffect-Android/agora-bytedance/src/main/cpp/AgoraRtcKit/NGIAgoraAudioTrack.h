@@ -43,7 +43,18 @@ public:
    * The position of the audio filter.
    */
   enum AudioFilterPosition {
-    Default
+    /**
+     * Work on the local playback
+     */
+    RecordingLocalPlayback,
+    /**
+     * Work on the post audio recording device.
+     */
+    PostAudioRecordingDevice,
+    /**
+     * Work on the post audio processing.
+     */
+    PostAudioProcessing,
   };
 
  public:
@@ -88,18 +99,32 @@ public:
   virtual bool removeAudioFilter(agora_refptr<IAudioFilter> filter, AudioFilterPosition position) = 0;
 
   /**
-   * set the properties of the specified video filter
+   * Enable / Disable specified audio filter
    * @param id id of the filter
-   * @param key key of the property
-   * @param json_value json str value of the property
+   * @param enable enable / disable the filter with given id
    * @return
    * - 0: success
    * - <0: failure
    */
-  virtual int setFilterProperty(const char* id, const char* key, const char* json_value) {
+  virtual int enableAudioFilter(const char* id, bool enable) {
+    (void)id;
+    (void)enable;
+    return -1;
+  }
+
+  /**
+   * set the properties of the specified audio filter
+   * @param id id of the filter
+   * @param key key of the property
+   * @param jsonValue json str value of the property
+   * @return
+   * - 0: success
+   * - <0: failure
+   */
+  virtual int setFilterProperty(const char* id, const char* key, const char* jsonValue) {
     (void)id;
     (void)key;
-    (void)json_value;
+    (void)jsonValue;
     return -1;
   }
 
@@ -237,18 +262,17 @@ class ILocalAudioTrack : public IAudioTrack {
    */
   virtual int enableLocalPlayback(bool enable) = 0;
   /**
-   * Enables or disables in-ear monitor.
-   * @param enable Whether to enable in-ear monitor:
-   * - `true`: Enable in-ear monitor.
-   * - `false`: Do not enable in-ear monitor.
-   * @param includeAudioFilter Whether to add an audio filter to the in-ear monitor.
-   * - `true`: Add an audio filter.
-   * - `false`: Do not add an audio filter.
+   * Enables in-ear monitoring (for Android and iOS only).
+   *
+   * @param enabled Determines whether to enable in-ear monitoring.
+   * - true: Enable.
+   * - false: (Default) Disable.
+   * @param includeAudioFilters The type of the ear monitoring: #EAR_MONITORING_FILTER_TYPE
    * @return
    * - 0: Success.
    * - < 0: Failure.
    */
-  virtual int enableEarMonitor(bool enable, bool includeAudioFilter) = 0;
+  virtual int enableEarMonitor(bool enable, int includeAudioFilters) = 0;
 
  protected:
   ~ILocalAudioTrack() {}

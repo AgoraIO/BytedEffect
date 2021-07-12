@@ -8,7 +8,7 @@
 #include "AgoraRtcKit/NGIAgoraMediaNode.h"
 #include <AgoraRtcKit/AgoraRefCountedObject.h>
 #include "AgoraRtcKit/AgoraRefPtr.h"
-#include "ByteDanceProcessor.h"
+#include "VideoProcessor.h"
 
 namespace agora {
     namespace extension {
@@ -35,30 +35,6 @@ namespace agora {
         protected:
             ExtensionVideoFilter() = default;
 
-        };
-
-        class AdjustVolumeAudioFilter : public agora::rtc::IAudioFilter {
-        public:
-            AdjustVolumeAudioFilter(const char* id = nullptr,
-                                    agora::rtc::IExtensionControl* control = nullptr);
-            virtual ~AdjustVolumeAudioFilter() = default;
-            bool adaptAudioFrame(const media::base::AudioPcmFrame& inAudioPcmFrame,
-                                 media::base::AudioPcmFrame& adaptedPcmFrame) override;
-            void setEnabled(bool enable) override { enabled_ = enable; }
-            bool isEnabled() const override { return enabled_; }
-            int setProperty(const char* key, const void* buf, int buf_size) override;
-            int getProperty(const char* key, void* buf, int buf_size) const override { return ERR_OK; }
-            void setVolume(int volume) { volume_ = volume / 100.0f; }
-            const char* getName() const override { return "ByteDance"; }
-
-        private:
-            static int16_t FloatS16ToS16(float v);
-
-        private:
-            std::atomic_bool enabled_ = {true};
-            std::atomic<float> volume_ = {1.0f};
-            std::string id_;
-            agora::rtc::IExtensionControl* control_ = nullptr;
         };
     }
 }
