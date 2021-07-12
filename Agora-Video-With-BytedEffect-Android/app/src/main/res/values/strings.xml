@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="agora_app_id" translatable="false">aab8b8f5a8cd4469a63042fcfafe7063</string>
+    <string name="agora_app_id" translatable="false"><!--APPID--></string>
     <string name="app_name">Demo</string>
     <string name="home_function_name_beauty" translatable="false">Face Beauty</string>
     <string name="home_function_name_makeup" translatable="false">Markup</string>
