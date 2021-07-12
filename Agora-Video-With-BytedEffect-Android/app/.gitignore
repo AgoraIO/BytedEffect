@@ -1,4 +1,4 @@
 /build
 /release
 libs
-src/jniLibs
+src/main/jniLibs
