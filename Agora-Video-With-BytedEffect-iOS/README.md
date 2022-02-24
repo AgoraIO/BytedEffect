@@ -1,12 +1,12 @@
-# Agora Video With Faceunity
+# Agora Video With BytedEffect
 
 *其他语言版本： [简体中文](README.zh.md)*
 
-This open source demo project demonstrates how to implement 1to1 video chat with  [Agora] (www.agora.io) video SDK and the [Faceunity] (http://www.faceunity.com) beauty SDK.
+This tutorial enables you to quickly get started in your development efforts to create an Android app with real-time video calls, voice calls, and interactive broadcasting. With this sample app you can:
 
-This project adopts the video beauty pre-processing function provided by Faceunity, Uses the audio collection, encoding, transmission, decoding and rendering functions provided by Agora's, and uses the video collection function provided by Agora Module.
-
-Faceunity beauty function please refer to. [Faceunity Document](http://www.faceunity.com/docs_develop_en/#/)
+Join and leave a channel.
+Choose between the front or rear camera.
+Real time Sticky/Effect/Filter for video(powered by BytedEffect SDK)
 
 Agora function implementation please refer to [Agora Document](https://docs.agora.io/en/Interactive%20Broadcast/API%20Reference/oc/docs/headers/Agora-Objective-C-API-Overview.html)
 
@@ -32,11 +32,6 @@ To build and run the sample application, get an App ID:
     // assign token to nil if you have not enabled app certificate
     NSString *const token = @"<#Temp Token#>";
     ```
-
-### 1.2 Replace FaceUnity license file `authpack.h`
-Please contact [FaceUnity](http://www.faceunity.com) to get license file and replace the `authpack.h` file located in BeautifyExample/FaceUnity
-
-### 1.3 Integrate the Agora Video SDK
 
 1. Update CocoaPods by running:
 
@@ -113,57 +108,6 @@ Create a class that implements the `VideoFilterDelegate` protocol `FUManager` , 
 }
 
 ```
-
-##### FaceUnity load
-
-in `ViewController.m` `viewDidLoad:` add demoBar,implements the `FUAPIDemoBarDelegate` protocol 
-
-```objc
-
-#import "FUManager.h"
-#import "FUAPIDemoBar.h"
-#import <Masonry/Masonry.h>
-
-/**faceU */
-@property(nonatomic, strong) FUAPIDemoBar *demoBar;
-
-```
-
-FaceUnity demoBar `FUAPIDemoBarDelegate`
-
-```objc
-
--(void)filterValueChange:(FUBeautyParam *)param{
-    [[FUManager shareManager] filterValueChange:param];
-}
-
--(void)switchRenderState:(BOOL)state{
-    [FUManager shareManager].isRender = state;
-}
-
--(void)bottomDidChange:(int)index{
-    if (index < 3) {
-        [[FUManager shareManager] setRenderType:FUDataTypeBeautify];
-    }
-    if (index == 3) {
-        [[FUManager shareManager] setRenderType:FUDataTypeStrick];
-    }
-    
-    if (index == 4) {
-        [[FUManager shareManager] setRenderType:FUDataTypeMakeup];
-    }
-    if (index == 5) {
-        
-        [[FUManager shareManager] setRenderType:FUDataTypebody];
-    }
-}
-
-```
-
-
-#### release
-
-check `delloc:` 
 
 ## FAQ
 
