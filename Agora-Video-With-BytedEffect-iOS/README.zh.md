@@ -1,12 +1,8 @@
-# Agora Video With Faceunity
+# Agora Video With BytedEffect
 
 *Read this in other languages: [English](README.md)*
 
-这个开源示例项目演示了如何快速集成 [Agora](www.agora.io) 视频 SDK 和 [Faceunity](http://www.faceunity.com) 美颜 SDK，实现一对一视频聊天。
-
-本项目采用了 Faceunity 提供的视频美颜前处理功能，使用了 Agora 提供的声音采集，编码，传输，解码和渲染功能，使用了 Agora Module 提供的视频采集功能。
-
-Faceunity 美颜功能实现请参考 [Faceunity 官方文档](http://www.faceunity.com/docs_develop/#/markdown/integrate/introduction)
+这个开源示例项目演示了如果快速集成 Agora 视频 SDK 和 BytedEffect 美颜 SDK，实现一对一视频聊天。
 
 Agora 功能实现请参考 [Agora 官方文档](https://docs.agora.io/cn/Interactive%20Broadcast/API%20Reference/oc/docs/headers/Agora-Objective-C-API-Overview.html)
 
@@ -31,10 +27,8 @@ Agora 功能实现请参考 [Agora 官方文档](https://docs.agora.io/cn/Intera
     }
     ```
 
-### 1.2 替换相芯美颜证书 `authpack.h`
-请联系 [Faceunity](http://www.faceunity.com) 获取证书文件替换本项目 `BeautifyExample/FaceUnity` 文件夹中的 ”authpack.h“ 文件。
 
-### 1.3 集成 Agora 视频 SDK
+### 1.2 集成 Agora 视频 SDK
 
 1. 执行以下命令更新CocoaPods依赖
 
@@ -137,58 +131,6 @@ __weak typeof(self) weakSelf = self;
 }];
 
 ```
-
-##### FaceUnity美颜模块加载
-
-在 `ViewController.m` `viewDidLoad:` 方法中查看美颜加载
-导入头文件,添加美颜工具条,实现代理方法 `FUAPIDemoBarDelegate`
-
-```objc
-
-#import "FUManager.h"
-#import "FUAPIDemoBar.h"
-#import <Masonry/Masonry.h>
-
-/**faceU */
-@property(nonatomic, strong) FUAPIDemoBar *demoBar;
-
-```
-
-美颜工具条代理方法 `FUAPIDemoBarDelegate`
-
-```objc
-
--(void)filterValueChange:(FUBeautyParam *)param{
-    [[FUManager shareManager] filterValueChange:param];
-}
-
--(void)switchRenderState:(BOOL)state{
-    [FUManager shareManager].isRender = state;
-}
-
--(void)bottomDidChange:(int)index{
-    if (index < 3) {
-        [[FUManager shareManager] setRenderType:FUDataTypeBeautify];
-    }
-    if (index == 3) {
-        [[FUManager shareManager] setRenderType:FUDataTypeStrick];
-    }
-    
-    if (index == 4) {
-        [[FUManager shareManager] setRenderType:FUDataTypeMakeup];
-    }
-    if (index == 5) {
-        
-        [[FUManager shareManager] setRenderType:FUDataTypebody];
-    }
-}
-
-```
-
-
-#### 资源释放和销毁
-
-参见 `delloc:` 方法
 
 
 ## 运行环境
