@@ -60,7 +60,7 @@ public class EffectHelper {
         ActivityManager am = (ActivityManager) context.getSystemService(mContext.ACTIVITY_SERVICE);
         ConfigurationInfo ci = am.getDeviceConfigurationInfo();
         int renderapi = (ci.reqGlEsVersion >= 0x30000)?1:0;
-        int ret = mRenderManager.init(context, modelDir, licence, true, true, renderapi);
+        int ret = mRenderManager.init(context, modelDir, licence, true, false, renderapi);
         if (ret != BEF_RESULT_SUC) {
             Log.e(TAG, "mRenderManager.init failed!! ret =" + ret);
         }
