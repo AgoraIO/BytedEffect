@@ -23,29 +23,7 @@
         android:src="@drawable/camera_change"
         android:onClick="onCameraChange"/>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/mirror_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:onClick="onMirrorModeChanged"
-        android:text="Mirror Mode"
-        android:textAllCaps="false"
-        android:visibility="invisible" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_toEndOf="@id/mirror_button"
-        android:onClick="onEffectEnabled"
-        android:text="Effect"
-        android:visibility="invisible" />
     <io.agora.rtcwithbyte.activities.EffectOptionContainer
         android:id="@+id/effect_container"
         android:layout_width="match_parent"

@@ -42,7 +42,7 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
 
-    implementation 'com.github.agorabuilder:native-full-sdk:3.4.5'
+    implementation 'io.agora.rtc:full-sdk:4.0.0-rc.1'
     implementation project(path: ':bytedance')
 
 }
