@@ -9,17 +9,16 @@
 
 #import "ViewController.h"
 #import <AgoraRtcKit/AgoraRtcEngineKit.h>
-#import "CapturerManager.h"
-#import "VideoProcessingManager.h"
 #import "KeyCenter.h"
+#import "BEImageUtils.h"
 
 #import "ByteDanceFilter.h"
 
-@interface ViewController () <AgoraRtcEngineDelegate>
+@interface ViewController () <AgoraRtcEngineDelegate, AgoraVideoFrameDelegate>
 
-@property (nonatomic, strong) CapturerManager *capturerManager;
 @property (nonatomic, strong) ByteDanceFilter *videoFilter;
-@property (nonatomic, strong) VideoProcessingManager *processingManager;
+@property (nonatomic, strong) BEImageUtils *imageUtils;
+
 @property (nonatomic, strong) AgoraRtcEngineKit *rtcEngineKit;
 @property (nonatomic, strong) IBOutlet UIView *localView;
 
@@ -45,29 +44,31 @@
     self.remoteView.hidden = YES;
     
     // 初始化 rte engine
-    self.rtcEngineKit = [AgoraRtcEngineKit sharedEngineWithAppId:[KeyCenter AppId] delegate:self];
+    AgoraRtcEngineConfig *config = [[AgoraRtcEngineConfig alloc] init];
+    config.appId = [KeyCenter AppId];
+    config.channelProfile = AgoraChannelProfileLiveBroadcasting;
+    self.rtcEngineKit = [AgoraRtcEngineKit sharedEngineWithConfig:config delegate:self];
     
-    [self.rtcEngineKit setChannelProfile:AgoraChannelProfileLiveBroadcasting];
+    [self.rtcEngineKit setVideoFrameDelegate:self];
     [self.rtcEngineKit setClientRole:AgoraClientRoleBroadcaster];
+    AgoraCameraCapturerConfiguration *captuer = [[AgoraCameraCapturerConfiguration alloc] init];
+    captuer.cameraDirection = AgoraCameraDirectionFront;
+    [self.rtcEngineKit setCameraCapturerConfiguration:captuer];
+    
     [self.rtcEngineKit enableVideo];
-    AgoraVideoEncoderConfiguration* config = [[AgoraVideoEncoderConfiguration alloc] initWithSize:CGSizeMake(720, 1280) frameRate:30 bitrate:0 orientationMode:AgoraVideoOutputOrientationModeAdaptative];
-    [self.rtcEngineKit setVideoEncoderConfiguration:config];
+    [self.rtcEngineKit enableAudio];
     
-    // init process manager
-    self.processingManager = [[VideoProcessingManager alloc] init];
+    AgoraVideoEncoderConfiguration *configuration = [[AgoraVideoEncoderConfiguration alloc] init];
+//    configuration.dimensions = CGSizeMake(360, 640);
+//    configuration.dimensions = CGSizeMake(720, 1280);
+
+    [self.rtcEngineKit setVideoEncoderConfiguration: configuration];
+    AgoraRtcChannelMediaOptions *option = [[AgoraRtcChannelMediaOptions alloc] init];
+    option.clientRoleType = [AgoraRtcIntOptional of: AgoraClientRoleBroadcaster];
+    option.publishMicrophoneTrack = [AgoraRtcBoolOptional of:YES];
+    option.publishCameraTrack = [AgoraRtcBoolOptional of:YES];
+    [self.rtcEngineKit joinChannelByToken:nil channelId:self.channelName uid:0 mediaOptions:option joinSuccess:^(NSString * _Nonnull channel, NSUInteger uid, NSInteger elapsed) { }];
     
-    // init capturer, it will push pixelbuffer to rtc channel
-    AGMCapturerVideoConfig *videoConfig = [AGMCapturerVideoConfig defaultConfig];
-    videoConfig.sessionPreset = AVCaptureSessionPreset1280x720;
-    videoConfig.fps = 30;
-    self.capturerManager = [[CapturerManager alloc] initWithVideoConfig:videoConfig delegate:self.processingManager];
-    
-    // add FaceUnity filter and add to process manager
-    self.videoFilter = [ByteDanceFilter shareManager];
-    self.videoFilter.enabled = YES;
-    [self.processingManager addVideoFilter:self.videoFilter];
-    
-    [self.capturerManager startCapture];
     
     // set up local video to render your local camera preview
     self.videoCanvas = [AgoraRtcVideoCanvas new];
@@ -77,37 +78,66 @@
     self.videoCanvas.renderMode = AgoraVideoRenderModeHidden;
     self.videoCanvas.mirrorMode = AgoraVideoMirrorModeDisabled;
     [self.rtcEngineKit setupLocalVideo:self.videoCanvas];
+    [self.rtcEngineKit startPreview];
+   
     
-    // set custom capturer as video source
-    [self.rtcEngineKit setVideoSource:self.capturerManager];
+    // add FaceUnity filter and add to process manager
+    self.videoFilter = [ByteDanceFilter shareManager];
+    self.videoFilter.enabled = YES;
     
-    [self.rtcEngineKit joinChannelByToken:nil channelId:self.channelName info:nil uid:0 joinSuccess:^(NSString * _Nonnull channel, NSUInteger uid, NSInteger elapsed) {
-        
-    }];
+    self.imageUtils = [[BEImageUtils alloc] init];
 }
 
 /// release
 - (void)dealloc {
-
-    [self.capturerManager stopCapture];
     [self.rtcEngineKit leaveChannel:nil];
     [self.rtcEngineKit stopPreview];
-    [self.rtcEngineKit setVideoSource:nil];
     [AgoraRtcEngineKit destroy];
 }
 
 
 - (IBAction)switchCamera:(UIButton *)button
 {
-    [self.capturerManager switchCamera];
+    [self.rtcEngineKit switchCamera];
 }
 
 - (IBAction)toggleRemoteMirror:(UIButton *)button
 {
     self.remoteVideoMirrored = self.remoteVideoMirrored == AgoraVideoMirrorModeEnabled ? AgoraVideoMirrorModeDisabled : AgoraVideoMirrorModeEnabled;
-    AgoraVideoEncoderConfiguration* config = [[AgoraVideoEncoderConfiguration alloc] initWithSize:CGSizeMake(720, 1280) frameRate:30 bitrate:0 orientationMode:AgoraVideoOutputOrientationModeAdaptative];
-    config.mirrorMode = self.remoteVideoMirrored;
-    [self.rtcEngineKit setVideoEncoderConfiguration:config];
+    [self.rtcEngineKit setLocalRenderMode:AgoraVideoRenderModeHidden mirror:self.remoteVideoMirrored];
+}
+
+- (void)rtcEngine:(AgoraRtcEngineKit *)engine didJoinedOfUid:(NSUInteger)uid elapsed:(NSInteger)elapsed
+{
+    NSLog(@"join uid === %lu", uid);
+}
+
+- (BOOL)onCaptureVideoFrame:(AgoraOutputVideoFrame *)videoFrame {
+    CVPixelBufferRef pixelBuffer = videoFrame.pixelBuffer;
+    BEPixelBufferInfo *pixelBufferInfo = [self.imageUtils getCVPixelBufferInfo:videoFrame.pixelBuffer];
+    if (pixelBufferInfo.format != BE_BGRA) {
+        pixelBuffer = [self.imageUtils transforCVPixelBufferToCVPixelBuffer:pixelBuffer outputFormat:BE_BGRA];
+    }
+    
+    pixelBuffer = [self.videoFilter processFrame: pixelBuffer
+                                       timeStamp: videoFrame.renderTimeMs];
+    videoFrame.pixelBuffer = pixelBuffer;
+    return YES;
+}
+
+- (AgoraVideoFormat)getVideoPixelFormatPreference{
+    return AgoraVideoFormatBGRA;
+}
+- (AgoraVideoFrameProcessMode)getVideoFrameProcessMode{
+    return AgoraVideoFrameProcessModeReadWrite;
+}
+
+- (BOOL)getMirrorApplied{
+    return YES;
+}
+
+- (BOOL)getRotationApplied{
+    return NO;
 }
 
 /// firstRemoteVideoDecoded

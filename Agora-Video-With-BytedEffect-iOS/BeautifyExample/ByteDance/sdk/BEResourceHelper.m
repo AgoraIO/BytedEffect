@@ -7,6 +7,7 @@
 //
 
 #import "BEResourceHelper.h"
+#import "BELicenseHelper.h"
 
 static NSString *LICENSE_PATH = @"LicenseBag";
 static NSString *COMPOSER_PATH = @"ComposeMakeup";
@@ -29,6 +30,8 @@ static NSString *BUNDLE = @"bundle";
 @implementation BEResourceHelper
 
 - (NSString *)licensePath {
+//    const char *license = [BELicenseHelper shareInstance].licensePath;
+//    return [[NSString alloc]initWithCString:license encoding:(NSUTF8StringEncoding)];
     NSString *licenseName;
     if ([self.delegate respondsToSelector:@selector(licenseName)]) {
         licenseName = [self.delegate licenseName];
@@ -50,6 +53,9 @@ static NSString *BUNDLE = @"bundle";
     }
     if (!_composerPrefix) {
         _composerPrefix = [[[NSBundle mainBundle] pathForResource:COMPOSER_PATH ofType:BUNDLE] stringByAppendingString:@"/ComposeMakeup/"];
+    }
+    if ([nodeName containsString:_composerPrefix]) {
+        return nodeName;
     }
     return [_composerPrefix stringByAppendingString:nodeName];
 }

@@ -24,8 +24,8 @@
     [super viewDidLoad];
 
 //    self.view.backgroundColor = [UIColor whiteColor];
-    
 }
+
 
 /// 输入房间号开始跳转
 

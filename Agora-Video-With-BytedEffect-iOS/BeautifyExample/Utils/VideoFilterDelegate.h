@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol VideoFilterDelegate <NSObject>
 
-- (CVPixelBufferRef)processFrame:(CVPixelBufferRef)frame frameTime:(CMTime)time;
+- (CVPixelBufferRef)processFrame:(CVPixelBufferRef)frame timeStamp:(double)timeStamp;
 
 @end
 

@@ -8,6 +8,8 @@
 #import "BEEffectManager.h"
 #import "BEResourceHelper.h"
 #import "BETimeRecoder.h"
+#import "BEEffectResourceHelper.h"
+
 
 @implementation BEProcessResultBuffer
 @end
@@ -55,17 +57,18 @@
         _faceInfo = NULL;
         _handInfo = NULL;
         _skeletonInfo = NULL;
-
-        _effectManager = [[BEEffectManager alloc] init];
+        BEEffectResourceHelper *resourceHelper = [BEEffectResourceHelper new];
+        _effectManager = [[BEEffectManager alloc] initWithResourceProvider:resourceHelper licenseProvider:[BELicenseHelper shareInstance]];
+        int ret = [_effectManager initTask];
+        NSLog(@"ret == %d", ret);
+        if (ret == BEF_RESULT_SUC) {
+            [self setEffectOn:true];
+        }
         _render = [[BERender alloc] init];
         _resourceHelper = [[BEResourceHelper alloc] init];
         _resourceHelper.delegate = delegate;
-
-        [self be_setupEffectSDK:[_resourceHelper licensePath] model:[_resourceHelper modelDirPath]];
         self.usePipeline = YES;
         
-//        _manager = [[IRenderMsgDelegateManager alloc] init];
-//        [_manager addDelegate:self];
 #ifdef TIME_LOG
         _timeRecoder = [BETimeRecoder new];
 #endif
@@ -100,7 +103,7 @@
     if ([EAGLContext currentContext] != _glContext) {
         [EAGLContext setCurrentContext:_glContext];
     }
-    
+
     BEProcessResult *result;
     if (_pixelBufferAccelerate) {
 #ifdef DEBUG_LOG
@@ -175,8 +178,8 @@
 
 - (BEProcessResult *)process:(GLuint)texture width:(int)width height:(int)height timeStamp:(double)timeStamp fromPixelBuffer:(BOOL)fromPixelBuffer {
     //设置后续美颜以及其他识别功能的基本参数
-    [_effectManager setWidth:width height:height orientation:[self getDeviceOrientation]];
-
+//    [_effectManager setWidth:width height:height orientation:[self getDeviceOrientation]];
+    
     GLuint textureResult;
     if (_effectOn) {
 #ifdef DEBUG_LOG
@@ -186,12 +189,12 @@
 #ifdef TIME_LOG
         [_timeRecoder record:@"algorithmProcess"];
 #endif
-        [_effectManager algorithmTexture:texture timeStamp:timeStamp];
+//        [_effectManager algorithmTexture:texture timeStamp:timeStamp];
 #ifdef TIME_LOG
         [_timeRecoder stop:@"algorithmProcess"];
         [_timeRecoder record:@"effectProcess"];
 #endif
-        textureResult = [_effectManager processTexture:texture outputTexture:outputTexutre timeStamp:timeStamp];
+        textureResult = [_effectManager processTexture:texture outputTexture:outputTexutre width:width height:height rotate:BEF_AI_CLOCKWISE_ROTATE_0 timeStamp:timeStamp];
 #ifdef TIME_LOG
         [_timeRecoder stop:@"effectProcess"];
 #endif
@@ -228,7 +231,7 @@
 
 - (void)setComposerMode:(int)mode {
     _composerMode = mode;
-    [_effectManager setComposerMode:mode];
+//    [_effectManager setComposerMode:mode];
 }
 
 - (void)updateComposerNodes:(NSArray<NSString *> *)nodes {
@@ -236,7 +239,10 @@
     
     NSMutableArray<NSString *> *paths = [NSMutableArray arrayWithCapacity:nodes.count];
     for (int i = 0; i < nodes.count; i++) {
-        [paths addObject:[_resourceHelper composerNodePath:nodes[i]]];
+        NSString *path = [_resourceHelper composerNodePath:nodes[i]];
+        if (path) {
+            [paths addObject:path];            
+        }
     }
     
     [_effectManager updateComposerNodes:paths];
@@ -270,42 +276,30 @@
 }
 
 - (BOOL)setCameraPosition:(BOOL)isFront {
-    return [_effectManager setCameraPosition:isFront];
+    [_effectManager setFrontCamera:isFront];
+    return YES;
 }
 
 - (BOOL)setImageMode:(BOOL)imageMode {
-    return [_effectManager setImageMode:imageMode];
+//    return [_effectManager setImageMode:imageMode];
+    return YES;
 }
 
 - (BOOL)processTouchEvent:(float)x y:(float)y {
-    return [_effectManager processTouchEvent:x y:y];
+//    return [_effectManager processTouchEvent:x y:y];
+    return YES;
 }
 
 - (bef_ai_face_info *)getFaceInfo {
-    if (_faceInfo == NULL) {
-        _faceInfo = (bef_ai_face_info *)malloc(sizeof(bef_ai_face_info));
-    }
-    memset(_faceInfo, 0, sizeof(bef_ai_face_info));
-    [_effectManager getFaceInfo:_faceInfo];
-    return _faceInfo;
+    return [_effectManager getFaceInfo];
 }
 
 - (bef_ai_hand_info *)getHandInfo {
-    if (_handInfo == NULL) {
-        _handInfo = (bef_ai_hand_info *)malloc(sizeof(bef_ai_hand_info));
-    }
-    memset(_handInfo, 0, sizeof(bef_ai_hand_info));
-    [_effectManager getHandInfo:_handInfo];
-    return _handInfo;
+    return [_effectManager getHandInfo];
 }
 
 - (bef_ai_skeleton_result *)getSkeletonInfo {
-    if (_skeletonInfo == NULL) {
-        _skeletonInfo = (bef_ai_skeleton_result *)malloc(sizeof(bef_ai_skeleton_result));
-    }
-    memset(_skeletonInfo, 0, sizeof(bef_ai_skeleton_result));
-    [_effectManager getSkeletonInfo:_skeletonInfo];
-    return _skeletonInfo;
+    return [_effectManager getSkeletonInfo];
 }
 
 #pragma mark - RenderMsgDelegate
@@ -320,7 +314,7 @@
 - (void)setUsePipeline:(BOOL)usePipeline {
     _usePipeline = usePipeline;
     if (_effectManager != nil) {
-        [_effectManager setPipelineProcess:usePipeline];
+        [_effectManager setUsePipeline:usePipeline];
     }
     if (_render != nil) {
         _render.useCacheTexture = usePipeline;
@@ -329,21 +323,14 @@
 
 #pragma mark - private
 
-/*
- * 初始化SDK
- */
-- (void)be_setupEffectSDK:(NSString *)license model:(NSString *)model {
-    [_effectManager setupEffectManagerWithLicense:license model:model];
-}
-
 - (void)be_releaseSDK {
     // 要在opengl上下文中调用
-    [_effectManager releaseEffectManager];
+    [_effectManager destroyTask];
 }
 
 - (void)be_checkAndSetComposer {
     if ([self be_shouldResetComposer]) {
-        [_effectManager initEffectCompose:[_resourceHelper composerPath]];
+//        [_effectManager initEffectCompose:[_resourceHelper composerPath]];
         _shouldResetComposer = false;
     }
 }

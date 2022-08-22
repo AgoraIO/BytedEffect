@@ -1,7 +1,6 @@
 // Copyright (C) 2018 Beijing Bytedance Network Technology Co., Ltd.
 #import <GLKit/GLKit.h>
 #import "BEResourceHelper.h"
-#import "BERender.h"
 #import "BEEffectManager.h"
 
 @class BEFrameProcessor;

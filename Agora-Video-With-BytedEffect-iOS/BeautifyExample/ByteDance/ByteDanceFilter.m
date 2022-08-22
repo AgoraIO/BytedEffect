@@ -21,11 +21,11 @@ static ByteDanceFilter *shareManager = NULL;
 
 + (ByteDanceFilter *)shareManager
 {
+    __block ByteDanceFilter *shareManager;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         shareManager = [[ByteDanceFilter alloc] init];
     });
-
     return shareManager;
 }
 
@@ -38,12 +38,14 @@ static ByteDanceFilter *shareManager = NULL;
         _processor.processorResult = BECVPixelBuffer;
         
         [_processor setEffectOn:YES];
-        [_processor updateComposerNodes:@[@"/beauty_IOS_live"]];
-        [_processor updateComposerNodeIntensity:@"/beauty_IOS_live" key:@"smooth" intensity:0.8];
-        [_processor updateComposerNodeIntensity:@"/beauty_IOS_live" key:@"whiten" intensity:0.3];
-        [_processor updateComposerNodeIntensity:@"/beauty_IOS_live" key:@"sharp" intensity:0.56];
-        [_processor setFilterPath:@"Filter_01_38"];
-        [_processor setFilterIntensity:1];
+        [_processor setFilterPath:@""];
+        [_processor updateComposerNodes:@[@"/beauty_IOS_lite"]];
+        [_processor updateComposerNodeIntensity:@"/beauty_IOS_lite" key:@"smooth" intensity:0.8];
+        [_processor updateComposerNodeIntensity:@"/beauty_IOS_lite" key:@"whiten" intensity:0.9];
+        [_processor updateComposerNodeIntensity:@"/beauty_IOS_lite" key:@"sharp" intensity:0.96];
+        [_processor updateComposerNodeIntensity:@"/reshape_lite" key:@"Internal_Deform_Overall" intensity:0.95];
+        [_processor updateComposerNodeIntensity:@"/reshape_lite" key:@"Internal_Deform_Eye" intensity:0.95];
+        [_processor updateComposerNodeIntensity:@"/reshape_lite" key:@"Internal_Deform_MovNose" intensity:0.0];
     }
     
     return self;
@@ -52,9 +54,8 @@ static ByteDanceFilter *shareManager = NULL;
 
 #pragma mark - VideoFilterDelegate
 /// process your video frame here
-- (CVPixelBufferRef)processFrame:(CVPixelBufferRef)frame frameTime:(CMTime)time{
+- (CVPixelBufferRef)processFrame:(CVPixelBufferRef)frame timeStamp:(double)timeStamp{
     if(self.enabled) {
-        double timeStamp = (double)time.value / time.timescale;
         BEProcessResult *result = [_processor process:frame timeStamp:timeStamp];
         return result.pixelBuffer;
     }

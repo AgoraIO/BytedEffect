@@ -3,29 +3,7 @@
 #import <OpenGLES/ES2/glext.h>
 #import <UIKit/UIKit.h>
 #import <CoreVideo/CoreVideo.h>
-
-/// input buffer type
-typedef NS_ENUM(NSInteger, BEFormatType) {
-    // unknow format
-    BE_UNKNOW,
-    // 8bit R G B A
-    BE_RGBA,
-    // 8bit B G R A
-    BE_BGRA,
-    // video range, 8bit Y1 Y2 Y3 Y4... U1 V1...
-    BE_YUV420V,
-    // full range, 8bit Y1 Y2 Y3 Y4... U1 V1...
-    BE_YUV420F
-};
-
-@interface BEPixelBufferInfo : NSObject
-
-@property (nonatomic, assign) BEFormatType format;
-@property (nonatomic, assign) int width;
-@property (nonatomic, assign) int height;
-@property (nonatomic, assign) int bytesPerRow;
-
-@end
+#import "BEPixelBufferInfo.h"
 
 @interface BERender : NSObject
 

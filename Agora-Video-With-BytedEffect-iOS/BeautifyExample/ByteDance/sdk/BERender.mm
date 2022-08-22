@@ -9,9 +9,6 @@
 
 static const int TEXTURE_CACHE_NUM = 3;
 
-@implementation BEPixelBufferInfo
-@end
-
 @interface BERender () {
     BERenderHelper          *_renderHelper;
     GLuint                  _frameBuffer;
