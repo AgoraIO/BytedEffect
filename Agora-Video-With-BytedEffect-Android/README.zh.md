@@ -25,20 +25,24 @@ Agora 功能实现请参考 [Agora 官方文档](https://docs.agora.io/cn/2.1.2/
 如需使用第三方采集，请特别参考[自定义设备 API](https://docs.agora.io/cn/2.1.2/product/Interactive%20Broadcast/API%20Reference/custom_live_android?platform=Android)  或者 [自采集 API](https://docs.agora.io/cn/2.1.2/product/Interactive%20Broadcast/API%20Reference/custom_live_android?platform=Android)
 
 ## 运行示例程序
-首先在 [Agora.io 注册](https://dashboard.agora.io/cn/signup/) 注册账号，并创建自己的测试项目，获取到 AppID。将 AppID 填写进 strings.xml
+1. 首先在 [Agora.io 注册](https://dashboard.agora.io/cn/signup/) 注册账号，并创建自己的测试项目，获取到 AppID。将 AppID 填写进 strings.xml
 
 ```
 <string name="agora_app_id"><#YOUR APP ID#></string>
 ```
 然后在 [Agora.io SDK](https://www.agora.io/cn/download/) 下载 视频通话 + 直播 SDK，解压后将其中的 libs\agora-rtc-sdk.jar 复制到本项目的 app\libs 文件夹下。
 
-请联系 labcv_business@bytedance.com 获取 BytedEffect SDK 和对应资源文件
+2. 请联系 labcv_business@bytedance.com 获取 ByteEffect SDK 和对应资源文件。
 
-修改 Agora-Video-With-BytedEffect-Android/app/build.gradle 中applicationId为对应的字节授权证书中的id
+3. 修改 app/build.gradle 中applicationId为对应的字节授权证书中的id，并将bytedance/src/main/java/com/byteddance/effect/ResourceHelper.java 中LICENSE_NAME为对应字节授权证书名。
 
-修改 Agora-Video-With-BytedEffect-Android/bytedance/src/main/java/com/byteddance/effect/ResourceHelper.java 中LICENSE_NAME为对应字节授权证书名
+4. 将ByteEffect的资源bundle文件放到bytedance/src/main/resource目录下。
 
-最后使用 Android Studio 打开本项目，连接 Android 测试设备，运行项目。
+5. 使用 Android Studio 打开本项目，连接 Android 测试设备，运行项目。
+
+## 字节插件
+
+在Agora云市场上已经有字节插件，使用插件能更快集成。集成可以参考[demo](https://github.com/AgoraIO-Community/AgoraMarketplace/tree/master/ByteDance)
 
 ## 运行环境
 * Android Studio(3.1+)

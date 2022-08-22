@@ -3,10 +3,15 @@ package com.byteddance.effect;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.AssetManager;
 
 import androidx.annotation.NonNull;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.CountDownLatch;
 
 public class ResourceHelper {
 
@@ -14,8 +19,99 @@ public class ResourceHelper {
     public static final String FILTER_RESOURCE = "FilterResource.bundle/Filter";
     private static final String LICENSE_NAME = "Agora_20200915_20210914_agoramarketplace.bytedance.labcv.demo_v3.9.3.1.licbag";
 
+    public static void initialize(Context context) {
+        CountDownLatch latch = new CountDownLatch(1);
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                String resourcePath = getResourcePath(context);
+                File rootDir = new File(resourcePath);
+                if (rootDir.exists()) {
+                    latch.countDown();
+                    return;
+                } else if (!rootDir.mkdirs()) {
+                    latch.countDown();
+                    return;
+                }
+                try {
+                    copyAssets(context.getAssets(), RESOURCE, getAssetsPath(context));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                latch.countDown();
+            }
+        }.start();
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void copyAssets(AssetManager assets, String path, String rootDir) throws IOException {
+        if (isAssetsDir(assets, path)) {
+            File dir = new File(rootDir + File.separator + path);
+            if (!dir.exists() && !dir.mkdirs()) {
+                throw new IllegalStateException("mkdir failed");
+            }
+            for (String s : assets.list(path)) {
+                copyAssets(assets, path + "/" + s, rootDir);
+            }
+        } else {
+            InputStream input = assets.open(path);
+            File dest = new File(rootDir, path);
+            copyToFileOrThrow(input, dest);
+        }
+
+    }
+
+    private static boolean isAssetsDir(AssetManager assets, String path) {
+        try {
+
+            String[] files = assets.list(path);
+            return files != null && files.length > 0;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static void copyToFileOrThrow(InputStream inputStream, File destFile)
+            throws IOException {
+        if (destFile.exists()) {
+            return;
+
+        }
+        File file = destFile.getParentFile();
+        if (file != null && !file.exists()) {
+            file.mkdirs();
+        }
+        FileOutputStream out = new FileOutputStream(destFile);
+        try {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) >= 0) {
+                out.write(buffer, 0, bytesRead);
+            }
+        } finally {
+            out.flush();
+            try {
+                out.getFD().sync();
+            } catch (IOException e) {
+            }
+            out.close();
+        }
+    }
+
+
     private static String getResourcePath(Context context) {
-        return context.getExternalFilesDir("assets").getAbsolutePath() + File.separator + RESOURCE;
+        return getAssetsPath(context) + File.separator + RESOURCE;
+    }
+
+    @NonNull
+    private static String getAssetsPath(Context context) {
+        return context.getExternalFilesDir("assets").getAbsolutePath();
     }
 
     public static String getModelDir(@NonNull final Context context) {

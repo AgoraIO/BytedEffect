@@ -1,43 +1,5 @@
 package io.agora.rtcwithbyte.activities;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.SurfaceView;
-import android.view.TextureView;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
-import com.byteddance.effect.ResourceHelper;
-import com.byteddance.model.ComposerNode;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import io.agora.capture.video.camera.CameraVideoManager;
-import io.agora.capture.video.camera.Constant;
-import io.agora.capture.video.camera.VideoCapture;
-import io.agora.rtc.RtcEngine;
-import io.agora.rtc.video.VideoCanvas;
-import io.agora.rtc.video.VideoEncoderConfiguration;
-import io.agora.rtcwithbyte.framework.ExternParam;
-import io.agora.rtcwithbyte.framework.PreprocessorByteDance;
-import io.agora.rtcwithbyte.R;
-import io.agora.rtcwithbyte.framework.RtcVideoConsumer;
-import io.agora.rtcwithbyte.utils.UnzipTask;
-
 import static io.agora.rtcwithbyte.framework.ItemGetContract.NODE_ALL_SLIM;
 import static io.agora.rtcwithbyte.framework.ItemGetContract.NODE_BEAUTY_LIVE;
 import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_BODY_LONG_LEG;
@@ -52,6 +14,40 @@ import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_EYESHAD
 import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_LIP;
 import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_PUPIL;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.SurfaceView;
+import android.view.TextureView;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.byteddance.effect.ResourceHelper;
+import com.byteddance.model.ComposerNode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import io.agora.rtc2.Constants;
+import io.agora.rtc2.RtcEngine;
+import io.agora.rtc2.video.VideoCanvas;
+import io.agora.rtc2.video.VideoEncoderConfiguration;
+import io.agora.rtcwithbyte.R;
+import io.agora.rtcwithbyte.framework.ExternParam;
+import io.agora.rtcwithbyte.utils.UnzipTask;
+
 public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnzipViewCallback {
     private static final String TAG = ByteChatActivity.class.getSimpleName();
     private static final int REQUEST = 1;
@@ -59,15 +55,11 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     private static final String[] PERMISSIONS = {
             Manifest.permission.CAMERA
     };
-    private CameraVideoManager mCameraVideoManager;
     private TextureView mVideoSurface;
     private boolean mPermissionGranted;
-    private boolean mFinished;
-    private boolean mIsMirrored = true;
     private int mRemoteUid = -1;
     private FrameLayout mRemoteViewContainer;
 
-    private PreprocessorByteDance preprocessor;
     private ExternParam externParam;
     private String channelName;
 
@@ -80,6 +72,14 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
         channelName = intent.getStringExtra(io.agora.rtcwithbyte.utils.Constant.ACTION_KEY_ROOM_NAME);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        rtcEngine().leaveChannel();
+        rtcEngine().stopPreview();
+        preProcessor().disposeOnStopPreview();
+    }
+
     private void initUI() {
         setContentView(R.layout.activity_main);
         mVideoSurface = findViewById(R.id.local_video_surface);
@@ -90,7 +90,6 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     }
 
     private void initRoom() {
-        rtcEngine().setVideoSource(new RtcVideoConsumer());
         joinChannel();
     }
 
@@ -100,7 +99,7 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
                 VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_24,
                 VideoEncoderConfiguration.STANDARD_BITRATE,
                 VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
-        rtcEngine().setClientRole(io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER);
+        rtcEngine().setClientRole(io.agora.rtc2.Constants.CLIENT_ROLE_BROADCASTER);
 
         rtcEngine().joinChannel(null, channelName==null?"BytedDemoChannel":channelName, null, 0);
     }
@@ -144,90 +143,15 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     }
 
     private void initCamera() {
-        mCameraVideoManager = videoManager();
-        preprocessor = (PreprocessorByteDance) mCameraVideoManager.getPreprocessor();
-        mCameraVideoManager.setCameraStateListener(new VideoCapture.VideoCaptureStateListener() {
-            @Override
-            public void onFirstCapturedFrame(int width, int height) {
-                Log.i(TAG, "onFirstCapturedFrame: " + width + "x" + height);
-            }
-
-            @Override
-            public void onCameraCaptureError(int error, String message) {
-                Log.i(TAG, "onCameraCaptureError: error:" + error + " " + message);
-                if (mCameraVideoManager != null) {
-                    // When there is a camera error, the capture should
-                    // be stopped to reset the internal states.
-                    mCameraVideoManager.stopCapture();
-                }
-            }
-
-            @Override
-            public void onCameraClosed() {
-
-            }
-        });
-
-        // Set camera capture configuration
-        mCameraVideoManager.setPictureSize(640, 480);
-        mCameraVideoManager.setFrameRate(24);
-        mCameraVideoManager.setFacing(Constant.CAMERA_FACING_FRONT);
-        mCameraVideoManager.setLocalPreviewMirror(toMirrorMode(mIsMirrored));
-
-        // The preview surface is actually considered as
-        // an on-screen consumer under the hood.
-        mCameraVideoManager.setLocalPreview(mVideoSurface, "Surface1");
-
-        // Can attach other consumers here,
-        // For example, rtc consumer or rtmp module
-        mCameraVideoManager.startCapture();
+        rtcEngine().setupLocalVideo(new VideoCanvas(mVideoSurface));
+        rtcEngine().startPreview();
         updateEffectOptionPanel();
     }
 
     public void onCameraChange(View view) {
-        if (mCameraVideoManager != null) {
-            mCameraVideoManager.switchCamera();
-        }
+        rtcEngine().switchCamera();
     }
 
-    public void onEffectEnabled(View view) {
-        if (preprocessor != null && preprocessor.initialized()) {
-            boolean enabled = preprocessor.isEnabled();
-            preprocessor.enablePreProcess(!enabled);
-        }
-    }
-
-    public void onMirrorModeChanged(View view) {
-        if (mCameraVideoManager != null) {
-            mIsMirrored = !mIsMirrored;
-            mCameraVideoManager.setLocalPreviewMirror(toMirrorMode(mIsMirrored));
-        }
-    }
-
-    private int toMirrorMode(boolean isMirrored) {
-        return isMirrored ? Constant.MIRROR_MODE_ENABLED : Constant.MIRROR_MODE_DISABLED;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (mPermissionGranted && mCameraVideoManager != null) {
-            mCameraVideoManager.startCapture();
-        }
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        mFinished = true;
-        if (mCameraVideoManager != null) mCameraVideoManager.stopCapture();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (!mFinished && mCameraVideoManager != null) mCameraVideoManager.stopCapture();
-    }
 
     @Override
     public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
@@ -265,7 +189,7 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
         @Override
         public void onEffectOptionItemClicked(int index, int textResource, boolean selected) {
             Log.i(TAG, "onEffectOptionItemClicked " + index + " " + selected);
-            if (preprocessor != null) {
+            if (preProcessor().initialized()) {
                 switch (index) {
                     case 0:
                         setBeautificationOn(selected);
@@ -382,7 +306,7 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     @Override
     public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
         Log.i(TAG, "onRemoteVideoStateChanged " + (uid & 0xFFFFFFFFL) + " " + state + " " + reason);
-        if (mRemoteUid == -1 && state == io.agora.rtc.Constants.REMOTE_VIDEO_STATE_DECODING) {
+        if (mRemoteUid == -1 && state == Constants.REMOTE_VIDEO_STATE_PLAYING) {
             runOnUiThread(() -> {
                 mRemoteUid = uid;
                 setRemoteVideoView(uid);
@@ -400,15 +324,15 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     private void updateEffectsByParam() {
         if(externParam != null ){
             if(externParam.getNodeArray()!=null && externParam.getNodeArray().length > 0){
-                preprocessor.setComposeNodes(externParam.getNodeArray());
+                preProcessor().setComposeNodes(externParam.getNodeArray());
                 for(ComposerNode node : externParam.getNodes()){
-                    preprocessor.updateComposeNode(node, true);
+                    preProcessor().updateComposeNode(node, true);
                 }
             }
-            preprocessor.setSticker(externParam.getSticker());
+            preProcessor().setSticker(externParam.getSticker());
             if (null != externParam.getFilter() && !TextUtils.isEmpty(externParam.getFilter().getKey())) {
-                preprocessor.setFilter(ResourceHelper.getFilterResourcePathByName(getContext(), externParam.getFilter().getKey()));
-                preprocessor.updateFilterIntensity(externParam.getFilter().getValue());
+                preProcessor().setFilter(ResourceHelper.getFilterResourcePathByName(getContext(), externParam.getFilter().getKey()));
+                preProcessor().updateFilterIntensity(externParam.getFilter().getValue());
             }
         }
     }

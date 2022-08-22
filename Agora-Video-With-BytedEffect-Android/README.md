@@ -25,26 +25,30 @@ In order to build and run the sample application you must obtain an App ID:
 ```xml
 <string name="agora_app_id"><#YOUR APP ID#></string>
 ```
-4. Contact labcv_business@bytedance.com and get BytedEffect SDK and resource bundle
 
-### Prepare agora SDK
-1. Download agora SDK from the official download page: https://www.agora.io/en/download/.
-2. Unpack the zip file, copy all .so libraries to their corresponding abi folders (app\src\main\jniLibs). The folder structure of jniLibs should be like this:
+### ByteEffect Configuration
+1. Contact labcv_business@bytedance.com and get ByteEffect SDK and resource bundle
 
-````
-jniLibs
-  |__arm64-v8a
-     |__ libagora-crypto.so
-     |__ libagora-rtc-sdk-jni.so
+2. Modify applicationId in app/build.gradle to the id in the corresponding byte authorization certificate, and set LICENSE_NAME in bytedance/src/main/java/com/byteddance/effect/ResourceHelper.java to the name of the corresponding byte authorization certificate.
 
-  |__ armeabi-v7a
-     |__ libagora-crypto.so
-     |__ libagora-rtc-sdk-jni.so
+3. Put the ByteEffect resource bundle file in the bytedance/src/main/resource directory.
 
-  |__x86
-     |__ libagora-crypto.so
-     |__ libagora-rtc-sdk-jni.so
+### Run project
+Open the project with Android Studio, connect the Android test device, and run the project.
 
-````
-3. If you need to implement raw data interfaces, please copy the header files under "include" folder in the zip file into the CPP source folder.
-4. Besides, copy agora-rtc-sdk.jar into "app/libs" folder.
+## Bytedance Extension
+Bytedance Extension is available in agora extension marketplace. Using extension is more easier than using raw video data. You can refer the [demo](https://github.com/AgoraIO-Community/AgoraMarketplace/tree/master/ByteDance) to use the extension.
+
+## Contact Us
+
+- If you have questions, take a look at [FAQ](https://docs.agora.io/cn/faq) first
+- Dive into [Agora SDK Samples](https://github.com/AgoraIO) to see more tutorials
+- Take a look at [Agora Use Case](https://github.com/AgoraIO-usecase) for more complicated, real-world use cases
+- More projects maintained by community can be found at [Agora Community](https://github.com/AgoraIO-Community)
+- You can find full API documentation at [Document Center](https://docs.agora.io/en/)
+- You can ask questions or see others' solutions in [Stack Overflow](https://stackoverflow.com/questions/tagged/agora.io)
+- If you find a bug of this project, please post an issue here [issue](https://github.com/AgoraIO/FaceUnity/issues)
+
+## License
+
+The MIT License (MIT)

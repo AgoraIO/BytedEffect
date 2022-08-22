@@ -1,6 +1,10 @@
 package com.byteddance.effect;
 
+import static com.bytedance.labcv.effectsdk.BytedEffectConstants.BytedResultCode.BEF_RESULT_SUC;
+
+import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.ConfigurationInfo;
 import android.opengl.GLES11Ext;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,8 +16,6 @@ import com.byteddance.model.TextureFormat;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static com.bytedance.labcv.effectsdk.BytedEffectConstants.BytedResultCode.BEF_RESULT_SUC;
 
 public class EffectHelper {
     public static final String TAG = "EffectHelper";
@@ -50,10 +52,15 @@ public class EffectHelper {
      * @return 如果成功返回BEF_RESULT_SUC， 否则返回对应的错误码
      */
     private int initEffect(Context context) {
+        ResourceHelper.initialize(context);
         String modelDir = ResourceHelper.getModelDir(context);
         String licence = ResourceHelper.getLicensePath(context);
         mEffectRender = new EffectRender();
-        int ret = mRenderManager.init(context, modelDir, licence);
+
+        ActivityManager am = (ActivityManager) context.getSystemService(mContext.ACTIVITY_SERVICE);
+        ConfigurationInfo ci = am.getDeviceConfigurationInfo();
+        int renderapi = (ci.reqGlEsVersion >= 0x30000)?1:0;
+        int ret = mRenderManager.init(context, modelDir, licence, true, false, renderapi);
         if (ret != BEF_RESULT_SUC) {
             Log.e(TAG, "mRenderManager.init failed!! ret =" + ret);
         }
