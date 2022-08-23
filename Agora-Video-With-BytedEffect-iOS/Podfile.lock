@@ -1,19 +1,4 @@
 PODS:
-  - AFNetworking (4.0.1):
-    - AFNetworking/NSURLSession (= 4.0.1)
-    - AFNetworking/Reachability (= 4.0.1)
-    - AFNetworking/Security (= 4.0.1)
-    - AFNetworking/Serialization (= 4.0.1)
-    - AFNetworking/UIKit (= 4.0.1)
-  - AFNetworking/NSURLSession (4.0.1):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/Reachability (4.0.1)
-  - AFNetworking/Security (4.0.1)
-  - AFNetworking/Serialization (4.0.1)
-  - AFNetworking/UIKit (4.0.1):
-    - AFNetworking/NSURLSession
   - AgoraRtcEngine_iOS (4.0.0-rc.1):
     - AgoraRtcEngine_iOS/AINS (= 4.0.0-rc.1)
     - AgoraRtcEngine_iOS/AudioBeauty (= 4.0.0-rc.1)
@@ -36,44 +21,27 @@ PODS:
   - AgoraRtcEngine_iOS/SuperResolution (4.0.0-rc.1)
   - AgoraRtcEngine_iOS/VirtualBackground (4.0.0-rc.1)
   - BytedEffectSDK (4.3.0)
-  - Masonry (1.1.0)
-  - SDWebImage (5.13.2):
-    - SDWebImage/Core (= 5.13.2)
-  - SDWebImage/Core (5.13.2)
   - SSZipArchive (2.4.3)
-  - YYModel (1.0.4)
 
 DEPENDENCIES:
-  - AFNetworking
   - AgoraRtcEngine_iOS (= 4.0.0-rc.1)
   - BytedEffectSDK (from `./`)
-  - Masonry
-  - SDWebImage
   - SSZipArchive
-  - YYModel
 
 SPEC REPOS:
   trunk:
-    - AFNetworking
     - AgoraRtcEngine_iOS
-    - Masonry
-    - SDWebImage
     - SSZipArchive
-    - YYModel
 
 EXTERNAL SOURCES:
   BytedEffectSDK:
     :path: "./"
 
 SPEC CHECKSUMS:
-  AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
   AgoraRtcEngine_iOS: 1b78af79120066c230cf9281d8587813ce6a8323
   BytedEffectSDK: 553374c2e36859edce6eb9b5cdd9d2307bb97248
-  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  SDWebImage: 72f86271a6f3139cc7e4a89220946489d4b9a866
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
-  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: c2ceb8fb8498b9ff37513f3fa50ab223cb9594f2
+PODFILE CHECKSUM: b6342842aac2d0ff470371128ffc93a43a6bef4f
 
 COCOAPODS: 1.11.2

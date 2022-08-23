@@ -15,9 +15,5 @@ target 'BeautifyExample' do
    pod 'BytedEffectSDK', :path => './'
    pod 'AgoraRtcEngine_iOS', '4.0.0-rc.1'
    pod 'SSZipArchive'
-   pod 'Masonry'
-   pod 'YYModel'
-   pod 'SDWebImage'
-   pod 'AFNetworking'
    
 end
