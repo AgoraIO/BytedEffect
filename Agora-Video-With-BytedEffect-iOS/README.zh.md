@@ -40,96 +40,66 @@ pod install
 
 
 
-## 2.Agora摄像头采集模块 AMGCapturer
-### 2.1 支持的功能
-- [x]     Capturer
-    - [x] Camera Capturer
-        - [x] Support for front and rear camera switching
-        - [x] Support for dynamic resolution switching
-        - [x] Support I420, NV12, BGRA pixel format output
-        - [x] Support Exposure, ISO
-        - [ ] Support ZoomScale
-        - [ ] Support Torch
-        - [ ] Support watermark
-    - [x] Audio Capturer
-        - [x] Support single and double channel
-        - [x] Support Mute
-    - [x]  Video Adapter Filter (For processing the video frame direction required by different modules)
-        - [x] Support VideoOutputOrientationModeAdaptative for RTC function
-        - [x] Support ...FixedLandscape and ...FixedLandscape for CDN live streaming
-- [x] Renderer
-    - [x] gles
-        - [x] Support glContext Shared
-        - [x] Support mirror
-        - [x] Support fit、hidden zoom mode
+## 2.Agora摄像头采集模块
+使用RTC采集视频流后传给字节SDK进行美颜处理
 
 
-
-### 2.3 代码示例 
-
-#### 2.3.1 Objective-C
-##### 如何使用采集器
+### 代码示例 
 
 ```objc
-// init process manager
-self.processingManager = [[VideoProcessingManager alloc] init];
+// set delegate
+[self.rtcEngineKit setVideoFrameDelegate:self];
+
+// 设置CapturerConfiguration
+ AgoraCameraCapturerConfiguration *captuer = [[AgoraCameraCapturerConfiguration alloc] init];
+captuer.cameraDirection = AgoraCameraDirectionFront;
+[self.rtcEngineKit setCameraCapturerConfiguration:captuer];
     
-// init capturer, it will push pixelbuffer to rtc channel
-AGMCapturerVideoConfig *videoConfig = [AGMCapturerVideoConfig defaultConfig];
-videoConfig.sessionPreset = AVCaptureSessionPreset1280x720;
-videoConfig.fps = 30;
-self.capturerManager = [[CapturerManager alloc] initWithVideoConfig:videoConfig delegate:self.processingManager];
+AgoraVideoEncoderConfiguration *configuration = [[AgoraVideoEncoderConfiguration alloc] init];
+configuration.dimensions = CGSizeMake(1280, 720);
+[self.rtcEngineKit setVideoEncoderConfiguration: configuration];
     
-// add FaceUnity filter and add to process manager
-self.videoFilter = [FUManager shareManager];
-self.videoFilter.enabled = YES;
-[self.processingManager addVideoFilter:self.videoFilter];
-[self.capturerManager startCapture];
+// 在回调中处理数据
+- (BOOL)onCaptureVideoFrame:(AgoraOutputVideoFrame *)videoFrame {
+    CVPixelBufferRef pixelBuffer = [self.videoFilter processFrame:videoFrame.pixelBuffer];
+    videoFrame.pixelBuffer = pixelBuffer;
+    return YES;
+}
 
 ```
 
 ##### 自定义滤镜模块
 
-创建一个实现 `VideoFilterDelegate` 协议的类 `FUManager`，在 `processFrame:` 代理方法里面处理视频帧数据。
+创建一个实现 `VideoFilterDelegate` 协议的类 `ByteDanceFilter`，在 `processFrame:` 代理方法里面处理视频帧数据。
 
 ```objc
 
 #pragma mark - VideoFilterDelegate
 /// process your video frame here
-- (CVPixelBufferRef)processFrame:(CVPixelBufferRef)frame {
+- (CVPixelBufferRef)processFrame:(CVPixelBufferRef)frame timeStamp:(double)timeStamp{
     if(self.enabled) {
-        CVPixelBufferRef buffer = [self renderItemsToPixelBuffer:frame];
-        return buffer;
+        BEProcessResult *result = [_processor process:frame timeStamp:timeStamp];
+        return result.pixelBuffer;
     }
     return frame;
 }
 
 ```
 
+#### 本地视图设置
 
-##### 方向适配器
-
-```objc
-
-在`CapturerManager.h`中查看定义
-self.videoAdapterFilter = [[AGMVideoAdapterFilter alloc] init];
-self.videoAdapterFilter.ignoreAspectRatio = YES;
-[self.cameraCapturer addVideoSink:self.videoAdapterFilter];
-
-```
-
-
-##### 模块之间连接
+* Agora 自采集自渲染
 
 ```objc
 
-[self.cameraCapturer addVideoSink:self.videoAdapterFilter];
-__weak typeof(self) weakSelf = self;
-[self.videoAdapterFilter setFrameProcessingCompletionBlock:^(AGMVideoSource * _Nonnull videoSource, CMTime time) {
-    CVPixelBufferRef pixelBuffer = videoSource.framebufferForOutput.pixelBuffer;
-    [weakSelf didOutputPixelBuffer:pixelBuffer frameTime:time];
-}];
+     AgoraRtcVideoCanvas *videoCanvas = [[AgoraRtcVideoCanvas alloc] init];
+    videoCanvas.uid = 0;
+    // Since we are making a simple 1:1 video chat app, for simplicity sake, we are not storing the UIDs. You could use a mechanism such as an array to store the UIDs in a channel.
 
+    videoCanvas.view = self.localView;
+    videoCanvas.renderMode = AgoraVideoRenderModeHidden;
+[self.rtcEngineKit setupLocalVideo:videoCanvas];
+    
 ```
 
 
@@ -145,6 +115,7 @@ __weak typeof(self) weakSelf = self;
 
 ## 联系我们
 
+- 如果想使用插件方式集成请参考 [云市场](https://docs.agora.io/cn/extension_customer/quickstart_faceunity?platform=iOS)
 - 完整的 API 文档见 [文档中心](https://docs.agora.io/cn/)
 - 如果在集成中遇到问题，你可以到 [开发者社区](https://dev.agora.io/cn/) 提问
 - 如果有售前咨询问题，可以拨打 400 632 6626，或加入官方Q群 12742516 提问
