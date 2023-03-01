@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 32
+    buildToolsVersion "32.0.0"
 
     defaultConfig {
-        applicationId "agoramarketplace.bytedance.labcv.demo"
+        applicationId "io.agora.rte.extension.bytedance"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 32
         versionCode 400
         versionName "4.0"
 
@@ -26,15 +27,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
-    repositories {
-        flatDir {
-            dirs 'libs'
-        }
-        maven {
-            url "https://jitpack.io"
-        }
-    }
 }
 
 dependencies {
@@ -42,7 +34,8 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
 
-    implementation 'com.github.agorabuilder:native-full-sdk:3.4.5'
+    implementation "io.agora.rtc:full-sdk:3.7.2.1"
+    implementation 'com.github.AgoraIO-Community:MediaIO-Camera:1.1.7.5'
     implementation project(path: ':bytedance')
 
 }

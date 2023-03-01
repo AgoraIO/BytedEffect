@@ -9,8 +9,10 @@
 
     <FrameLayout
         android:id="@+id/remote_video_layout"
-        android:layout_width="90dp"
-        android:layout_height="160dp" />
+        android:layout_width="180dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:layout_height="320dp" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/switch_camera"

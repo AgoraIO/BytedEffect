@@ -1,16 +1,15 @@
 package io.agora.rtcwithbyte;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Application;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
-
 import io.agora.capture.video.camera.CameraVideoManager;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtcwithbyte.framework.PreprocessorByteDance;
-
-import static android.content.ContentValues.TAG;
 
 public class MyApplication extends Application {
     private CameraVideoManager mVideoManager;
@@ -42,8 +41,7 @@ public class MyApplication extends Application {
 
     private void initVideoCapture() {
         Context application = getApplicationContext();
-        mVideoManager = new CameraVideoManager(application,
-                new PreprocessorByteDance(application));
+        mVideoManager = CameraVideoManager.create(application, new PreprocessorByteDance(application));
         Log.i(TAG, mVideoManager.toString());
     }
 

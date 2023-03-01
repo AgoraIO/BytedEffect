@@ -1,15 +1,9 @@
 package io.agora.rtcwithbyte.activities;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -19,40 +13,25 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.byteddance.effect.ResourceHelper;
-import com.byteddance.model.ComposerNode;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import io.agora.beauty.bytedance.IBeautyByteDance;
 import io.agora.capture.video.camera.CameraVideoManager;
 import io.agora.capture.video.camera.Constant;
 import io.agora.capture.video.camera.VideoCapture;
+import io.agora.rtc.Constants;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
-import io.agora.rtcwithbyte.framework.ExternParam;
-import io.agora.rtcwithbyte.framework.PreprocessorByteDance;
 import io.agora.rtcwithbyte.R;
+import io.agora.rtcwithbyte.framework.PreprocessorByteDance;
 import io.agora.rtcwithbyte.framework.RtcVideoConsumer;
-import io.agora.rtcwithbyte.utils.UnzipTask;
 
-import static io.agora.rtcwithbyte.framework.ItemGetContract.NODE_ALL_SLIM;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.NODE_BEAUTY_LIVE;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_BODY_LONG_LEG;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_BODY_SHRINK_HEAD;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_BODY_THIN;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_FACE_SHARPEN;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_FACE_SMOOTH;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_BEAUTY_FACE_WHITEN;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_BLUSHER;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_EYEBROW;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_EYESHADOW;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_LIP;
-import static io.agora.rtcwithbyte.framework.ItemGetContract.TYPE_MAKEUP_PUPIL;
-
-public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnzipViewCallback {
+public class ByteChatActivity extends RtcBasedActivity {
     private static final String TAG = ByteChatActivity.class.getSimpleName();
     private static final int REQUEST = 1;
     private EffectOptionContainer mEffectContainer;
@@ -63,21 +42,28 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     private TextureView mVideoSurface;
     private boolean mPermissionGranted;
     private boolean mFinished;
-    private boolean mIsMirrored = true;
+    private boolean mIsMirrored = false;
     private int mRemoteUid = -1;
     private FrameLayout mRemoteViewContainer;
 
     private PreprocessorByteDance preprocessor;
-    private ExternParam externParam;
     private String channelName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UnzipTask mTask = new UnzipTask(this);
-        mTask.execute(ResourceHelper.RESOURCE);
-        Intent intent =getIntent();
+        Intent intent = getIntent();
         channelName = intent.getStringExtra(io.agora.rtcwithbyte.utils.Constant.ACTION_KEY_ROOM_NAME);
+        initUI();
+        checkCameraPermission();
+        initRoom();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        rtcEngine().setVideoSource(null);
+        rtcEngine().leaveChannel();
     }
 
     private void initUI() {
@@ -85,7 +71,6 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
         mVideoSurface = findViewById(R.id.local_video_surface);
         mEffectContainer = findViewById(R.id.effect_container);
         mEffectContainer.setEffectOptionItemListener(new EffectListener());
-        externParam = new ExternParam();
         initRemoteViewLayout();
     }
 
@@ -97,12 +82,12 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     private void joinChannel() {
         rtcEngine().setVideoEncoderConfiguration(new VideoEncoderConfiguration(
                 VideoEncoderConfiguration.VD_640x360,
-                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_24,
+                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_15,
                 VideoEncoderConfiguration.STANDARD_BITRATE,
-                VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
+                VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_ADAPTIVE));
         rtcEngine().setClientRole(io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER);
 
-        rtcEngine().joinChannel(null, channelName==null?"BytedDemoChannel":channelName, null, 0);
+        rtcEngine().joinChannel(null, channelName == null ? "ByteDemoChannel" : channelName, null, 0);
     }
 
     private void checkCameraPermission() {
@@ -124,11 +109,11 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
         boolean granted = true;
         if (requestCode == REQUEST) {
-             for (String permission : permissions) {
-                 if (!permissionGranted(permission)) {
-                     granted = false;
-                 }
-             }
+            for (String permission : permissions) {
+                if (!permissionGranted(permission)) {
+                    granted = false;
+                }
+            }
         }
 
         if (granted) {
@@ -163,14 +148,24 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
             }
 
             @Override
+            public void onCameraOpen() {
+
+            }
+
+            @Override
             public void onCameraClosed() {
 
+            }
+
+            @Override
+            public VideoCapture.FrameRateRange onSelectCameraFpsRange(List<VideoCapture.FrameRateRange> list, VideoCapture.FrameRateRange frameRateRange) {
+                return null;
             }
         });
 
         // Set camera capture configuration
-        mCameraVideoManager.setPictureSize(640, 480);
-        mCameraVideoManager.setFrameRate(24);
+        mCameraVideoManager.setPictureSize(1280, 720);
+        mCameraVideoManager.setFrameRate(15);
         mCameraVideoManager.setFacing(Constant.CAMERA_FACING_FRONT);
         mCameraVideoManager.setLocalPreviewMirror(toMirrorMode(mIsMirrored));
 
@@ -191,7 +186,7 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     }
 
     public void onEffectEnabled(View view) {
-        if (preprocessor != null && preprocessor.initialized()) {
+        if (preprocessor != null) {
             boolean enabled = preprocessor.isEnabled();
             preprocessor.enablePreProcess(!enabled);
         }
@@ -236,30 +231,30 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
 
     @Override
     public void onUserOffline(int uid, int reason) {
-//        Log.i(TAG, "onUserJoined " + (uid & 0xFFFFFFFFL));
+        Log.i(TAG, "onUserJoined " + (uid & 0xFFFFFFFFL));
+        runOnUiThread(() -> {
+            if (mRemoteViewContainer.getChildCount() > 0
+                    && mRemoteViewContainer.getTag() instanceof Integer
+                    && (int) mRemoteViewContainer.getTag() == uid) {
+                mRemoteViewContainer.removeAllViews();
+            }
+        });
     }
 
     @Override
     public void onUserJoined(int uid, int elapsed) {
         Log.i(TAG, "onUserJoined " + (uid & 0xFFFFFFFFL));
+        runOnUiThread(() -> {
+            if (mRemoteViewContainer.getChildCount() > 0) {
+                mRemoteViewContainer.removeAllViews();
+            }
+            SurfaceView surfaceView = RtcEngine.CreateRendererView(ByteChatActivity.this);
+            rtcEngine().setupRemoteVideo(new VideoCanvas(surfaceView, Constants.RENDER_MODE_FIT, uid));
+            mRemoteViewContainer.addView(surfaceView);
+            mRemoteViewContainer.setTag(uid);
+        });
     }
 
-    @Override
-    public Context getContext() {
-        return getApplicationContext();
-    }
-
-    @Override
-    public void onStartTask() {
-
-    }
-
-    @Override
-    public void onEndTask(boolean result) {
-        initUI();
-        checkCameraPermission();
-        initRoom();
-    }
 
     private class EffectListener implements EffectOptionContainer.OnEffectOptionContainerItemClickListener {
         @Override
@@ -282,6 +277,7 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
                 }
             }
         }
+
         @Override
         public void onEffectNotSupported(int index, int textResource) {
             Toast.makeText(ByteChatActivity.this, R.string.sorry_no_permission, Toast.LENGTH_SHORT).show();
@@ -289,76 +285,31 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
     }
 
     private void setBeautyBody(boolean selected) {
-        List<ComposerNode> list = new ArrayList<>();
-        if(!selected){
-            list.add(new ComposerNode(TYPE_BEAUTY_BODY_THIN, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_THIN", 0));
-            list.add(new ComposerNode(TYPE_BEAUTY_BODY_LONG_LEG, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_LONG_LEG", 0));
-            list.add(new ComposerNode(TYPE_BEAUTY_BODY_SHRINK_HEAD, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_SHRINK_HEAD", 0));
+        IBeautyByteDance beautyByteDance = preprocessor.getBeautyByteDance();
+        if (beautyByteDance != null) {
+            beautyByteDance.setBodyBeautifyEnable(selected);
         }
-        else{
-            if(externParam.getNodes()!=null)
-                list.addAll(Arrays.asList(externParam.getNodes()));
-            list.add(new ComposerNode(TYPE_BEAUTY_BODY_THIN, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_THIN", 1));
-            list.add(new ComposerNode(TYPE_BEAUTY_BODY_LONG_LEG, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_LONG_LEG", 1));
-            list.add(new ComposerNode(TYPE_BEAUTY_BODY_SHRINK_HEAD, NODE_ALL_SLIM, "BEF_BEAUTY_BODY_SHRINK_HEAD", 1));
-        }
-        externParam.setNodes(list.toArray(new ComposerNode[list.size()]));
-        updateEffectsByParam();
     }
 
     private void setStickerItem(boolean selected) {
-        if(!selected){
-            externParam.setSticker(null);
+        IBeautyByteDance beautyByteDance = preprocessor.getBeautyByteDance();
+        if (beautyByteDance != null) {
+            beautyByteDance.setStickerEnable(selected);
         }
-        else {
-            externParam.setSticker(ResourceHelper.getStickerPath(getApplicationContext(), "zhutouzhuer"));
-        }
-        updateEffectsByParam();
     }
 
     private void setBeautificationOn(boolean selected) {
-        List<ComposerNode> list = new ArrayList<>();
-        if(!selected){
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SMOOTH, NODE_BEAUTY_LIVE, "smooth", 0));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_LIVE, "whiten", 0));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_LIVE, "sharp", 0));
-            externParam.setFilter(null);
+        IBeautyByteDance beautyByteDance = preprocessor.getBeautyByteDance();
+        if (beautyByteDance != null) {
+            beautyByteDance.setFaceBeautifyEnable(selected);
         }
-        else{
-            if(externParam.getNodes()!=null)
-                list.addAll(Arrays.asList(externParam.getNodes()));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SMOOTH, NODE_BEAUTY_LIVE, "smooth", 1));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_WHITEN, NODE_BEAUTY_LIVE, "whiten", 1));
-            list.add(new ComposerNode(TYPE_BEAUTY_FACE_SHARPEN, NODE_BEAUTY_LIVE, "sharp", 1));
-            ExternParam.FilterItem filterItem = new ExternParam.FilterItem();
-            filterItem.setKey("Filter_01_38");
-            filterItem.setValue(0.6f);
-            externParam.setFilter(filterItem);
-        }
-        externParam.setNodes(list.toArray(new ComposerNode[list.size()]));
-        updateEffectsByParam();
     }
 
     private void setMakeupItemParam(boolean selected) {
-        List<ComposerNode> list = new ArrayList<>();
-        if(!selected){
-            list.add(new ComposerNode(TYPE_MAKEUP_BLUSHER, "blush/richang", "Internal_Makeup_Blusher", 0));
-            list.add(new ComposerNode(TYPE_MAKEUP_LIP, "lip/sironghong", "Internal_Makeup_Lips", 0));
-            list.add(new ComposerNode(TYPE_MAKEUP_PUPIL, "pupil/hunxuezong", "Internal_Makeup_Pupil", 0));
-            list.add(new ComposerNode(TYPE_MAKEUP_EYESHADOW, "eyeshadow/dadizong", "Internal_Makeup_Eye", 0));
-            list.add(new ComposerNode(TYPE_MAKEUP_EYEBROW, "eyebrow/BK01", "Internal_Makeup_Brow", 0));
+        IBeautyByteDance beautyByteDance = preprocessor.getBeautyByteDance();
+        if (beautyByteDance != null) {
+            beautyByteDance.setMakeUpEnable(selected);
         }
-        else{
-            if(externParam.getNodes()!=null)
-                list.addAll(Arrays.asList(externParam.getNodes()));
-            list.add(new ComposerNode(TYPE_MAKEUP_BLUSHER, "blush/richang", "Internal_Makeup_Blusher", 1));
-            list.add(new ComposerNode(TYPE_MAKEUP_LIP, "lip/sironghong", "Internal_Makeup_Lips", 1));
-            list.add(new ComposerNode(TYPE_MAKEUP_PUPIL, "pupil/hunxuezong", "Internal_Makeup_Pupil", 1));
-            list.add(new ComposerNode(TYPE_MAKEUP_EYESHADOW, "eyeshadow/dadizong", "Internal_Makeup_Eye", 1));
-            list.add(new ComposerNode(TYPE_MAKEUP_EYEBROW, "eyebrow/BK01", "Internal_Makeup_Brow", 1));
-        }
-        externParam.setNodes(list.toArray(new ComposerNode[list.size()]));
-        updateEffectsByParam();
     }
 
     private void updateEffectOptionPanel() {
@@ -397,19 +348,4 @@ public class ByteChatActivity extends RtcBasedActivity implements UnzipTask.IUnz
         mRemoteViewContainer.addView(surfaceView);
     }
 
-    private void updateEffectsByParam() {
-        if(externParam != null ){
-            if(externParam.getNodeArray()!=null && externParam.getNodeArray().length > 0){
-                preprocessor.setComposeNodes(externParam.getNodeArray());
-                for(ComposerNode node : externParam.getNodes()){
-                    preprocessor.updateComposeNode(node, true);
-                }
-            }
-            preprocessor.setSticker(externParam.getSticker());
-            if (null != externParam.getFilter() && !TextUtils.isEmpty(externParam.getFilter().getKey())) {
-                preprocessor.setFilter(ResourceHelper.getFilterResourcePathByName(getContext(), externParam.getFilter().getKey()));
-                preprocessor.updateFilterIntensity(externParam.getFilter().getValue());
-            }
-        }
-    }
 }
